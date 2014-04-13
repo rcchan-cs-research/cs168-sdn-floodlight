@@ -1,8 +1,8 @@
 package org.openflow.protocol;
 
 public enum OFTable {
-    OFTT_MAX                ((byte)0xfe),
-    OFTT_ALL                ((byte)0xff);
+    OFPTT_MAX                ((byte)0xfe),
+    OFPTT_ALL                ((byte)0xff);
 
     protected byte value;
 
