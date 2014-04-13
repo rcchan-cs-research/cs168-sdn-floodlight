@@ -45,22 +45,15 @@ import org.openflow.protocol.OFHello;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPortStatus;
-import org.openflow.protocol.OFQueueConfigReply;
+import org.openflow.protocol.OFQueueGetConfigReply;
 import org.openflow.protocol.OFSetConfig;
 import org.openflow.protocol.OFMultipartReply;
 import org.openflow.protocol.OFMultipartRequest;
 import org.openflow.protocol.OFSwitchConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFVendor;
-import org.openflow.protocol.OFError.OFBadActionCode;
-import org.openflow.protocol.OFError.OFBadRequestCode;
-import org.openflow.protocol.OFError.OFErrorType;
-import org.openflow.protocol.OFError.OFFlowModFailedCode;
-import org.openflow.protocol.OFError.OFHelloFailedCode;
-import org.openflow.protocol.OFError.OFPortModFailedCode;
-import org.openflow.protocol.OFError.OFQueueOpFailedCode;
+import org.openflow.protocol.OFError.*;
 import org.openflow.protocol.factory.BasicFactory;
-import org.openflow.protocol.factory.MessageParseException;
 import org.openflow.protocol.multipart.OFDescriptionStatistics;
 import org.openflow.protocol.multipart.OFMultipartData;
 import org.openflow.protocol.multipart.OFMultipartDataType;
@@ -299,7 +292,7 @@ class OFChannelHandler
             if (pendingXid == error.getXid()) {
                 boolean isBadRequestError =
                         (error.getErrorType() == OFError.OFErrorType.
-                        OFPET_BAD_REQUEST.getValue());
+                        OFPET_BAD_REQUEST.ordinal());
                 if (isBadRequestError) {
                     counters.roleReplyErrorUnsupported.updateCounterWithFlush();
                     setSwitchRole(pendingRole, RoleRecvStatus.UNSUPPORTED);
@@ -611,7 +604,7 @@ class OFChannelHandler
 
             @Override
             void processOFError(OFChannelHandler h, OFError m) {
-                if (m.getErrorType() == OFErrorType.OFPET_BAD_REQUEST.getValue()
+                if (m.getErrorType() == OFErrorType.OFPET_BAD_REQUEST.ordinal()
                         && m.getErrorCode() ==
                             OFBadRequestCode.OFPBRC_BAD_VENDOR.ordinal()) {
                     log.debug("Switch {} has multiple tables but does not " +
@@ -656,9 +649,9 @@ class OFChannelHandler
                         new OFDescriptionStatistics();
                 ChannelBuffer data =
                         ChannelBuffers.buffer(description.getLength());
-                OFMultipartData f = m.getFirstStatistics();
-                f.writeTo(data);
-                description.readFrom(data);
+                OFMultipartData f = m.getFirstMultipartData();
+                f.writeTo(data.toByteBuffer());
+                description.readFrom(data.toByteBuffer());
                 h.sw = h.controller.getOFSwitchInstance(description);
                 // set switch information
                 // set features reply and channel first so we a DPID and
@@ -815,7 +808,7 @@ class OFChannelHandler
                 if (didHandle)
                     return;
                 if (m.getErrorType() ==
-                        OFErrorType.OFPET_BAD_REQUEST.getValue() &&
+                        OFErrorType.OFPET_BAD_REQUEST.ordinal() &&
                    m.getErrorCode() ==
                         OFBadRequestCode.OFPBRC_EPERM.ordinal()) {
                     // We are the master controller and the switch returned
@@ -833,9 +826,9 @@ class OFChannelHandler
                     h.controller.reassertRole(h, Role.MASTER);
                 }
                 else if (m.getErrorType() ==
-                        OFErrorType.OFPET_PORT_MOD_FAILED.getValue() &&
+                        OFErrorType.OFPET_PORT_MOD_FAILED.ordinal() &&
                     m.getErrorCode() ==
-                        OFFlowModFailedCode.OFPFMFC_ALL_TABLES_FULL.ordinal()) {
+                        OFFlowModFailedCode.OFPFMFC_TABLES_FULL.ordinal()) {
                     h.sw.setTableFull(true);
                 }
                 else {
@@ -1181,7 +1174,7 @@ class OFChannelHandler
                 case QUEUE_GET_CONFIG_REPLY:
                     processOFQueueGetConfigReply(h, (OFQueueGetConfigReply)m);
                     break;
-                case STATS_REPLY:
+                case MULTIPART_REPLY:
                     processOFMultipartReply(h, (OFMultipartReply)m);
                     break;
                 case VENDOR:
@@ -1195,9 +1188,11 @@ class OFChannelHandler
                 case PORT_MOD:
                 case QUEUE_GET_CONFIG_REQUEST:
                 case BARRIER_REQUEST:
-                case STATS_REQUEST:
+                case MULTIPART_REQUEST:
                 case FEATURES_REQUEST:
                 case FLOW_MOD:
+                case GROUP_MOD:
+                case METER_MOD:                	
                     illegalMessageReceived(h, m);
                     break;
             }
@@ -1451,14 +1446,14 @@ class OFChannelHandler
             }
             counters.switchDisconnectSwitchStateException.updateCounterWithFlush();
             ctx.getChannel().close();
-        } else if (e.getCause() instanceof MessageParseException) {
+/*        } else if (e.getCause() instanceof MessageParseException) {
             log.error("Disconnecting switch "
                                  + getSwitchInfoString() +
                                  " due to message parse failure",
                                  e.getCause());
             counters.switchDisconnectParseError.updateCounterWithFlush();
             ctx.getChannel().close();
-        } else if (e.getCause() instanceof StorageException) {
+*/        } else if (e.getCause() instanceof StorageException) {
             log.error("Terminating controller due to storage exception",
                       e.getCause());
             this.controller.terminate();
@@ -1603,6 +1598,14 @@ class OFChannelHandler
                 OFBadActionCode bac =
                     OFBadActionCode.values()[0xffff & error.getErrorCode()];
                 return String.format("Error %s %s", et, bac);
+            case OFPET_BAD_INSTRUCTION:
+                OFBadInstructionCode bic =
+                    OFBadInstructionCode.values()[0xffff & error.getErrorCode()];
+                return String.format("Error %s %s", et, bic);
+            case OFPET_BAD_MATCH:
+                OFBadMatchCode bmc =
+                    OFBadMatchCode.values()[0xffff & error.getErrorCode()];
+                return String.format("Error %s %s", et, bmc);
             case OFPET_FLOW_MOD_FAILED:
                 OFFlowModFailedCode fmfc =
                     OFFlowModFailedCode.values()[0xffff & error.getErrorCode()];
@@ -1611,10 +1614,34 @@ class OFChannelHandler
                 OFPortModFailedCode pmfc =
                     OFPortModFailedCode.values()[0xffff & error.getErrorCode()];
                 return String.format("Error %s %s", et, pmfc);
+            case OFPET_GROUP_MOD_FAILED:
+                OFGroupModFailedCode gmfc =
+                    OFGroupModFailedCode.values()[0xffff & error.getErrorCode()];
+                return String.format("Error %s %s", et, gmfc);
+            case OFPET_TABLE_MOD_FAILED:
+                OFTableModFailedCode tmfc =
+                    OFTableModFailedCode.values()[0xffff & error.getErrorCode()];
+                return String.format("Error %s %s", et, tmfc);
             case OFPET_QUEUE_OP_FAILED:
                 OFQueueOpFailedCode qofc =
                     OFQueueOpFailedCode.values()[0xffff & error.getErrorCode()];
                 return String.format("Error %s %s", et, qofc);
+            case OFPET_SWITCH_CONFIG_FAILED:
+                OFSwitchConfigFailedCode scfc =
+                	OFSwitchConfigFailedCode.values()[0xffff & error.getErrorCode()];
+                return String.format("Error %s %s", et, scfc);
+            case OFPET_ROLE_REQUEST_FAILED:
+                OFRoleRequestFailedCode rrfc =
+	                OFRoleRequestFailedCode.values()[0xffff & error.getErrorCode()];
+	            return String.format("Error %s %s", et, rrfc);
+            case OFPET_METER_MOD_FAILED:
+                OFMeterModFailedCode mmfc =
+                    OFMeterModFailedCode.values()[0xffff & error.getErrorCode()];
+                return String.format("Error %s %s", et, mmfc);
+            case OFPET_TABLE_FEATURES_FAILED:
+                OFTableFeaturesFailedCode tffc =
+                    OFTableFeaturesFailedCode.values()[0xffff & error.getErrorCode()];
+                return String.format("Error %s %s", et, tffc);
             case OFPET_VENDOR:
                 // no codes known for vendor error
                 return String.format("Error %s", et);
@@ -1735,7 +1762,7 @@ class OFChannelHandler
     private void sendHandshakeDescriptionStatsRequest() throws IOException {
         // Get Description to set switch-specific flags
         OFMultipartRequest req = new OFMultipartRequest();
-        req.setStatisticType(OFMultipartDataType.DESC);
+        req.setMultipartDataType(OFMultipartDataType.DESC);
         req.setXid(handshakeTransactionIds--);
 
         channel.write(Collections.singletonList(req));
