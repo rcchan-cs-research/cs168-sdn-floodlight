@@ -30,7 +30,8 @@ import org.openflow.protocol.multipart.OFVendorStatistics;
  */
 public class BasicFactory implements OFMessageFactory, OFActionFactory,
         OFQueuePropertyFactory, OFMultipartFactory,
-        OFInstructionFactory, OFHelloElementFactory {
+        OFInstructionFactory, OFHelloElementFactory,
+        OFMeterBandFactory {
     @Override
     public OFMessage getMessage(OFType t) {
         return t.newInstance();
@@ -73,6 +74,9 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
             }
             if (ofm instanceof OFHelloElementFactoryAware) {
                 ((OFHelloElementFactoryAware)ofm).setHelloElementFactory(this);
+            }
+            if (ofm instanceof OFMeterBandFactoryAware) {
+                ((OFMeterBandFactoryAware)ofm).setMeterBandFactory(this);
             }
             ofm.readFrom(data);
             if (OFMessage.class.equals(ofm.getClass())) {
@@ -333,6 +337,51 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
                 // advance the position for un-implemented messages
                 data.position(data.position()+(ofqp.getLengthU() -
                         OFHelloElement.MINIMUM_LENGTH));
+            }
+            results.add(ofqp);
+        }
+
+        return results;
+    }
+
+    @Override
+    public OFMeterBand getMeterBand(OFMeterBandType t) {
+        return t.newInstance();
+    }
+
+    @Override
+    public List<OFMeterBand> parseMeterBands(ByteBuffer data,
+            int length) {
+        return parseMeterBands(data, length, 0);
+    }
+
+    @Override
+    public List<OFMeterBand> parseMeterBands(ByteBuffer data,
+            int length, int limit) {
+        List<OFMeterBand> results = new ArrayList<OFMeterBand>();
+        OFMeterBand demux = new OFMeterBand();
+        OFMeterBand ofqp;
+        int end = data.position() + length;
+
+        while (limit == 0 || results.size() <= limit) {
+            if (data.remaining() < OFMeterBand.MINIMUM_LENGTH ||
+                    (data.position() + OFMeterBand.MINIMUM_LENGTH) > end)
+                return results;
+
+            data.mark();
+            demux.readFrom(data);
+            data.reset();
+
+            if (demux.getLengthU() > data.remaining() ||
+                    (data.position() + demux.getLengthU()) > end)
+                return results;
+
+            ofqp = getMeterBand(demux.getType());
+            ofqp.readFrom(data);
+            if (OFMeterBand.class.equals(ofqp.getClass())) {
+                // advance the position for un-implemented messages
+                data.position(data.position()+(ofqp.getLengthU() -
+                        OFMeterBand.MINIMUM_LENGTH));
             }
             results.add(ofqp);
         }
