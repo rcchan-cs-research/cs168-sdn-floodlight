@@ -52,7 +52,7 @@ public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, C
         this.length = U16.t(MINIMUM_LENGTH);
         this.outPort = OFPort.OFPP_ANY.getValue();
         this.outGroup = OFGroup.OFPG_ANY.getValue();
-        this.priority = 32768; 
+        this.priority = (short)32768; 
     }
 
     /**
