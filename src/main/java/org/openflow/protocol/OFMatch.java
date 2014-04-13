@@ -70,6 +70,18 @@ public class OFMatch implements Cloneable {
         this.matchLength = 4; //No padding
     }
 
+    /**
+     * Get in_port
+     * @return
+     */
+    public int getInPort() {
+        for (OFMatchField matchField: matchFields) {
+            if (matchField.getOXMFieldType() == OFOXMFieldType.IN_PORT)
+                return (Integer) matchField.oxmFieldValue;
+        }
+        return -1;
+    }
+
     public OFMatchType getType() {
         return type;
     }
