@@ -17,6 +17,8 @@ import org.openflow.protocol.multipart.OFMultipartDataType;
 import org.openflow.protocol.hello.OFHelloElement;
 import org.openflow.protocol.hello.OFHelloElementType;
 import org.openflow.protocol.multipart.OFVendorStatistics;
+import org.openflow.protocol.meter.OFMeterBand;
+import org.openflow.protocol.meter.OFMeterBandType;
 
 
 /**

@@ -1615,7 +1615,7 @@ class OFChannelHandler
                 OFQueueOpFailedCode qofc =
                     OFQueueOpFailedCode.values()[0xffff & error.getErrorCode()];
                 return String.format("Error %s %s", et, qofc);
-            case OFPET_VENDOR_ERROR:
+            case OFPET_VENDOR:
                 // no codes known for vendor error
                 return String.format("Error %s", et);
         }
