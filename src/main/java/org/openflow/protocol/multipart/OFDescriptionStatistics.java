@@ -20,6 +20,23 @@ public class OFDescriptionStatistics implements OFMultipartData {
     protected String datapathDescription;
 
     /**
+     *
+     */
+    public OFDescriptionStatistics() {
+    }
+
+    /**
+     * Copy constructor
+     */
+	public OFDescriptionStatistics(OFDescriptionStatistics other) {
+    	manufacturerDescription = other.manufacturerDescription;
+       	hardwareDescription = other.hardwareDescription;
+       	softwareDescription = other.softwareDescription;
+       	serialNumber = other.serialNumber;
+    	datapathDescription = other.datapathDescription;
+    }
+    
+    /**
      * @return the manufacturerDescription
      */
     public String getManufacturerDescription() {
