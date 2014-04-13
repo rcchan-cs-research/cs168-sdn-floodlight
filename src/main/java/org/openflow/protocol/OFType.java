@@ -130,12 +130,12 @@ public enum OFType {
     QUEUE_GET_CONFIG_REQUEST (22, OFMessage.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
-                                return new OFQueueConfigRequest();
+                                return new OFQueueGetConfigRequest();
                             }}),
     QUEUE_GET_CONFIG_REPLY  (23, OFMessage.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
-                                return new OFQueueConfigReply();
+                                return new OFQueueGetConfigReply();
                             }}),
 /* TODO
     ROLE_REQUEST        (24, OFMessage.class, new Instantiable<OFMessage>() {

@@ -13,7 +13,7 @@ import org.openflow.protocol.queue.OFPacketQueue;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class OFQueueConfigReply extends OFMessage implements Cloneable, OFQueuePropertyFactoryAware {
+public class OFQueueGetConfigReply extends OFMessage implements Cloneable, OFQueuePropertyFactoryAware {
     public static int MINIMUM_LENGTH = 16;
 
     protected OFQueuePropertyFactory queuePropertyFactory;
@@ -24,7 +24,7 @@ public class OFQueueConfigReply extends OFMessage implements Cloneable, OFQueueP
     /**
      * 
      */
-    public OFQueueConfigReply() {
+    public OFQueueGetConfigReply() {
         super();
         this.type = OFType.QUEUE_GET_CONFIG_REPLY;
         this.length = U16.t(MINIMUM_LENGTH);
@@ -40,7 +40,7 @@ public class OFQueueConfigReply extends OFMessage implements Cloneable, OFQueueP
     /**
      * @param port the port to set
      */
-    public OFQueueConfigReply setPort(int portNumber) {
+    public OFQueueGetConfigReply setPort(int portNumber) {
         this.portNumber = portNumber;
         return this;
     }
@@ -55,7 +55,7 @@ public class OFQueueConfigReply extends OFMessage implements Cloneable, OFQueueP
     /**
      * @param queues the queues to set
      */
-    public OFQueueConfigReply setQueues(List<OFPacketQueue> queues) {
+    public OFQueueGetConfigReply setQueues(List<OFPacketQueue> queues) {
         this.queues = queues;
         return this;
     }
@@ -105,9 +105,9 @@ public class OFQueueConfigReply extends OFMessage implements Cloneable, OFQueueP
             return true;
         if (!super.equals(obj))
             return false;
-        if (!(obj instanceof OFQueueConfigReply))
+        if (!(obj instanceof OFQueueGetConfigReply))
             return false;
-        OFQueueConfigReply other = (OFQueueConfigReply) obj;
+        OFQueueGetConfigReply other = (OFQueueGetConfigReply) obj;
         if (portNumber != other.portNumber)
             return false;
         if (queues == null) {
@@ -125,9 +125,9 @@ public class OFQueueConfigReply extends OFMessage implements Cloneable, OFQueueP
     }
 
     @Override
-    public OFQueueConfigReply clone() {
+    public OFQueueGetConfigReply clone() {
         try {
-            OFQueueConfigReply clone = (OFQueueConfigReply) super.clone();
+            OFQueueGetConfigReply clone = (OFQueueGetConfigReply) super.clone();
             if (this.queues != null) {
                 List<OFPacketQueue> queues = new ArrayList<OFPacketQueue>();
                 for (OFPacketQueue queue : this.queues) {
@@ -143,7 +143,7 @@ public class OFQueueConfigReply extends OFMessage implements Cloneable, OFQueueP
 
     @Override
     public String toString() {
-        return "OFQueueConfigReply [portNumber=" + portNumber + ", queues=" + queues
+        return "OFQueueGetConfigReply [portNumber=" + portNumber + ", queues=" + queues
                 + ", xid=" + xid + "]";
     }
 

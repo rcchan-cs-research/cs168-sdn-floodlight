@@ -8,7 +8,7 @@ import org.openflow.util.U16;
  *
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class OFQueueConfigRequest extends OFMessage implements Cloneable {
+public class OFQueueGetConfigRequest extends OFMessage implements Cloneable {
     public static int MINIMUM_LENGTH = 16;
 
     protected int portNumber;
@@ -16,7 +16,7 @@ public class OFQueueConfigRequest extends OFMessage implements Cloneable {
     /**
      * 
      */
-    public OFQueueConfigRequest() {
+    public OFQueueGetConfigRequest() {
         super();
         this.type = OFType.QUEUE_GET_CONFIG_REQUEST;
         this.length = U16.t(MINIMUM_LENGTH);
@@ -32,7 +32,7 @@ public class OFQueueConfigRequest extends OFMessage implements Cloneable {
     /**
      * @param portNumber the port to set
      */
-    public OFQueueConfigRequest setPort(int portNumber) {
+    public OFQueueGetConfigRequest setPort(int portNumber) {
         this.portNumber = portNumber;
         return this;
     }
@@ -65,18 +65,18 @@ public class OFQueueConfigRequest extends OFMessage implements Cloneable {
             return true;
         if (!super.equals(obj))
             return false;
-        if (!(obj instanceof OFQueueConfigRequest))
+        if (!(obj instanceof OFQueueGetConfigRequest))
             return false;
-        OFQueueConfigRequest other = (OFQueueConfigRequest) obj;
+        OFQueueGetConfigRequest other = (OFQueueGetConfigRequest) obj;
         if (portNumber != other.portNumber)
             return false;
         return true;
     }
 
     @Override
-    public OFQueueConfigRequest clone() {
+    public OFQueueGetConfigRequest clone() {
         try {
-            return (OFQueueConfigRequest) super.clone();
+            return (OFQueueGetConfigRequest) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
