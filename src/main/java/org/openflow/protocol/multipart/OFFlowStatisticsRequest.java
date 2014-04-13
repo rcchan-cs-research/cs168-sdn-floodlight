@@ -3,6 +3,9 @@ package org.openflow.protocol.multipart;
 import java.nio.ByteBuffer;
 
 import org.openflow.protocol.OFMatch;
+import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFGroup;
+import org.openflow.protocol.OFTable;
 
 /**
  * Represents an ofp_flow_stats_request structure
@@ -18,6 +21,14 @@ public class OFFlowStatisticsRequest implements OFMultipartData {
     protected int outGroup;
     protected long cookie;
     protected long cookieMask;
+
+    public OFFlowStatisticsRequest() {
+        super();
+        this.outPort = OFPort.OFPP_ANY.getValue();
+        this.outGroup = OFGroup.OFPG_ANY.getValue();
+        this.tableId = OFTable.OFPTT_ANT.getValue();
+        this.cookieMask = 0;
+    }
 
     /**
      * @return the match
