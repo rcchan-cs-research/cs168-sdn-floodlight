@@ -33,20 +33,12 @@ public class OFMultipartReply extends OFMultipartMessageBase {
     /**
      * @return the multipart data
      */
-    public List<OFMultipartData> getMultipartData() {
+    public List<? extends OFMultipartData> getMultipartData() {
         if (this.multipartData == null)
             return null;
         else if (this.multipartData.size() == 0)
             return null;
         else 
             return this.multipartData;
-    }
-
-    /**
-     * @param multipartData the multipart data to set
-     */
-    public OFMultipartMessageBase setMultipartData(List<OFMultipartData> multipartData) {
-        this.multipartData = multipartData;
-        return this;
     }
 }

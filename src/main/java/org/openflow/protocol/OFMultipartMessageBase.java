@@ -22,7 +22,7 @@ public abstract class OFMultipartMessageBase extends OFMessage implements
     protected OFMultipartFactory multipartFactory;
     protected OFMultipartDataType multipartDataType;
     protected short flags;
-    protected List<OFMultipartData> multipartData;
+    protected List<? extends OFMultipartData> multipartData;
 
     /**
      * @return the multipartDataType
@@ -53,6 +53,24 @@ public abstract class OFMultipartMessageBase extends OFMessage implements
         this.flags = flags;
         return this;
     }
+
+    public OFMultipartData getFirstMultipartData() {
+        if (multipartData == null ) {
+            throw new RuntimeException("No multipart statistics data available");
+        }
+        if (multipartData.size() == 0) {
+            throw new RuntimeException("No multipart statistics data available");
+        }
+        return multipartData.get(0);
+    }
+
+    /**
+     * @param multipartData the multipartData to set
+     */
+    public void setMultipartData(List<? extends OFMultipartData> multipartData) {
+        this.multipartData = multipartData;
+    }
+
 
     @Override
     public void setMultipartFactory(OFMultipartFactory multipartFactory) {
