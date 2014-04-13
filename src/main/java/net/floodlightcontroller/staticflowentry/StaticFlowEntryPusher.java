@@ -788,7 +788,7 @@ public class StaticFlowEntryPusher
         fm.setMatch(ofm);
         fm.setCookie(AppCookie.makeCookie(StaticFlowEntryPusher.STATIC_FLOW_APP_ID, 0));
         fm.setCommand(OFFlowMod.OFPFC_DELETE);
-        fm.setOutPort(OFPort.OFPP_NONE);
+        fm.setOutPort(OFPort.OFPP_ANY);
 
         try {
             sw.write(fm, null);

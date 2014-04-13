@@ -263,8 +263,8 @@ public abstract class ForwardingBase
                 }
             }
 
-            short outPort = switchPortList.get(indx).getPortId();
-            short inPort = switchPortList.get(indx-1).getPortId();
+            int outPort = switchPortList.get(indx).getPortId();
+            int inPort = switchPortList.get(indx-1).getPortId();
             // set input and output ports on the switch
             fm.getMatch().setInputPort(inPort);
             ((OFActionOutput)fm.getActions().get(0)).setPort(outPort);
@@ -429,7 +429,7 @@ public abstract class ForwardingBase
      */
     public void packetOutMultiPort(byte[] packetData,
                                    IOFSwitch sw,
-                                   short inPort,
+                                   int inPort,
                                    Set<Integer> outPorts,
                                    FloodlightContext cntx) {
         //setting actions
@@ -450,7 +450,7 @@ public abstract class ForwardingBase
         po.setActionsLength((short) (OFActionOutput.MINIMUM_LENGTH *
                 outPorts.size()));
 
-        // set buffer-id to BUFFER_ID_NONE, and set in-port to OFPP_NONE
+        // set buffer-id to BUFFER_ID_NONE, and set in-port to OFPP_ANY
         po.setBufferId(OFPacketOut.BUFFER_ID_NONE);
         po.setInPort(inPort);
 
@@ -482,7 +482,7 @@ public abstract class ForwardingBase
      */
     public void packetOutMultiPort(OFPacketIn pi,
                                    IOFSwitch sw,
-                                   short inPort,
+                                   int inPort,
                                    Set<Integer> outPorts,
                                    FloodlightContext cntx) {
         packetOutMultiPort(pi.getPacketData(), sw, inPort, outPorts, cntx);
@@ -495,7 +495,7 @@ public abstract class ForwardingBase
      */
     public void packetOutMultiPort(IPacket packet,
                                    IOFSwitch sw,
-                                   short inPort,
+                                   int inPort,
                                    Set<Integer> outPorts,
                                    FloodlightContext cntx) {
         packetOutMultiPort(packet.serialize(), sw, inPort, outPorts, cntx);
@@ -571,7 +571,7 @@ public abstract class ForwardingBase
         OFMatch match = new OFMatch();
         List<OFAction> actions = new ArrayList<OFAction>(); // Set no action to
                                                             // drop
-        match.setInputPort((short)inputPort);
+        match.setInputPort(inputPort);
         if (host_mac != -1L) {
             match.setDataLayerSource(Ethernet.toByteArray(host_mac))
                 .setWildcards(OFMatch.OFPFW_ALL & ~OFMatch.OFPFW_DL_SRC

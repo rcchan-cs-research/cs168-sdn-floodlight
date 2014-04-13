@@ -45,10 +45,10 @@ import org.openflow.protocol.OFHello;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPortStatus;
-import org.openflow.protocol.OFQueueGetConfigReply;
+import org.openflow.protocol.OFQueueConfigReply;
 import org.openflow.protocol.OFSetConfig;
-import org.openflow.protocol.OFStatisticsReply;
-import org.openflow.protocol.OFStatisticsRequest;
+import org.openflow.protocol.OFMultipartReply;
+import org.openflow.protocol.OFMultipartRequest;
 import org.openflow.protocol.OFSwitchConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFVendor;
@@ -61,9 +61,9 @@ import org.openflow.protocol.OFError.OFPortModFailedCode;
 import org.openflow.protocol.OFError.OFQueueOpFailedCode;
 import org.openflow.protocol.factory.BasicFactory;
 import org.openflow.protocol.factory.MessageParseException;
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
-import org.openflow.protocol.statistics.OFStatistics;
-import org.openflow.protocol.statistics.OFStatisticsType;
+import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.multipart.OFMultipartData;
+import org.openflow.protocol.multipart.OFMultipartDataType;
 import org.openflow.util.HexString;
 import org.openflow.vendor.nicira.OFNiciraVendorData;
 import org.openflow.vendor.nicira.OFRoleReplyVendorData;
@@ -457,8 +457,8 @@ class OFChannelHandler
                 illegalMessageReceived(h, m);
             }
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply  m)
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply  m)
                     throws IOException {
                 illegalMessageReceived(h, m);
             }
@@ -500,8 +500,8 @@ class OFChannelHandler
                 }
             }
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply  m)
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply  m)
                     throws IOException {
                 illegalMessageReceived(h, m);
             }
@@ -537,8 +537,8 @@ class OFChannelHandler
                 illegalMessageReceived(h, m);
             }
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply  m)
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply  m)
                     throws IOException {
                 illegalMessageReceived(h, m);
             }
@@ -603,8 +603,8 @@ class OFChannelHandler
                 illegalMessageReceived(h, m);
             }
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply  m)
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply  m)
                     throws IOException {
                 illegalMessageReceived(h, m);
             }
@@ -649,14 +649,14 @@ class OFChannelHandler
                             "a switch driver based on the switch description" +
                             "received from the switch")
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply m) {
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply m) {
                 // Read description, if it has been updated
                 OFDescriptionStatistics description =
                         new OFDescriptionStatistics();
                 ChannelBuffer data =
                         ChannelBuffers.buffer(description.getLength());
-                OFStatistics f = m.getFirstStatistics();
+                OFMultipartData f = m.getFirstStatistics();
                 f.writeTo(data);
                 description.readFrom(data);
                 h.sw = h.controller.getOFSwitchInstance(description);
@@ -776,8 +776,8 @@ class OFChannelHandler
             }
 
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply m) {
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply m) {
                 illegalMessageReceived(h, m);
             }
 
@@ -845,8 +845,8 @@ class OFChannelHandler
             }
 
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply m) {
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply m) {
                 h.sw.deliverStatisticsReply(m);
             }
 
@@ -910,8 +910,8 @@ class OFChannelHandler
 
 
             @Override
-            void processOFStatisticsReply(OFChannelHandler h,
-                                          OFStatisticsReply m) {
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply m) {
                 // FIXME.
                 h.sw.deliverStatisticsReply(m);
             }
@@ -1182,7 +1182,7 @@ class OFChannelHandler
                     processOFQueueGetConfigReply(h, (OFQueueGetConfigReply)m);
                     break;
                 case STATS_REPLY:
-                    processOFStatisticsReply(h, (OFStatisticsReply)m);
+                    processOFMultipartReply(h, (OFMultipartReply)m);
                     break;
                 case VENDOR:
                     processOFVendor(h, (OFVendor)m);
@@ -1281,7 +1281,7 @@ class OFChannelHandler
             unhandledMessageReceived(h, m);
         }
 
-        void processOFStatisticsReply(OFChannelHandler h, OFStatisticsReply m)
+        void processOFMultipartReply(OFChannelHandler h, OFMultipartReply m)
                 throws IOException {
             unhandledMessageReceived(h, m);
         }
@@ -1734,8 +1734,8 @@ class OFChannelHandler
      */
     private void sendHandshakeDescriptionStatsRequest() throws IOException {
         // Get Description to set switch-specific flags
-        OFStatisticsRequest req = new OFStatisticsRequest();
-        req.setStatisticType(OFStatisticsType.DESC);
+        OFMultipartRequest req = new OFMultipartRequest();
+        req.setStatisticType(OFMultipartDataType.DESC);
         req.setXid(handshakeTransactionIds--);
 
         channel.write(Collections.singletonList(req));

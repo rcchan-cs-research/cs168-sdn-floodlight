@@ -25,27 +25,27 @@ import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.threadpool.IThreadPoolService;
 
 import org.openflow.protocol.OFMessage;
-import org.openflow.protocol.OFStatisticsReply;
+import org.openflow.protocol.OFMultipartReply;
 import org.openflow.protocol.OFType;
-import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.multipart.OFMultipartData;
 
 /**
- * A concrete implementation that handles asynchronously receiving OFStatistics
+ * A concrete implementation that handles asynchronously receiving OFMultipartData
  * 
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class OFStatisticsFuture extends
-        OFMessageFuture<List<OFStatistics>> {
+public class OFMultipartDataFuture extends
+        OFMessageFuture<List<OFMultipartData>> {
 
     protected volatile boolean finished;
 
-    public OFStatisticsFuture(IThreadPoolService tp,
+    public OFMultipartDataFuture(IThreadPoolService tp,
             IOFSwitch sw, int transactionId) {
         super(tp, sw, OFType.STATS_REPLY, transactionId);
         init();
     }
 
-    public OFStatisticsFuture(IThreadPoolService tp,
+    public OFMultipartDataFuture(IThreadPoolService tp,
             IOFSwitch sw, int transactionId, long timeout, TimeUnit unit) {
         super(tp, sw, OFType.STATS_REPLY, transactionId, timeout, unit);
         init();
@@ -53,12 +53,12 @@ public class OFStatisticsFuture extends
 
     private void init() {
         this.finished = false;
-        this.result = new CopyOnWriteArrayList<OFStatistics>();
+        this.result = new CopyOnWriteArrayList<OFMultipartData>();
     }
 
     @Override
     protected void handleReply(IOFSwitch sw, OFMessage msg) {
-        OFStatisticsReply sr = (OFStatisticsReply) msg;
+        OFMultipartReply sr = (OFMultipartReply) msg;
         synchronized (this.result) {
             this.result.addAll(sr.getStatistics());
             if ((sr.getFlags() & 0x1) == 0) {

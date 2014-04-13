@@ -29,13 +29,13 @@ import net.floodlightcontroller.core.annotations.LogMessageDoc;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
-import org.openflow.protocol.OFStatisticsRequest;
-import org.openflow.protocol.statistics.OFAggregateStatisticsRequest;
-import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
-import org.openflow.protocol.statistics.OFPortStatisticsRequest;
-import org.openflow.protocol.statistics.OFQueueStatisticsRequest;
-import org.openflow.protocol.statistics.OFStatistics;
-import org.openflow.protocol.statistics.OFStatisticsType;
+import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.multipart.OFAggregateStatisticsRequest;
+import org.openflow.protocol.multipart.OFFlowStatisticsRequest;
+import org.openflow.protocol.multipart.OFPortStatisticsRequest;
+import org.openflow.protocol.multipart.OFQueueStatisticsRequest;
+import org.openflow.protocol.multipart.OFMultipartData;
+import org.openflow.protocol.multipart.OFMultipartDataType;
 import org.openflow.util.HexString;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
@@ -67,52 +67,52 @@ public class SwitchResourceBase extends ServerResource {
                    		"from the switch",
                    recommendation=LogMessageDoc.CHECK_SWITCH + " " +
                    		LogMessageDoc.GENERIC_ACTION)
-    protected List<OFStatistics> getSwitchStatistics(long switchId,
-                                                     OFStatisticsType statType) {
+    protected List<OFMultipartData> getSwitchStatistics(long switchId,
+                                                     OFMultipartDataType statType) {
         IFloodlightProviderService floodlightProvider =
                 (IFloodlightProviderService)getContext().getAttributes().
                     get(IFloodlightProviderService.class.getCanonicalName());
 
         IOFSwitch sw = floodlightProvider.getSwitch(switchId);
-        Future<List<OFStatistics>> future;
-        List<OFStatistics> values = null;
+        Future<List<OFMultipartData>> future;
+        List<OFMultipartData> values = null;
         if (sw != null) {
-            OFStatisticsRequest req = new OFStatisticsRequest();
+            OFMultipartRequest req = new OFMultipartRequest();
             req.setStatisticType(statType);
             int requestLength = req.getLengthU();
-            if (statType == OFStatisticsType.FLOW) {
+            if (statType == OFMultipartDataType.FLOW) {
                 OFFlowStatisticsRequest specificReq = new OFFlowStatisticsRequest();
                 OFMatch match = new OFMatch();
                 match.setWildcards(0xffffffff);
                 specificReq.setMatch(match);
-                specificReq.setOutPort(OFPort.OFPP_NONE.getValue());
+                specificReq.setOutPort(OFPort.OFPP_ANY.getValue());
                 specificReq.setTableId((byte) 0xff);
-                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
                 requestLength += specificReq.getLength();
-            } else if (statType == OFStatisticsType.AGGREGATE) {
+            } else if (statType == OFMultipartDataType.AGGREGATE) {
                 OFAggregateStatisticsRequest specificReq = new OFAggregateStatisticsRequest();
                 OFMatch match = new OFMatch();
                 match.setWildcards(0xffffffff);
                 specificReq.setMatch(match);
-                specificReq.setOutPort(OFPort.OFPP_NONE.getValue());
+                specificReq.setOutPort(OFPort.OFPP_ANY.getValue());
                 specificReq.setTableId((byte) 0xff);
-                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
                 requestLength += specificReq.getLength();
-            } else if (statType == OFStatisticsType.PORT) {
+            } else if (statType == OFMultipartDataType.PORT) {
                 OFPortStatisticsRequest specificReq = new OFPortStatisticsRequest();
-                specificReq.setPortNumber(OFPort.OFPP_NONE.getValue());
-                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                specificReq.setPortNumber(OFPort.OFPP_ANY.getValue());
+                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
                 requestLength += specificReq.getLength();
-            } else if (statType == OFStatisticsType.QUEUE) {
+            } else if (statType == OFMultipartDataType.QUEUE) {
                 OFQueueStatisticsRequest specificReq = new OFQueueStatisticsRequest();
                 specificReq.setPortNumber(OFPort.OFPP_ALL.getValue());
                 // LOOK! openflowj does not define OFPQ_ALL! pulled this from openflow.h
                 // note that I haven't seen this work yet though...
                 specificReq.setQueueId(0xffffffff);
-                req.setStatistics(Collections.singletonList((OFStatistics)specificReq));
+                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
                 requestLength += specificReq.getLength();
-            } else if (statType == OFStatisticsType.DESC ||
-                       statType == OFStatisticsType.TABLE) {
+            } else if (statType == OFMultipartDataType.DESC ||
+                       statType == OFMultipartDataType.TABLE) {
                 // pass - nothing todo besides set the type above
             }
             req.setLengthU(requestLength);
@@ -126,7 +126,7 @@ public class SwitchResourceBase extends ServerResource {
         return values;
     }
 
-    protected List<OFStatistics> getSwitchStatistics(String switchId, OFStatisticsType statType) {
+    protected List<OFMultipartData> getSwitchStatistics(String switchId, OFMultipartDataType statType) {
         return getSwitchStatistics(HexString.toLong(switchId), statType);
     }
 

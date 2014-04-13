@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
+import org.openflow.protocol.multipart.OFDescriptionStatistics;
 
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.IOFSwitchDriver;

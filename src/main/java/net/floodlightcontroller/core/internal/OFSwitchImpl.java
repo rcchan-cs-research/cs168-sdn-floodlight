@@ -18,7 +18,7 @@
 package net.floodlightcontroller.core.internal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
+import org.openflow.protocol.multipart.OFDescriptionStatistics;
 
 import net.floodlightcontroller.core.OFSwitchBase;
 
@@ -34,13 +34,13 @@ public class OFSwitchImpl extends OFSwitchBase {
     }
 
     @Override
-    public OFPortType getPortType(short port_num) {
+    public OFPortType getPortType(int port_num) {
         return OFPortType.NORMAL;
     }
 
     @Override
     @JsonIgnore
-    public boolean isFastPort(short port_num) {
+    public boolean isFastPort(int port_num) {
         return false;
     }
 }

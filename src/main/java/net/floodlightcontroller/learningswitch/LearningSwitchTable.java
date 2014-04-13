@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class LearningSwitchTable extends ServerResource {
     protected static Logger log = LoggerFactory.getLogger(LearningSwitchTable.class);
 
-    protected Map<String, Object> formatTableEntry(MacVlanPair key, short port) {
+    protected Map<String, Object> formatTableEntry(MacVlanPair key, int port) {
         Map<String, Object> entry = new HashMap<String, Object>();
         entry.put("mac", HexString.toHexString(key.mac));
         entry.put("vlan", key.vlan);

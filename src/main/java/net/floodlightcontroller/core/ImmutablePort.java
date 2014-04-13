@@ -34,7 +34,7 @@ import org.openflow.util.HexString;
  *
  */
 public class ImmutablePort {
-    private final short portNumber;
+    private final int portNumber;
     private final byte[] hardwareAddress;
     private final String name;
     private final EnumSet<OFPortConfig> config;
@@ -51,7 +51,7 @@ public class ImmutablePort {
      * TODO: add methods to remove elements from the EnumSets
      */
     public static class Builder {
-        private short portNumber;
+        private int portNumber;
         private byte[] hardwareAddress;
         private String name;
         private EnumSet<OFPortConfig> config;
@@ -91,7 +91,7 @@ public class ImmutablePort {
         /**
          * @param portNumber the portNumber to set
          */
-        public Builder setPortNumber(short portNumber) {
+        public Builder setPortNumber(int portNumber) {
             this.portNumber = portNumber;
             return this;
         }
@@ -269,7 +269,7 @@ public class ImmutablePort {
      * @param supportedFeatures
      * @param peerFeatures
      */
-    private ImmutablePort(short portNumber, byte[] hardwareAddress,
+    private ImmutablePort(int portNumber, byte[] hardwareAddress,
                                  String name, EnumSet<OFPortConfig> config,
                                  boolean portStateLinkDown,
                                  OFPortState portStateStp,
@@ -313,7 +313,7 @@ public class ImmutablePort {
         this.peerFeatures = peerFeatures;
     }
 
-    public short getPortNumber() {
+    public int getPortNumber() {
         return portNumber;
     }
 

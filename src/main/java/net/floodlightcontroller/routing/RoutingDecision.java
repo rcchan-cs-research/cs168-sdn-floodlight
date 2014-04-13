@@ -36,7 +36,7 @@ public class RoutingDecision implements IRoutingDecision {
     protected List<SwitchPort> broadcastIntertfaces;
 
     public RoutingDecision(long swDipd,
-                                  short inPort,
+                                  int inPort,
                                   IDevice srcDevice,
                                   RoutingAction action) {
         this.srcPort = new SwitchPort(swDipd, inPort);

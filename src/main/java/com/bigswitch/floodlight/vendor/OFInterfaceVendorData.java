@@ -68,7 +68,7 @@ public class OFInterfaceVendorData {
     }
 
     /**
-     * Write this message's binary format to the specified ByteBuffer
+     * Write this message's binary format to the specified ChannelBuffer
      * @param data
      */
     public void writeTo(ChannelBuffer data) {
@@ -95,7 +95,7 @@ public class OFInterfaceVendorData {
     }
 
     /**
-     * Read this message off the wire from the specified ByteBuffer
+     * Read this message off the wire from the specified ChannelBuffer
      * @param data
      */
     public void readFrom(ChannelBuffer data) {

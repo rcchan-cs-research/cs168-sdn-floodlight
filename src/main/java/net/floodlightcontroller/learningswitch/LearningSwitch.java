@@ -117,7 +117,7 @@ public class LearningSwitch
      * @param vlan The VLAN that the host is on
      * @param portVal The switchport that the host is on
      */
-    protected void addToPortMap(IOFSwitch sw, long mac, short vlan, short portVal) {
+    protected void addToPortMap(IOFSwitch sw, long mac, short vlan, int portVal) {
         Map<MacVlanPair,Short> swMap = macVlanToSwitchPortMap.get(sw);
 
         if (vlan == (short) 0xffff) {
@@ -199,7 +199,7 @@ public class LearningSwitch
      * @param outPort The switch port to output it to.
      */
     private void writeFlowMod(IOFSwitch sw, short command, int bufferId,
-            OFMatch match, short outPort) {
+            OFMatch match, int outPort) {
         // from openflow 1.0 spec - need to set these on a struct ofp_flow_mod:
         // struct ofp_flow_mod {
         //    struct ofp_header header;
@@ -215,7 +215,7 @@ public class LearningSwitch
         //                           Not meaningful for OFPFC_DELETE*. */
         //    uint16_t out_port; /* For OFPFC_DELETE* commands, require
         //                          matching entries to include this as an
-        //                          output port. A value of OFPP_NONE
+        //                          output port. A value of OFPP_ANY
         //                          indicates no restriction. */
         //    uint16_t flags; /* One of OFPFF_*. */
         //    struct ofp_action_header actions[0]; /* The action length is inferred
@@ -231,7 +231,7 @@ public class LearningSwitch
         flowMod.setHardTimeout(LearningSwitch.FLOWMOD_DEFAULT_HARD_TIMEOUT);
         flowMod.setPriority(LearningSwitch.FLOWMOD_PRIORITY);
         flowMod.setBufferId(bufferId);
-        flowMod.setOutPort((command == OFFlowMod.OFPFC_DELETE) ? outPort : OFPort.OFPP_NONE.getValue());
+        flowMod.setOutPort((command == OFFlowMod.OFPFC_DELETE) ? outPort : OFPort.OFPP_ANY.getValue());
         flowMod.setFlags((command == OFFlowMod.OFPFC_DELETE) ? 0 : (short) (1 << 0)); // OFPFF_SEND_FLOW_REM
 
         // set the ofp_action_header/out actions:
@@ -347,7 +347,7 @@ public class LearningSwitch
                                           short egressPort) {
         // from openflow 1.0 spec - need to set these on a struct ofp_packet_out:
         // uint32_t buffer_id; /* ID assigned by datapath (-1 if none). */
-        // uint16_t in_port; /* Packet's input port (OFPP_NONE if none). */
+        // uint16_t in_port; /* Packet's input port (OFPP_ANY if none). */
         // uint16_t actions_len; /* Size of action array in bytes. */
         // struct ofp_action_header actions[0]; /* Actions. */
         /* uint8_t data[0]; */ /* Packet data. The length is inferred

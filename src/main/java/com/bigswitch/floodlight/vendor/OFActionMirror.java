@@ -14,7 +14,7 @@ public class OFActionMirror extends OFActionBigSwitchVendor {
     protected byte pad1;
     protected byte pad2;
 
-    public OFActionMirror(short portNumber) {
+    public OFActionMirror(int portNumber) {
         super(BSN_ACTION_MIRROR);
         super.setLength((short) (OFActionBigSwitchVendor.MINIMUM_LENGTH + OFActionMirror.MINIMUM_LENGTH));
         this.destPort = portNumber;

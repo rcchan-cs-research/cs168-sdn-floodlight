@@ -10,7 +10,7 @@ import net.floodlightcontroller.util.MACAddress;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPhysicalPort.OFPortState;
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
+import org.openflow.protocol.multipart.OFDescriptionStatistics;
 import org.openflow.util.HexString;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SwitchSyncRepresentation {
     public static class SyncedPort {
         @JsonProperty
-        public short portNumber;
+        public int portNumber;
         @JsonProperty
         public long hardwareAddress;
         @JsonProperty

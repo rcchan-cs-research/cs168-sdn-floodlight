@@ -642,12 +642,12 @@ IFlowReconcileListener, IInfoProvider {
     }
 
     @Override
-    public void addSuppressAPs(long swId, short port) {
+    public void addSuppressAPs(long swId, int port) {
         suppressAPs.add(new SwitchPort(swId, port));
     }
 
     @Override
-    public void removeSuppressAPs(long swId, short port) {
+    public void removeSuppressAPs(long swId, int port) {
         suppressAPs.remove(new SwitchPort(swId, port));
     }
 

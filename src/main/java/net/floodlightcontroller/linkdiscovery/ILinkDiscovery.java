@@ -83,7 +83,7 @@ public interface ILinkDiscovery {
         }
 
         // For port up or port down; and tunnel port added and removed.
-        public LDUpdate(long sw, short port, UpdateOperation operation) {
+        public LDUpdate(long sw, int port, UpdateOperation operation) {
             this.src = sw;
             this.srcPort = port;
             this.operation = operation;

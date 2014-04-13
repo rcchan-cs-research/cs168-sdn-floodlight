@@ -171,7 +171,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
      *            method to derive wildcards for the decision to be taken
      * @return true if the rule matches the given packet-in, false otherwise
      */
-    public boolean matchesFlow(long switchDpid, short inPort, Ethernet packet,
+    public boolean matchesFlow(long switchDpid, int inPort, Ethernet packet,
             WildcardsPair wildcards) {
         IPacket pkt = packet.getPayload();
 

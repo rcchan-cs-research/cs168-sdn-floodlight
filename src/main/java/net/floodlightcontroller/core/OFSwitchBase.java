@@ -39,7 +39,7 @@ import net.floodlightcontroller.core.annotations.LogMessageDoc;
 import net.floodlightcontroller.core.annotations.LogMessageDocs;
 import net.floodlightcontroller.core.internal.Controller;
 import net.floodlightcontroller.core.internal.OFFeaturesReplyFuture;
-import net.floodlightcontroller.core.internal.OFStatisticsFuture;
+import net.floodlightcontroller.core.internal.OFMultipartDataFuture;
 import net.floodlightcontroller.core.util.AppCookie;
 import net.floodlightcontroller.core.web.serializers.DPIDSerializer;
 import net.floodlightcontroller.debugcounter.IDebugCounter;
@@ -70,13 +70,13 @@ import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.OFPort;
-import org.openflow.protocol.OFStatisticsReply;
-import org.openflow.protocol.OFStatisticsRequest;
+import org.openflow.protocol.OFMultipartReply;
+import org.openflow.protocol.OFMultipartRequest;
 import org.openflow.protocol.OFType;
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
-import org.openflow.protocol.statistics.OFStatistics;
-import org.openflow.protocol.statistics.OFStatisticsType;
-import org.openflow.protocol.statistics.OFTableStatistics;
+import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.multipart.OFMultipartData;
+import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.multipart.OFTableStatistics;
 import org.openflow.util.HexString;
 import org.openflow.util.U16;
 import org.slf4j.Logger;
@@ -115,7 +115,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
      * Members hidden from subclasses
      */
     private final AtomicInteger transactionIdSource;
-    private final Map<Integer,OFStatisticsFuture> statsFutureMap;
+    private final Map<Integer,OFMultipartDataFuture> statsFutureMap;
     private final Map<Integer, IOFMessageListener> iofMsgListenersMap;
     private final Map<Integer,OFFeaturesReplyFuture> featuresFutureMap;
     private volatile boolean connected;
@@ -173,7 +173,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
         this.connectedSince = null;
         this.transactionIdSource = new AtomicInteger();
         this.connected = false;
-        this.statsFutureMap = new ConcurrentHashMap<Integer,OFStatisticsFuture>();
+        this.statsFutureMap = new ConcurrentHashMap<Integer,OFMultipartDataFuture>();
         this.featuresFutureMap = new ConcurrentHashMap<Integer,OFFeaturesReplyFuture>();
         this.iofMsgListenersMap = new ConcurrentHashMap<Integer,IOFMessageListener>();
         this.role = null;
@@ -866,7 +866,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public ImmutablePort getPort(short portNumber) {
+    public ImmutablePort getPort(int portNumber) {
         return portManager.getPort(portNumber);
     }
 
@@ -902,7 +902,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public boolean portEnabled(short portNumber) {
+    public boolean portEnabled(int portNumber) {
         ImmutablePort p = portManager.getPort(portNumber);
         if (p == null) return false;
         return p.isEnabled();
@@ -958,7 +958,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public void sendStatsQuery(OFStatisticsRequest request, int xid,
+    public void sendStatsQuery(OFMultipartRequest request, int xid,
                                 IOFMessageListener caller) throws IOException {
         request.setXid(xid);
         this.iofMsgListenersMap.put(xid, caller);
@@ -969,9 +969,9 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public Future<List<OFStatistics>> queryStatistics(OFStatisticsRequest request) throws IOException {
+    public Future<List<OFMultipartData>> queryStatistics(OFMultipartRequest request) throws IOException {
         request.setXid(getNextTransactionId());
-        OFStatisticsFuture future = new OFStatisticsFuture(threadPool, this, request.getXid());
+        OFMultipartDataFuture future = new OFMultipartDataFuture(threadPool, this, request.getXid());
         this.statsFutureMap.put(request.getXid(), future);
         List<OFMessage> msglist = new ArrayList<OFMessage>(1);
         msglist.add(request);
@@ -980,9 +980,9 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public void deliverStatisticsReply(OFStatisticsReply reply) {
+    public void deliverStatisticsReply(OFMultipartReply reply) {
         checkForTableStats(reply);
-        OFStatisticsFuture future = this.statsFutureMap.get(reply.getXid());
+        OFMultipartDataFuture future = this.statsFutureMap.get(reply.getXid());
         if (future != null) {
             future.deliverFuture(this, reply);
             // The future will ultimately unregister itself and call
@@ -1005,13 +1005,13 @@ public abstract class OFSwitchBase implements IOFSwitch {
             message="Switch {switch} flow table capacity back to normal",
             explanation="The switch flow table is less than 90% full")
     })
-    private void checkForTableStats(OFStatisticsReply statReply) {
-        if (statReply.getStatisticType() != OFStatisticsType.TABLE) {
+    private void checkForTableStats(OFMultipartReply statReply) {
+        if (statReply.getStatisticType() != OFMultipartDataType.TABLE) {
             return;
         }
-        List<? extends OFStatistics> stats = statReply.getStatistics();
+        List<? extends OFMultipartData> stats = statReply.getStatistics();
         // Assume a single table only
-        OFStatistics stat = stats.get(0);
+        OFMultipartData stat = stats.get(0);
         if (stat instanceof OFTableStatistics) {
             OFTableStatistics tableStat = (OFTableStatistics) stat;
             int activeCount = tableStat.getActiveCount();
@@ -1045,7 +1045,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
         /* we don't need to be synchronized here. Even if another thread
          * modifies the map while we're cleaning up the future will eventuall
          * timeout */
-        for (OFStatisticsFuture f : statsFutureMap.values()) {
+        for (OFMultipartDataFuture f : statsFutureMap.values()) {
             f.cancel(true);
         }
         statsFutureMap.clear();
@@ -1127,7 +1127,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
             .getMessage(OFType.FLOW_MOD))
                 .setMatch(match)
             .setCommand(OFFlowMod.OFPFC_DELETE)
-            .setOutPort(OFPort.OFPP_NONE)
+            .setOutPort(OFPort.OFPP_ANY)
             .setLength(U16.t(OFFlowMod.MINIMUM_LENGTH));
         fm.setXid(getNextTransactionId());
         OFMessage barrierMsg = floodlightProvider.getOFMessageFactory().getMessage(

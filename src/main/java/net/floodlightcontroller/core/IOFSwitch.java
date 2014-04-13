@@ -35,10 +35,10 @@ import org.jboss.netty.channel.Channel;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPortStatus;
-import org.openflow.protocol.OFStatisticsReply;
-import org.openflow.protocol.OFStatisticsRequest;
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
-import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.OFMultipartReply;
+import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.multipart.OFMultipartData;
 
 /**
  *
@@ -278,7 +278,7 @@ public interface IOFSwitch {
      * messages that have been received.
      * @return Unmodifiable list of ports not backed by the underlying collection
      */
-    public Collection<Short> getEnabledPortNumbers();
+    public Collection<Integer> getEnabledPortNumbers();
 
     /**
      * Retrieve the port object by the port number. The port object
@@ -287,7 +287,7 @@ public interface IOFSwitch {
      * @param portNumber
      * @return port object
      */
-    public ImmutablePort getPort(short portNumber);
+    public ImmutablePort getPort(int portNumber);
 
     /**
      * Retrieve the port object by the port name. The port object
@@ -336,7 +336,7 @@ public interface IOFSwitch {
      * @return Whether a port is enabled per latest port status message
      * (not configured down nor link down nor in spanning tree blocking state)
      */
-    public boolean portEnabled(short portNumber);
+    public boolean portEnabled(int portNumber);
 
     /**
      * @param portNumber
@@ -409,22 +409,22 @@ public interface IOFSwitch {
 
     /**
      * Returns a Future object that can be used to retrieve the asynchronous
-     * OFStatisticsReply when it is available.
+     * OFMultipartReply when it is available.
      *
      * @param request statistics request
-     * @return Future object wrapping OFStatisticsReply
+     * @return Future object wrapping OFMultipartReply
      * @throws IOException
      */
-    public Future<List<OFStatistics>> queryStatistics(OFStatisticsRequest request)
+    public Future<List<OFMultipartData>> queryStatistics(OFMultipartRequest request)
 
             throws IOException;
 
     /**
      * Returns a Future object that can be used to retrieve the asynchronous
-     * OFStatisticsReply when it is available.
+     * OFMultipartReply when it is available.
      *
      * @param request statistics request
-     * @return Future object wrapping OFStatisticsReply
+     * @return Future object wrapping OFMultipartReply
      * @throws IOException
      */
     public Future<OFFeaturesReply> querySwitchFeaturesReply()
@@ -483,7 +483,7 @@ public interface IOFSwitch {
      * Deliver the statistics future reply
      * @param reply the reply to deliver
      */
-    public void deliverStatisticsReply(OFStatisticsReply reply);
+    public void deliverStatisticsReply(OFMultipartReply reply);
 
     /**
      * Cancel the statistics reply with the given transaction ID
@@ -545,7 +545,7 @@ public interface IOFSwitch {
      * @return true if there is a cache hit
      *         false if there is no cache hit.
      */
-    public boolean updateBroadcastCache(Long entry, Short port);
+    public boolean updateBroadcastCache(Long entry, Integer port);
 
     /**
      * Get the portBroadcastCacheHits
@@ -565,7 +565,7 @@ public interface IOFSwitch {
      * that the transaction id is unique only within the scope of this switch.
      * @throws IOException
      */
-    public void sendStatsQuery(OFStatisticsRequest request, int xid,
+    public void sendStatsQuery(OFMultipartRequest request, int xid,
                             IOFMessageListener caller) throws IOException;
 
     /**
@@ -591,14 +591,14 @@ public interface IOFSwitch {
      * @param port_num
      * @return
      */
-    public OFPortType getPortType(short port_num);
+    public OFPortType getPortType(int port_num);
 
     /**
      * Can the port be turned on without forming a new loop?
      * @param port_num
      * @return
      */
-    public boolean isFastPort(short port_num);
+    public boolean isFastPort(int port_num);
 
     /**
      * Return whether write throttling is enabled on the switch

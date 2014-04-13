@@ -101,7 +101,7 @@ public class StaticFlowEntries {
         fm.setBufferId(OFPacketOut.BUFFER_ID_NONE);
         fm.setCommand((short) 0);
         fm.setFlags((short) 0);
-        fm.setOutPort(OFPort.OFPP_NONE.getValue());
+        fm.setOutPort(OFPort.OFPP_ANY.getValue());
         fm.setCookie(computeEntryCookie(fm, 0, entryName));  
         fm.setPriority(Short.MAX_VALUE);
     }
@@ -223,7 +223,7 @@ public class StaticFlowEntries {
                     break;
                 case OPAQUE_ENQUEUE:
                     int queue = ((OFActionEnqueue)a).getQueueId();
-                    short port = ((OFActionEnqueue)a).getPort();
+                    int port = ((OFActionEnqueue)a).getPort();
                     sb.append("enqueue=" + Short.toString(port) + ":0x" + String.format("%02x", queue));
                     break;
                 case STRIP_VLAN:
@@ -439,7 +439,7 @@ public class StaticFlowEntries {
         if (n.matches()) {
             OFActionOutput action = new OFActionOutput();
             action.setMaxLength(Short.MAX_VALUE);
-            short port = OFPort.OFPP_NONE.getValue();
+            int port = OFPort.OFPP_ANY.getValue();
             if (n.group(1) != null) {
                 try {
                     port = get_short(n.group(1));
@@ -482,7 +482,7 @@ public class StaticFlowEntries {
         
         n = Pattern.compile("enqueue=(?:((?:0x)?\\d+)\\:((?:0x)?\\d+))").matcher(subaction);
         if (n.matches()) {
-            short portnum = 0;
+            int portnum = 0;
             if (n.group(1) != null) {
                 try {
                     portnum = get_short(n.group(1));
@@ -730,7 +730,7 @@ public class StaticFlowEntries {
         if (n.matches()) {
             if (n.group(1) != null) {
                 try {
-                    short portnum = get_short(n.group(1));
+                    int portnum = get_short(n.group(1));
                     OFActionTransportLayerSource action = new OFActionTransportLayerSource();
                     action.setTransportPort(portnum);
                     log.debug("action {}", action);
@@ -760,7 +760,7 @@ public class StaticFlowEntries {
         if (n.matches()) {
             if (n.group(1) != null) {
                 try {
-                    short portnum = get_short(n.group(1));
+                    int portnum = get_short(n.group(1));
                     OFActionTransportLayerDestination action = new OFActionTransportLayerDestination();
                     action.setTransportPort(portnum);
                     log.debug("action {}", action);

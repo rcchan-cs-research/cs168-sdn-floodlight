@@ -299,7 +299,7 @@ public class LoadBalancer implements IFloodlightModule,
                         arpRequest.getSenderProtocolAddress()));
                 
         // push ARP reply out
-        pushPacket(arpReply, sw, OFPacketOut.BUFFER_ID_NONE, OFPort.OFPP_NONE.getValue(),
+        pushPacket(arpReply, sw, OFPacketOut.BUFFER_ID_NONE, OFPort.OFPP_ANY.getValue(),
                    pi.getInPort(), cntx, true);
         log.debug("proxy ARP reply pushed as {}", IPv4.fromIPv4Address(vips.get(vipId).address));
         
@@ -312,16 +312,16 @@ public class LoadBalancer implements IFloodlightModule,
      * @param OFPacketIn pi
      * @param IOFSwitch sw
      * @param int bufferId
-     * @param short inPort
-     * @param short outPort
+     * @param int inPort
+     * @param int outPort
      * @param FloodlightContext cntx
      * @param boolean flush
      */    
     public void pushPacket(IPacket packet, 
                            IOFSwitch sw,
                            int bufferId,
-                           short inPort,
-                           short outPort, 
+                           int inPort,
+                           int outPort, 
                            FloodlightContext cntx,
                            boolean flush) {
         if (log.isTraceEnabled()) {
@@ -535,7 +535,7 @@ public class LoadBalancer implements IFloodlightModule,
                fm.setBufferId(OFPacketOut.BUFFER_ID_NONE);
                fm.setCommand((short) 0);
                fm.setFlags((short) 0);
-               fm.setOutPort(OFPort.OFPP_NONE.getValue());
+               fm.setOutPort(OFPort.OFPP_ANY.getValue());
                fm.setCookie((long) 0);  
                fm.setPriority(Short.MAX_VALUE);
                
@@ -923,7 +923,7 @@ public class LoadBalancer implements IFloodlightModule,
         if (n.matches()) {
             OFActionOutput action = new OFActionOutput();
             action.setMaxLength(Short.MAX_VALUE);
-            short port = OFPort.OFPP_NONE.getValue();
+            int port = OFPort.OFPP_ANY.getValue();
             if (n.group(1) != null) {
                 try {
                     port = get_short(n.group(1));
@@ -966,7 +966,7 @@ public class LoadBalancer implements IFloodlightModule,
         
         n = Pattern.compile("enqueue=(?:((?:0x)?\\d+)\\:((?:0x)?\\d+))").matcher(subaction);
         if (n.matches()) {
-            short portnum = 0;
+            int portnum = 0;
             if (n.group(1) != null) {
                 try {
                     portnum = get_short(n.group(1));
@@ -1214,7 +1214,7 @@ public class LoadBalancer implements IFloodlightModule,
         if (n.matches()) {
             if (n.group(1) != null) {
                 try {
-                    short portnum = get_short(n.group(1));
+                    int portnum = get_short(n.group(1));
                     OFActionTransportLayerSource action = new OFActionTransportLayerSource();
                     action.setTransportPort(portnum);
                     log.debug("action {}", action);
@@ -1244,7 +1244,7 @@ public class LoadBalancer implements IFloodlightModule,
         if (n.matches()) {
             if (n.group(1) != null) {
                 try {
-                    short portnum = get_short(n.group(1));
+                    int portnum = get_short(n.group(1));
                     OFActionTransportLayerDestination action = new OFActionTransportLayerDestination();
                     action.setTransportPort(portnum);
                     log.debug("action {}", action);
