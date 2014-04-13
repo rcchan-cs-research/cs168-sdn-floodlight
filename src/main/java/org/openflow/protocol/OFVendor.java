@@ -17,7 +17,7 @@
 
 package org.openflow.protocol;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import java.nio.ByteBuffer;
 import org.openflow.util.U16;
 import org.openflow.protocol.factory.OFVendorDataFactory;
 import org.openflow.protocol.factory.OFVendorDataFactoryAware;
@@ -31,6 +31,7 @@ public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
     public static int MINIMUM_LENGTH = 12;
 
     protected int vendor;
+    protected int vendorType;
     protected OFVendorData vendorData;
     protected OFVendorDataFactory vendorDataFactory;
 
@@ -55,6 +56,20 @@ public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
     }
 
     /**
+     * @return the vendor type
+     */
+    public int getVendorType() {
+        return vendorType;
+    }
+
+    /**
+     * @param vendor the vendor to set
+     */
+    public void setVendorType(int vendorType) {
+        this.vendorType = vendorType;
+    }
+
+    /**
      * @return the data
      */
     public OFVendorData getVendorData() {
@@ -74,9 +89,10 @@ public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
     }
       
     @Override
-    public void readFrom(ChannelBuffer data) {
+    public void readFrom(ByteBuffer data) {
         super.readFrom(data);
-        this.vendor = data.readInt();
+        this.vendor = data.getInt();
+        this.vendorType = data.getInt();
         if (vendorDataFactory == null)
             throw new RuntimeException("OFVendorDataFactory not set");
             
@@ -85,9 +101,10 @@ public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
     }
 
     @Override
-    public void writeTo(ChannelBuffer data) {
+    public void writeTo(ByteBuffer data) {
         super.writeTo(data);
-        data.writeInt(this.vendor);
+        data.putInt(this.vendor);
+        data.putInt(this.vendorType);
         if (vendorData != null)
             vendorData.writeTo(data);
     }
@@ -100,6 +117,7 @@ public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
         final int prime = 337;
         int result = super.hashCode();
         result = prime * result + vendor;
+        result = prime * result + vendorType;
         if (vendorData != null)
             result = prime * result + vendorData.hashCode();
         return result;
@@ -118,6 +136,8 @@ public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
             return false;
         OFVendor other = (OFVendor) obj;
         if (vendor != other.vendor)
+            return false;
+        if (vendorType != other.vendorType)
             return false;
         if (vendorData == null) {
             if (other.vendorData != null) {
