@@ -26,9 +26,10 @@ public class OFMatch implements Cloneable {
     public static final int ETH_TYPE_ARP = 0x806;
     public static final int ETH_TYPE_VLAN = 0x8100;
 
-    public static final int IP_PROTO_TCP = 6;
-    public static final int IP_PROTO_UDP = 17;
-    public static final int IP_PROTO_SCTP = 132;
+    public static final byte IP_PROTO_ICMP = 0x1;
+    public static final byte IP_PROTO_TCP = 0x6;
+    public static final byte IP_PROTO_UDP = 0x11;
+    public static final byte IP_PROTO_SCTP = (byte)0x84;
     
     enum OFMatchType {
         STANDARD, OXM
@@ -165,8 +166,8 @@ public class OFMatch implements Cloneable {
     }
 
     public void readFrom(ByteBuffer data) {
-        byte[] dataLayerAddress = new byte[6];
-        byte[] dataLayerAddressMask = new byte[6];
+        byte[] dataLayerAddress = new byte[OFPhysicalPort.OFP_ETH_ALEN];
+        byte[] dataLayerAddressMask = new byte[OFPhysicalPort.OFP_ETH_ALEN];
         int networkAddress;
         int networkAddressMask;
         int wildcards;
@@ -261,13 +262,13 @@ public class OFMatch implements Cloneable {
             transportNumber = data.getShort();
             if ((wildcards & OFMatchWildcardMask.TP_SRC.getValue()) == 0) {
                 switch (transportNumber) {
-                    case 6:
+                    case IP_PROTO_TCP:
                         this.setField(OFOXMFieldType.TCP_SRC, data.getShort());
                         break;
-                    case 17:
+                    case IP_PROTO_UDP:
                         this.setField(OFOXMFieldType.UDP_SRC, data.getShort());
                         break;
-                    case 132:
+                    case IP_PROTO_SCTP:
                         this.setField(OFOXMFieldType.SCTP_SRC, data.getShort());
                         break;
                 }
@@ -276,13 +277,13 @@ public class OFMatch implements Cloneable {
             transportNumber = data.getShort();
             if ((wildcards & OFMatchWildcardMask.TP_DST.getValue()) == 0) {
                 switch (transportNumber) {
-                    case 6:
+                    case IP_PROTO_TCP:
                         this.setField(OFOXMFieldType.TCP_DST, data.getShort());
                         break;
-                    case 17:
+                    case IP_PROTO_UDP:
                         this.setField(OFOXMFieldType.UDP_DST, data.getShort());
                         break;
-                    case 132:
+                    case IP_PROTO_SCTP:
                         this.setField(OFOXMFieldType.SCTP_DST, data.getShort());
                         break;
                 }
@@ -396,7 +397,7 @@ public class OFMatch implements Cloneable {
      */
     public OFMatch loadFromPacket(byte[] packetData, int inPort) {
         short scratch;
-        byte[] dataLayerAddress = new byte[6];
+        byte[] dataLayerAddress = new byte[OFPhysicalPort.OFP_ETH_ALEN];
         short dataLayerType = 0;
         byte networkProtocol = 0;
 
@@ -467,25 +468,25 @@ public class OFMatch implements Cloneable {
         }
 
         switch (networkProtocol) {
-        case 0x01: // icmp
-            // type
+        case IP_PROTO_ICMP: 
+            // icmp type
             this.setField(OFOXMFieldType.ICMPV4_TYPE, packetDataBB.get());
             // code
             this.setField(OFOXMFieldType.ICMPV4_CODE, packetDataBB.get());
             break;
-        case 0x06: // tcp
+        case IP_PROTO_TCP:
             // tcp src
             this.setField(OFOXMFieldType.TCP_SRC, packetDataBB.getShort());
             // tcp dest
             this.setField(OFOXMFieldType.TCP_DST, packetDataBB.getShort());
             break;
-        case 0x11: // udp
+        case IP_PROTO_UDP:
             // udp src
             this.setField(OFOXMFieldType.UDP_SRC, packetDataBB.getShort());
             // udp dest
             this.setField(OFOXMFieldType.UDP_DST, packetDataBB.getShort());
             break;
-        case (byte)0x84: // sctp
+        case IP_PROTO_SCTP: 
             // sctp src
             this.setField(OFOXMFieldType.SCTP_SRC, packetDataBB.getShort());
             // sctp dest
