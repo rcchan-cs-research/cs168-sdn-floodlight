@@ -472,14 +472,13 @@ public class VirtualNetworkFilter
             (OFFlowMod) floodlightProvider.getOFMessageFactory().getMessage(OFType.FLOW_MOD);
         OFMatch match = new OFMatch();
         match.loadFromPacket(pi.getPacketData(), pi.getInPort());
-        List<OFAction> actions = new ArrayList<OFAction>(); // no actions = drop
         long cookie = AppCookie.makeCookie(APP_ID, 0);
         fm.setCookie(cookie)
         .setIdleTimeout(ForwardingBase.FLOWMOD_DEFAULT_IDLE_TIMEOUT)
         .setHardTimeout(ForwardingBase.FLOWMOD_DEFAULT_HARD_TIMEOUT)
         .setBufferId(OFPacketOut.BUFFER_ID_NONE)
         .setMatch(match)
-        .setActions(actions)
+        // no instructions = drop
         .setLengthU(OFFlowMod.MINIMUM_LENGTH);
 //        fm.setFlags(OFFlowMod.OFPFF_SEND_FLOW_REM);
         try {
