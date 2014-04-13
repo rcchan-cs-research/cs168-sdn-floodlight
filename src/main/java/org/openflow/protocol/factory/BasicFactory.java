@@ -30,17 +30,26 @@ import org.openflow.protocol.meter.OFMeterBandType;
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  *
  */
-public class BasicFactory implements OFMessageFactory, OFActionFactory,
+public enum BasicFactory implements OFMessageFactory, OFActionFactory,
         OFQueuePropertyFactory, OFMultipartFactory,
         OFInstructionFactory, OFHelloElementFactory,
         OFMeterBandFactory {
+
+    SINGLETON_INSTANCE;
+
+    private BasicFactory() { }
+
+    public static BasicFactory getInstance() {
+        return SINGLETON_INSTANCE;
+    }
+
     @Override
     public OFMessage getMessage(OFType t) {
         return t.newInstance();
     }
 
     @Override
-    public List<OFMessage> parseMessages(ByteBuffer data) {
+    public List<OFMessage> parseMessages(ByteBuffer data) { 
         return parseMessages(data, 0);
     }
 

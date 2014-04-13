@@ -179,7 +179,7 @@ public class SimpleController implements SelectListener {
         // register this connection for accepting
         listenSelectLoop.register(listenSock, SelectionKey.OP_ACCEPT, listenSock);
 
-        this.factory = new BasicFactory();
+        this.factory = BasicFactory.getInstance();
     }
 
     @Override
