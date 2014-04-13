@@ -53,6 +53,30 @@ public class OFOXMField implements Cloneable {
             | ((byte)oxmFieldType.getFieldPayloadLength());
     }
 
+    public boolean isAllZero(Object val) {
+        if (val instanceof Byte) {
+        	return ((byte)val == 0);
+        }
+        if (val instanceof Short) {
+        	return ((short)val== 0);
+        }
+        if (val instanceof Integer) {
+        	return ((int)val == 0);
+        }
+        if (val instanceof Long) {
+        	return ((long)val == 0);
+        }
+        if (val instanceof byte[]) {
+	    	for (byte b: (byte[])val)
+	    		if (b != 0)
+	    			return false;
+	    	return true;
+        }
+        //TODO: error check
+        return false;
+    }
+    
+
     public Object readObject(ByteBuffer data, int length)
     {
         switch (length) {

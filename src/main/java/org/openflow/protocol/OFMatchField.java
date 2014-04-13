@@ -27,8 +27,10 @@ public class OFMatchField extends OFOXMField implements Cloneable {
     public OFMatchField(OFOXMFieldType oxmFieldType, Object oxmFieldValue, Object oxmFieldMask) {
         super(oxmFieldType, oxmFieldValue);
         this.oxmFieldLength = 4 + 2 * oxmFieldType.getFieldPayloadLength();
-        this.oxmFieldHasMask = 1;
-        this.oxmFieldMask = oxmFieldMask;
+        if (isAllZero(oxmFieldMask)) {
+	        this.oxmFieldHasMask = 1;
+	        this.oxmFieldMask = oxmFieldMask;
+        }
     }
 
     public Object getOXMFieldMask() {
