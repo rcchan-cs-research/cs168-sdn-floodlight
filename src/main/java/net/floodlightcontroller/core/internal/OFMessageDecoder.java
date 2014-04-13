@@ -45,7 +45,7 @@ public class OFMessageDecoder extends FrameDecoder {
             return null;
         }
 
-        List<OFMessage> message = factory.parseMessage(buffer);
+        List<OFMessage> message = factory.parseMessages(buffer.toByteBuffer());
         return message;
     }
 

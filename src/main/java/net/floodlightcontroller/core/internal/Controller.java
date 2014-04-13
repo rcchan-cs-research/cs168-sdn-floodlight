@@ -2034,7 +2034,7 @@ public class Controller implements IFloodlightProviderService,
         if (bc == null)
             bc = new FloodlightContext();
         if (log.isTraceEnabled()) {
-            String str = OFMessage.getDataAsString(sw, m, bc);
+            String str = m.toString();
             log.trace("{}", str);
         }
 

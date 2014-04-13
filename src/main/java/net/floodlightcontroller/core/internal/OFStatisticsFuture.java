@@ -34,20 +34,20 @@ import org.openflow.protocol.multipart.OFMultipartData;
  * 
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class OFMultipartDataFuture extends
+public class OFStatisticsFuture extends
         OFMessageFuture<List<OFMultipartData>> {
 
     protected volatile boolean finished;
 
-    public OFMultipartDataFuture(IThreadPoolService tp,
+    public OFStatisticsFuture(IThreadPoolService tp,
             IOFSwitch sw, int transactionId) {
-        super(tp, sw, OFType.STATS_REPLY, transactionId);
+        super(tp, sw, OFType.MULTIPART_REPLY, transactionId);
         init();
     }
 
-    public OFMultipartDataFuture(IThreadPoolService tp,
+    public OFStatisticsFuture(IThreadPoolService tp,
             IOFSwitch sw, int transactionId, long timeout, TimeUnit unit) {
-        super(tp, sw, OFType.STATS_REPLY, transactionId, timeout, unit);
+        super(tp, sw, OFType.MULTIPART_REPLY, transactionId, timeout, unit);
         init();
     }
 
@@ -60,7 +60,7 @@ public class OFMultipartDataFuture extends
     protected void handleReply(IOFSwitch sw, OFMessage msg) {
         OFMultipartReply sr = (OFMultipartReply) msg;
         synchronized (this.result) {
-            this.result.addAll(sr.getStatistics());
+            this.result.addAll(sr.getMultipartData());
             if ((sr.getFlags() & 0x1) == 0) {
                 this.finished = true;
             }

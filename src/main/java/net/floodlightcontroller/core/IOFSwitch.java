@@ -551,7 +551,7 @@ public interface IOFSwitch {
      * Get the portBroadcastCacheHits
      * @return
      */
-    public Map<Short, Long> getPortBroadcastHits();
+    public Map<Integer, Long> getPortBroadcastHits();
 
     /**
      * Send a flow statistics request to the switch. This call returns after

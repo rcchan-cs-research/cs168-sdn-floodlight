@@ -30,6 +30,7 @@ import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.OFTable;
 import org.openflow.protocol.multipart.OFAggregateStatisticsRequest;
 import org.openflow.protocol.multipart.OFFlowStatisticsRequest;
 import org.openflow.protocol.multipart.OFPortStatisticsRequest;
@@ -78,30 +79,28 @@ public class SwitchResourceBase extends ServerResource {
         List<OFMultipartData> values = null;
         if (sw != null) {
             OFMultipartRequest req = new OFMultipartRequest();
-            req.setStatisticType(statType);
+            req.setMultipartDataType(statType);
             int requestLength = req.getLengthU();
             if (statType == OFMultipartDataType.FLOW) {
                 OFFlowStatisticsRequest specificReq = new OFFlowStatisticsRequest();
                 OFMatch match = new OFMatch();
-                match.setWildcards(0xffffffff);
                 specificReq.setMatch(match);
                 specificReq.setOutPort(OFPort.OFPP_ANY.getValue());
-                specificReq.setTableId((byte) 0xff);
-                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
+                specificReq.setTableId(OFTable.OFPTT_ALL.getValue());
+                req.setMultipartData(specificReq);
                 requestLength += specificReq.getLength();
             } else if (statType == OFMultipartDataType.AGGREGATE) {
                 OFAggregateStatisticsRequest specificReq = new OFAggregateStatisticsRequest();
                 OFMatch match = new OFMatch();
-                match.setWildcards(0xffffffff);
                 specificReq.setMatch(match);
                 specificReq.setOutPort(OFPort.OFPP_ANY.getValue());
                 specificReq.setTableId((byte) 0xff);
-                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
+                req.setMultipartData(specificReq);
                 requestLength += specificReq.getLength();
             } else if (statType == OFMultipartDataType.PORT) {
                 OFPortStatisticsRequest specificReq = new OFPortStatisticsRequest();
                 specificReq.setPortNumber(OFPort.OFPP_ANY.getValue());
-                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
+                req.setMultipartData(specificReq);
                 requestLength += specificReq.getLength();
             } else if (statType == OFMultipartDataType.QUEUE) {
                 OFQueueStatisticsRequest specificReq = new OFQueueStatisticsRequest();
@@ -109,7 +108,7 @@ public class SwitchResourceBase extends ServerResource {
                 // LOOK! openflowj does not define OFPQ_ALL! pulled this from openflow.h
                 // note that I haven't seen this work yet though...
                 specificReq.setQueueId(0xffffffff);
-                req.setStatistics(Collections.singletonList((OFMultipartData)specificReq));
+                req.setMultipartData(specificReq);
                 requestLength += specificReq.getLength();
             } else if (statType == OFMultipartDataType.DESC ||
                        statType == OFMultipartDataType.TABLE) {
