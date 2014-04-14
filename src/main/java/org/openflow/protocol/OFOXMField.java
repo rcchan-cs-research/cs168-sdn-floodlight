@@ -55,16 +55,16 @@ public class OFOXMField implements Cloneable {
 
     public boolean isAllZero(Object val) {
         if (val instanceof Byte) {
-        	return ((byte)val == 0);
+        	return ((Byte)val == 0);
         }
         if (val instanceof Short) {
-        	return ((short)val== 0);
+        	return ((Short)val== 0);
         }
         if (val instanceof Integer) {
-        	return ((int)val == 0);
+        	return ((Integer)val == 0);
         }
         if (val instanceof Long) {
-        	return ((long)val == 0);
+        	return ((Long)val == 0);
         }
         if (val instanceof byte[]) {
 	    	for (byte b: (byte[])val)

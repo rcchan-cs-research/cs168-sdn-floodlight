@@ -92,7 +92,7 @@ public class OFMatch implements Cloneable {
      * @return integer
      */
     public int getInPort() {
-    	return (int)getMatchFieldValue(OFOXMFieldType.IN_PORT);
+    	return (Integer)getMatchFieldValue(OFOXMFieldType.IN_PORT);
     }
 
     /**
@@ -177,7 +177,7 @@ public class OFMatch implements Cloneable {
      * @return ether_type
      */
     public short getDataLayerType() {
-        return (short)getMatchFieldValue(OFOXMFieldType.ETH_TYPE);
+        return (Short)getMatchFieldValue(OFOXMFieldType.ETH_TYPE);
     }
 
     /**
@@ -193,19 +193,23 @@ public class OFMatch implements Cloneable {
     /**
      * Get dl_vlan
      *
-     * @return vlan tag
+     * @return vlan tag without the VLAN present bit set
      */
     public short getDataLayerVirtualLan() {
-        return (short)getMatchFieldValue(OFOXMFieldType.VLAN_VID);
+        try {
+            return (short)((Short)getMatchFieldValue(OFOXMFieldType.VLAN_VID) & 0xFFF);
+        } catch (IllegalArgumentException e) {
+            return OFVlanId.OFPVID_NONE.getValue();
+        }
     }
 
     /**
      * Set dl_vlan
      *
-     * @param dataLayerVirtualLan
+     * @param dataLayerVirtualLan VLAN ID without the VLAN present bit set
      */
     public OFMatch setDataLayerVirtualLan(short vlan) {
-    	this.setField(OFOXMFieldType.VLAN_VID, vlan);
+    	this.setField(OFOXMFieldType.VLAN_VID, vlan | OFVlanId.OFPVID_PRESENT.getValue());
         return this;
     }
 
@@ -215,7 +219,11 @@ public class OFMatch implements Cloneable {
      * @return VLAN PCP value
      */
     public byte getDataLayerVirtualLanPriorityCodePoint() {
-        return (byte) getMatchFieldValue(OFOXMFieldType.VLAN_PCP);
+        try {
+            return (Byte) getMatchFieldValue(OFOXMFieldType.VLAN_PCP);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
     }
 
     /**
@@ -234,7 +242,7 @@ public class OFMatch implements Cloneable {
      * @return
      */
     public byte getNetworkProtocol() {
-        return (byte)getMatchFieldValue(OFOXMFieldType.IP_PROTO);
+        return (Byte)getMatchFieldValue(OFOXMFieldType.IP_PROTO);
     }
 
     /**
@@ -253,7 +261,11 @@ public class OFMatch implements Cloneable {
      * @return : 6-bit DSCP value (0-63)
      */
     public byte getNetworkTypeOfService() {
-        return (byte)((byte)getMatchFieldValue(OFOXMFieldType.IP_DSCP) & 0x3f);
+        try {
+            return (byte)((Byte)getMatchFieldValue(OFOXMFieldType.IP_DSCP) & 0x3f);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
     }
 
     /**
@@ -274,7 +286,7 @@ public class OFMatch implements Cloneable {
      * @return integer destination IP address
      */
     public int getNetworkDestination() {
-        return (int)getMatchFieldValue(OFOXMFieldType.IPV4_DST);
+        return (Integer)getMatchFieldValue(OFOXMFieldType.IPV4_DST);
     }
 
     /**
@@ -315,7 +327,7 @@ public class OFMatch implements Cloneable {
      */
     // TODO: Add support for IPv6
     public int getNetworkSource() {
-        return (int)getMatchFieldValue(OFOXMFieldType.IPV4_SRC);
+        return (Integer)getMatchFieldValue(OFOXMFieldType.IPV4_SRC);
     }
 
     /**
@@ -357,11 +369,11 @@ public class OFMatch implements Cloneable {
     	byte networkProtocol = getNetworkProtocol();
     	switch (networkProtocol) {
     		case IP_PROTO_TCP:
-    			return (short)getMatchFieldValue(OFOXMFieldType.TCP_DST);
+    			return (Short)getMatchFieldValue(OFOXMFieldType.TCP_DST);
     		case IP_PROTO_UDP:
-    			return (short)getMatchFieldValue(OFOXMFieldType.UDP_DST);
+    			return (Short)getMatchFieldValue(OFOXMFieldType.UDP_DST);
     		case IP_PROTO_SCTP:
-    			return (short)getMatchFieldValue(OFOXMFieldType.SCTP_DST);
+    			return (Short)getMatchFieldValue(OFOXMFieldType.SCTP_DST);
     	}
     	throw new IllegalArgumentException("Network Protocol invalid for extracting port number");
     }
@@ -406,11 +418,11 @@ public class OFMatch implements Cloneable {
     	byte networkProtocol = getNetworkProtocol();
     	switch (networkProtocol) {
     		case IP_PROTO_TCP:
-    			return (short)getMatchFieldValue(OFOXMFieldType.TCP_SRC);
+    			return (Short)getMatchFieldValue(OFOXMFieldType.TCP_SRC);
     		case IP_PROTO_UDP:
-    			return (short)getMatchFieldValue(OFOXMFieldType.UDP_SRC);
+    			return (Short)getMatchFieldValue(OFOXMFieldType.UDP_SRC);
     		case IP_PROTO_SCTP:
-    			return (short)getMatchFieldValue(OFOXMFieldType.SCTP_SRC);
+    			return (Short)getMatchFieldValue(OFOXMFieldType.SCTP_SRC);
     	}
     	throw new IllegalArgumentException("Network Protocol invalid for extracting port number");
     }
@@ -565,12 +577,12 @@ public class OFMatch implements Cloneable {
             this.setField(OFOXMFieldType.ETH_DST, dataLayerAddress.clone(), dataLayerAddressMask.clone());
 
             if ((wildcards & OFMatchWildcardMask.DL_VLAN.getValue()) == 0)
-                this.setField(OFOXMFieldType.VLAN_VID, data.getShort());
+                setDataLayerVirtualLan(data.getShort());
             else
                 data.getShort(); //skip
                 
             if ((wildcards & OFMatchWildcardMask.DL_VLAN_PCP.getValue()) == 0)
-                this.setField(OFOXMFieldType.VLAN_PCP, data.get());
+                setDataLayerVirtualLanPriorityCodePoint(data.get());
             else
                 data.get(); //skip
 
@@ -578,7 +590,7 @@ public class OFMatch implements Cloneable {
             
             if ((wildcards & OFMatchWildcardMask.DL_TYPE.getValue()) == 0) {
                 dataLayerType = data.getShort();
-                this.setField(OFOXMFieldType.ETH_TYPE, data.getShort());
+                setDataLayerType(dataLayerType);
             } else
                 data.getShort(); //skip
 
