@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;
 
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.IFloodlightProviderService;
@@ -54,6 +55,8 @@ import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
+import org.openflow.protocol.instruction.OFInstruction;
+import org.openflow.protocol.instruction.OFInstructionApplyActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,7 +215,7 @@ public abstract class ForwardingBase
                              FloodlightContext cntx,
                              boolean reqeustFlowRemovedNotifn,
                              boolean doFlush,
-                             short   flowModCommand) {
+                             byte flowModCommand) {
 
         boolean srcSwitchIncluded = false;
         OFFlowMod fm =
@@ -229,7 +232,7 @@ public abstract class ForwardingBase
             .setCookie(cookie)
             .setCommand(flowModCommand)
             .setMatch(match)
-            .setActions(actions)
+            .setInstructions(Arrays.asList((OFInstruction) new OFInstructionApplyActions().setActions(actions)))
             .setLengthU(OFFlowMod.MINIMUM_LENGTH+OFActionOutput.MINIMUM_LENGTH);
 
         List<NodePortTuple> switchPortList = route.getPath();
@@ -266,7 +269,7 @@ public abstract class ForwardingBase
             int outPort = switchPortList.get(indx).getPortId();
             int inPort = switchPortList.get(indx-1).getPortId();
             // set input and output ports on the switch
-            fm.getMatch().setInputPort(inPort);
+            fm.getMatch().setIntPort(inPort);
             ((OFActionOutput)fm.getActions().get(0)).setPort(outPort);
 
             try {
@@ -276,7 +279,7 @@ public abstract class ForwardingBase
                             "sw={} inPort={} outPort={}",
                             new Object[] {indx,
                                           sw,
-                                          fm.getMatch().getInputPort(),
+                                          fm.getMatch().getInPort(),
                                           outPort });
                 }
                 messageDamper.write(sw, fm, cntx);
@@ -357,7 +360,7 @@ public abstract class ForwardingBase
      */
     protected void pushPacket(IOFSwitch sw, OFPacketIn pi,
                            boolean useBufferId,
-                           short outport, FloodlightContext cntx) {
+                           int outport, FloodlightContext cntx) {
 
         if (pi == null) {
             return;
