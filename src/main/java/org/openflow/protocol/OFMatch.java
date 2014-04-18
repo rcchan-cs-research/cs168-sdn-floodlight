@@ -112,8 +112,9 @@ public class OFMatch implements Cloneable {
      * Set in_port in match
      * @param in_port
      */
-    public void setInPort(int inPort) {
+    public OFMatch setInPort(int inPort) {
     	this.setField(OFOXMFieldType.IN_PORT, inPort);
+    	return this;
     }
 
     /**
@@ -572,7 +573,7 @@ public class OFMatch implements Cloneable {
      * @param preservedFieldTypes list of match field types preserved,
      * if null all fields are wildcarded
      */
-    public void wildcardAllExceptGiven(List<OFOXMFieldType> preservedFieldTypes) {
+    public OFMatch wildcardAllExceptGiven(List<OFOXMFieldType> preservedFieldTypes) {
         List <OFMatchField> newMatchFields = new ArrayList<OFMatchField>();
 
         if (preservedFieldTypes != null) {
@@ -583,6 +584,7 @@ public class OFMatch implements Cloneable {
 	        }
         }
         setMatchFields(newMatchFields);
+        return this;
     }
 
     public void readFrom(ByteBuffer data) {
