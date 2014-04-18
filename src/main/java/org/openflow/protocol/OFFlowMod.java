@@ -13,6 +13,7 @@ import org.openflow.util.U32;
 /**
  * Represents an ofp_flow_mod message
  * @author David Erickson (daviderickson@cs.stanford.edu)
+ * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  *
  */
 public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, Cloneable {
@@ -53,6 +54,12 @@ public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, C
         this.outPort = OFPort.OFPP_ANY.getValue();
         this.outGroup = OFGroup.OFPG_ANY.getValue();
         this.priority = (short)32768; 
+        this.idleTimeout = 0;
+        this.hardTimeout = 0;
+        this.bufferId = OFPacketOut.BUFFER_ID_NONE;
+        this.match = null;
+        this.flags = 0;
+        this.tableId = 0;
     }
 
     /**
