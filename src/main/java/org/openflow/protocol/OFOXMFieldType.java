@@ -119,7 +119,7 @@ public enum OFOXMFieldType {
      */
     @Override
         public String toString() {
-            return "OFMatch [fieldName=" + fieldName + ", fieldType=" + fieldType +
+            return "OFOXMFieldType [fieldName=" + fieldName + ", fieldTypeVal=" + fieldType +
                 ", fieldPayloadLength=" + fieldPayloadLength + "]";
     }
 }
