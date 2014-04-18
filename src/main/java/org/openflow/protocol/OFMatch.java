@@ -288,7 +288,7 @@ public class OFMatch implements Cloneable {
      *            : 6-bit DSCP value (0-63)
      */
     public OFMatch setNetworkTypeOfService(byte networkTypeOfService) {
-        this.setField(OFOXMFieldType.IP_DSCP, (byte)(networkTypeOfService >> 2) & 0x3f);
+        this.setField(OFOXMFieldType.IP_DSCP, (byte)((networkTypeOfService >> 2) & 0x3f));
         this.setField(OFOXMFieldType.IP_ECN, (byte)(networkTypeOfService & 0x3));
         return this;
     }
@@ -713,9 +713,9 @@ public class OFMatch implements Cloneable {
         short matchLength = getMatchLength();
         data.putShort((short)this.type.ordinal());
         data.putShort(matchLength); //length does not include padding
-        for (OFMatchField matchField : matchFields) {
+        for (OFMatchField matchField : matchFields) 
             matchField.writeTo(data);
-        }
+        
         int padLength = 8*((matchLength + 7)/8) - matchLength;
         for (;padLength>0;padLength--)
             data.put((byte)0); //pad
@@ -811,7 +811,7 @@ public class OFMatch implements Cloneable {
         assert (limit >= 14);
         // dl dst
         packetDataBB.get(dataLayerAddress);
-        setDataLayerSource(dataLayerAddress.clone());
+        setDataLayerDestination(dataLayerAddress.clone());
         // dl src
         packetDataBB.get(dataLayerAddress);
         setDataLayerSource(dataLayerAddress.clone());
