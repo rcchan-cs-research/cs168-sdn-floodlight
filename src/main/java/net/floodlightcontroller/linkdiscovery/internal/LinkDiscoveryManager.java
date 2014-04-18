@@ -991,6 +991,11 @@ public class LinkDiscoveryManager implements IOFMessageListener,
         }
     }
 
+    private boolean isPortUp(int portStateValue) {
+    	OFPortState portState = OFPortState.valueOf(portStateValue);
+    	return (portState == OFPortState.OFPPS_LIVE);
+    }
+    
     private void generateSwitchPortStatusUpdate(long sw, int port) {
         UpdateOperation operation;
 
@@ -1000,12 +1005,8 @@ public class LinkDiscoveryManager implements IOFMessageListener,
         OFPhysicalPort ofp = iofSwitch.getPort(port).toOFPhysicalPort();
         if (ofp == null) return;
 
-        int srcPortState = ofp.getState();
-        boolean portUp = ((srcPortState & OFPortState.OFPPS_STP_MASK.getValue())
-                               != OFPortState.OFPPS_STP_BLOCK.getValue());
-
-        if (portUp)
-            operation = UpdateOperation.PORT_UP;
+        if (isPortUp(ofp.getState()))
+        		operation = UpdateOperation.PORT_UP;
         else
             operation = UpdateOperation.PORT_DOWN;
 
@@ -1202,19 +1203,14 @@ public class LinkDiscoveryManager implements IOFMessageListener,
 
     protected UpdateOperation getUpdateOperation(int srcPortState,
                                                  int dstPortState) {
-        boolean added = (((srcPortState & OFPortState.OFPPS_STP_MASK.getValue())
-                                != OFPortState.OFPPS_STP_BLOCK.getValue()) &&
-                          ((dstPortState & OFPortState.OFPPS_STP_MASK.getValue())
-                                != OFPortState.OFPPS_STP_BLOCK.getValue()));
-
-        if (added) return UpdateOperation.LINK_UPDATED;
+        boolean added = (isPortUp(srcPortState) && (isPortUp(dstPortState)));
+        if (added) 
+        	return UpdateOperation.LINK_UPDATED;
         return UpdateOperation.LINK_REMOVED;
     }
 
     protected UpdateOperation getUpdateOperation(int srcPortState) {
-        boolean portUp = ((srcPortState & OFPortState.OFPPS_STP_MASK.getValue()) != OFPortState.OFPPS_STP_BLOCK.getValue());
-
-        if (portUp)
+        if (isPortUp(srcPortState))
             return UpdateOperation.PORT_UP;
         else
             return UpdateOperation.PORT_DOWN;
@@ -1227,8 +1223,8 @@ public class LinkDiscoveryManager implements IOFMessageListener,
     /**
      * This method is used to specifically ignore/consider specific links.
      */
-    protected boolean isLinkAllowed(long src, short srcPort,
-                                    long dst, short dstPort) {
+    protected boolean isLinkAllowed(long src, int srcPort,
+                                    long dst, int dstPort) {
         return true;
     }
 
@@ -2161,19 +2157,19 @@ public class LinkDiscoveryManager implements IOFMessageListener,
         long srcDpid;
 
         @EventColumn(name = "srcPort", description = EventFieldType.PRIMITIVE)
-        short srcPort;
+        int srcPort;
 
         @EventColumn(name = "dstSw", description = EventFieldType.DPID)
         long dstDpid;
 
         @EventColumn(name = "dstPort", description = EventFieldType.PRIMITIVE)
-        short dstPort;
+        int dstPort;
 
         @EventColumn(name = "reason", description = EventFieldType.STRING)
         String reason;
 
-        public DirectLinkEvent(long srcDpid, short srcPort, long dstDpid,
-                               short dstPort, String reason) {
+        public DirectLinkEvent(long srcDpid, int srcPort, long dstDpid,
+                               int dstPort, String reason) {
             this.srcDpid = srcDpid;
             this.srcPort = srcPort;
             this.dstDpid = dstDpid;
