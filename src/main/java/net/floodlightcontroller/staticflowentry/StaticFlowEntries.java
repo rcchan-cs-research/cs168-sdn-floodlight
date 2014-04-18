@@ -42,6 +42,8 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPort;
+import org.openflow.protocol.OFGroup;
+import org.openflow.protocol.instruction.OFInstruction;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionDataLayerDestination;
 import org.openflow.protocol.action.OFActionDataLayerSource;
@@ -50,7 +52,7 @@ import org.openflow.protocol.action.OFActionNetworkLayerDestination;
 import org.openflow.protocol.action.OFActionNetworkLayerSource;
 import org.openflow.protocol.action.OFActionNetworkTypeOfService;
 import org.openflow.protocol.action.OFActionOutput;
-import org.openflow.protocol.action.OFActionStripVirtualLan;
+import org.openflow.protocol.action.OFActionPopVLAN;
 import org.openflow.protocol.action.OFActionTransportLayerDestination;
 import org.openflow.protocol.action.OFActionTransportLayerSource;
 import org.openflow.protocol.action.OFActionVirtualLanIdentifier;
@@ -99,9 +101,10 @@ public class StaticFlowEntries {
         fm.setIdleTimeout((short) 0);   // infinite
         fm.setHardTimeout((short) 0);   // infinite
         fm.setBufferId(OFPacketOut.BUFFER_ID_NONE);
-        fm.setCommand((short) 0);
+        fm.setCommand((byte) 0);
         fm.setFlags((short) 0);
         fm.setOutPort(OFPort.OFPP_ANY.getValue());
+        fm.setOutGroup(OFGroup.OFPG_ANY.getValue());
         fm.setCookie(computeEntryCookie(fm, 0, entryName));  
         fm.setPriority(Short.MAX_VALUE);
     }
@@ -526,12 +529,12 @@ public class StaticFlowEntries {
         Matcher n = Pattern.compile("strip-vlan").matcher(subaction);
         
         if (n.matches()) {
-            OFActionStripVirtualLan action = new OFActionStripVirtualLan();
+            OFActionPopVLAN action = new OFActionPopVLAN();
             log.debug("action {}", action);
             
             sa = new SubActionStruct();
             sa.action = action;
-            sa.len = OFActionStripVirtualLan.MINIMUM_LENGTH;
+            sa.len = OFActionPopVLAN.MINIMUM_LENGTH;
         }
         else {
             log.debug("Invalid action: '{}'", subaction);

@@ -45,7 +45,7 @@ import org.openflow.protocol.action.OFActionNetworkLayerDestination;
 import org.openflow.protocol.action.OFActionNetworkLayerSource;
 import org.openflow.protocol.action.OFActionNetworkTypeOfService;
 import org.openflow.protocol.action.OFActionOutput;
-import org.openflow.protocol.action.OFActionStripVirtualLan;
+import org.openflow.protocol.action.OFActionPopVLAN;
 import org.openflow.protocol.action.OFActionTransportLayerDestination;
 import org.openflow.protocol.action.OFActionTransportLayerSource;
 import org.openflow.protocol.action.OFActionVirtualLanIdentifier;
@@ -1010,12 +1010,12 @@ public class LoadBalancer implements IFloodlightModule,
         Matcher n = Pattern.compile("strip-vlan").matcher(subaction);
         
         if (n.matches()) {
-            OFActionStripVirtualLan action = new OFActionStripVirtualLan();
+            OFActionPopVLAN action = new OFActionPopVLAN();
             log.debug("action {}", action);
             
             sa = new SubActionStruct();
             sa.action = action;
-            sa.len = OFActionStripVirtualLan.MINIMUM_LENGTH;
+            sa.len = OFActionPopVLAN.MINIMUM_LENGTH;
         }
         else {
             log.debug("Invalid action: '{}'", subaction);
