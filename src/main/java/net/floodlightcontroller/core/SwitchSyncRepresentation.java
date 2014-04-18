@@ -56,7 +56,7 @@ public class SwitchSyncRepresentation {
             }
             rv.name = p.getName();
             rv.config = EnumBitmaps.toBitmap(p.getConfig());
-            rv.state = p.getStpState().getValue();
+            rv.state = p.getPortState().getValue();
             if (p.isLinkDown())
                 rv.state |= OFPortState.OFPPS_LINK_DOWN.getValue();
             rv.currentFeatures  = EnumBitmaps.toBitmap(p.getCurrentFeatures());
@@ -136,7 +136,7 @@ public class SwitchSyncRepresentation {
         this.hardwareDescription = hardwareDescription;
         this.softwareDescription = softwareDescription;
         this.serialNumber = serialNumber;
-        this.datapathDescription = datapathDescription;
+        this.datapathDescrtion = datapathDescription;
     }
 
     public SwitchSyncRepresentation(IOFSwitch sw) {

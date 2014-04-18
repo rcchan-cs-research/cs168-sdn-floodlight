@@ -163,8 +163,8 @@ public class StaticFlowEntries {
         if ((fm.getActions() != null) && (fm.getActions().size() > 0))
         	entry.put(StaticFlowEntryPusher.COLUMN_ACTIONS, StaticFlowEntries.flowModActionsToString(fm.getActions()));
         
-        if (match.getInputPort() != 0)
-        	entry.put(StaticFlowEntryPusher.COLUMN_IN_PORT, Short.toString(match.getInputPort()));
+        if (match.getInPort() != 0)
+        	entry.put(StaticFlowEntryPusher.COLUMN_IN_PORT, Short.toString(match.getInPort()));
         
         if (!Arrays.equals(match.getDataLayerSource(), zeroMac))
         	entry.put(StaticFlowEntryPusher.COLUMN_DL_SRC, HexString.toHexString(match.getDataLayerSource()));

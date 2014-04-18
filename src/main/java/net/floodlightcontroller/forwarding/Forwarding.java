@@ -135,16 +135,14 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule {
         OFFlowMod fm =
                 (OFFlowMod) floodlightProvider.getOFMessageFactory()
                                               .getMessage(OFType.FLOW_MOD);
-        List<OFAction> actions = new ArrayList<OFAction>(); // Set no action to
-                                                            // drop
         long cookie = AppCookie.makeCookie(FORWARDING_APP_ID, 0);
 
+        //No instructions leads to drop
         fm.setCookie(cookie)
           .setHardTimeout((short) 0)
           .setIdleTimeout((short) 5)
           .setBufferId(OFPacketOut.BUFFER_ID_NONE)
           .setMatch(match)
-          .setActions(actions)
           .setLengthU(OFFlowMod.MINIMUM_LENGTH); // +OFActionOutput.MINIMUM_LENGTH);
 
         try {

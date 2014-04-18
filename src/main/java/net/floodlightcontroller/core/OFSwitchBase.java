@@ -185,7 +185,6 @@ public abstract class OFSwitchBase implements IOFSwitch {
         this.portManager = new PortManager();
 
         // Defaults properties for an ideal switch
-        this.setAttribute(PROP_FASTWILDCARDS, OFMatch);
         this.setAttribute(PROP_SUPPORTS_OFPP_FLOOD, Boolean.valueOf(true));
         this.setAttribute(PROP_SUPPORTS_OFPP_TABLE, Boolean.valueOf(true));
         if (packetInRateThresholdHigh == 0) {
@@ -1007,17 +1006,20 @@ public abstract class OFSwitchBase implements IOFSwitch {
             message="Switch {switch} flow table capacity back to normal",
             explanation="The switch flow table is less than 90% full")
     })
+    
     private void checkForTableStats(OFMultipartReply statReply) {
         if (statReply.getMultipartDataType() != OFMultipartDataType.TABLE) {
             return;
         }
         List<? extends OFMultipartData> stats = statReply.getMultipartData();
+        // TODO: Support multiple tables
         // Assume a single table only
         OFMultipartData stat = stats.get(0);
         if (stat instanceof OFTableStatistics) {
             OFTableStatistics tableStat = (OFTableStatistics) stat;
             int activeCount = tableStat.getActiveCount();
-            //int maxEntry = tableStat.getMaximumEntries();
+            /* TODO: Query switch for maximum entries of table
+            int maxEntry = tableStat.getMaximumEntries();
             log.debug("Switch {} active entries {} max entries {}",
                     new Object[] { this.stringId, activeCount, maxEntry});
             int percentFull = activeCount * 100 / maxEntry;
@@ -1030,7 +1032,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
                 log.info("Switch {} flow table is almost full", toString());
                 floodlightProvider.addSwitchEvent(this.datapathId,
                         "SWITCH_FLOW_TABLE_ALMOST_FULL >= 98% full", false);
-            }
+            } */   
         }
     }
 
@@ -1124,7 +1126,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
             return;
         // Delete all pre-existing flows
         log.info("Clearing all flows on switch {}", this);
-        OFMatch match = new OFMatch().setWildcards(OFMatch.OFPFW_ALL);
+        OFMatch match = new OFMatch();
         OFMessage fm = ((OFFlowMod) floodlightProvider.getOFMessageFactory()
             .getMessage(OFType.FLOW_MOD))
                 .setMatch(match)

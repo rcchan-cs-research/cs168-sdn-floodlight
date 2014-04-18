@@ -424,7 +424,7 @@ public class LearningSwitch
             //     from port map whenever a flow expires, so you would still see
             //     a lot of floods.
             this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_FLOOD.getValue());
-        } else if (outPort == match.getInputPort()) {
+        } else if (outPort == match.getInPort()) {
             log.trace("ignoring packet that arrived on same port as learned destination:"
                     + " switch {} vlan {} dest MAC {} port {}",
                     new Object[]{ sw, vlan, HexString.toHexString(destMac), outPort });
@@ -454,7 +454,7 @@ public class LearningSwitch
                     .setTransportSource(match.getTransportDestination())
                     .setTransportDestination(match.getTransportSource())
                     .setInputPort(outPort),
-                    match.getInputPort());
+                    match.getInPort());
             }
         }
         return Command.CONTINUE;
@@ -497,7 +497,7 @@ public class LearningSwitch
                 .setNetworkDestination(match.getNetworkSource())
                 .setTransportSource(match.getTransportDestination())
                 .setTransportDestination(match.getTransportSource()),
-                match.getInputPort());
+                match.getInPort());
         return Command.CONTINUE;
     }
 
