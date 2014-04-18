@@ -18,11 +18,11 @@ import org.openflow.util.U32;
 public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, Cloneable {
     public static int MINIMUM_LENGTH = 56;
 
-    public static final short OFPFC_ADD = 0;                /* New flow. */
-    public static final short OFPFC_MODIFY = 1;             /* Modify all matching flows. */
-    public static final short OFPFC_MODIFY_STRICT = 2;      /* Modify entry strictly matching wildcards */
-    public static final short OFPFC_DELETE=3;               /* Delete all matching flows. */
-    public static final short OFPFC_DELETE_STRICT =4;       /* Strictly match wildcards and priority. */
+    public static final byte OFPFC_ADD = 0;                /* New flow. */
+    public static final byte OFPFC_MODIFY = 1;             /* Modify all matching flows. */
+    public static final byte OFPFC_MODIFY_STRICT = 2;      /* Modify entry strictly matching wildcards */
+    public static final byte OFPFC_DELETE=3;               /* Delete all matching flows. */
+    public static final byte OFPFC_DELETE_STRICT =4;       /* Strictly match wildcards and priority. */
 
     // Flags
     public static final short OFPFF_SEND_FLOW_REM = 1 << 0;
