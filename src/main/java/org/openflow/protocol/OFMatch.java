@@ -73,6 +73,7 @@ public class OFMatch implements Cloneable {
         this.type = OFMatchType.OXM;
         this.length = U16.t(MINIMUM_LENGTH);
         this.matchLength = 4; //No padding
+        this.matchFields = new ArrayList<OFMatchField>();
     }
 
     /**
@@ -83,6 +84,18 @@ public class OFMatch implements Cloneable {
         for (OFMatchField matchField: matchFields) {
             if (matchField.getOXMFieldType() == matchType)
                 return matchField.getOXMFieldValue();
+        }
+        throw new IllegalArgumentException("No match exists for matchfield " + matchType.getFieldName());
+    }
+
+    /**
+     * Get mask of particular field
+     * @return
+     */
+    public Object getMatchFieldMask(OFOXMFieldType matchType) {
+        for (OFMatchField matchField: matchFields) {
+            if (matchField.getOXMFieldType() == matchType)
+                return matchField.getOXMFieldMask();
         }
         throw new IllegalArgumentException("No match exists for matchfield " + matchType.getFieldName());
     }
@@ -290,6 +303,19 @@ public class OFMatch implements Cloneable {
     }
 
     /**
+     * Get nw_dst mask
+     *
+     * @return integer destination IP address mask
+     */
+    public int getNetworkDestinationMask() {
+        Object mask = getMatchFieldMask(OFOXMFieldType.IPV4_DST);
+        if (mask == null)
+        	return 0;
+        else
+        	return (Integer)mask;
+    }
+
+    /**
      * Set nw_dst
      *
      * @param networkDestination destination IP address
@@ -328,6 +354,19 @@ public class OFMatch implements Cloneable {
     // TODO: Add support for IPv6
     public int getNetworkSource() {
         return (Integer)getMatchFieldValue(OFOXMFieldType.IPV4_SRC);
+    }
+
+    /**
+     * Get nw_src mask
+     *
+     * @return integer source IP address mask
+     */
+    public int getNetworkSourceMask() {
+        Object mask = getMatchFieldMask(OFOXMFieldType.IPV4_SRC);
+        if (mask == null)
+        	return 0;
+        else
+        	return (Integer)mask;
     }
 
     /**
@@ -526,6 +565,24 @@ public class OFMatch implements Cloneable {
     public OFMatch setMatchFields(List<OFMatchField> matchFields) {
         this.matchFields = matchFields;
         return this;
+    }
+
+    /**
+     * Utility function to wildcard all fields except specified in list
+     * @param preservedFieldTypes list of match field types preserved,
+     * if null all fields are wildcarded
+     */
+    public void wildcardAllExceptGiven(List<OFOXMFieldType> preservedFieldTypes) {
+        List <OFMatchField> newMatchFields = new ArrayList<OFMatchField>();
+
+        if (preservedFieldTypes != null) {
+	        for (OFMatchField matchField: matchFields) {
+	            OFOXMFieldType type = matchField.getOXMFieldType();
+	            if (preservedFieldTypes.contains(type))
+	                newMatchFields.add(matchField);
+	        }
+        }
+        setMatchFields(newMatchFields);
     }
 
     public void readFrom(ByteBuffer data) {
