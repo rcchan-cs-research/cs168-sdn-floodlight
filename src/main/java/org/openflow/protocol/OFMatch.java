@@ -569,11 +569,11 @@ public class OFMatch implements Cloneable {
     }
 
     /**
-     * Utility function to wildcard all fields except specified in list
+     * Utility function to wildcard all fields except those specified in list
      * @param nonWildcardedFieldTypes list of match field types preserved,
      * if null all fields are wildcarded
      */
-    public OFMatch wildcardAllExceptGiven(List<OFOXMFieldType> nonWildcardedFieldTypes) {
+    public OFMatch setNonWildcards(List<OFOXMFieldType> nonWildcardedFieldTypes) {
         List <OFMatchField> newMatchFields = new ArrayList<OFMatchField>();
 
         if (nonWildcardedFieldTypes != null) {
