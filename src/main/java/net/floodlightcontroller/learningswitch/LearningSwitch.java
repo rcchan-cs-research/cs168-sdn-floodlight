@@ -444,9 +444,10 @@ public class LearningSwitch
             // FIXME: current HP switches ignore DL_SRC and DL_DST fields, so we have to match on
             // NW_SRC and NW_DST as well
 
-        	match.wildcardAllExceptGiven(Arrays.asList(OFOXMFieldType.IN_PORT, OFOXMFieldType.VLAN_VID, 
+        	match.setNonWildcards(Arrays.asList(OFOXMFieldType.IN_PORT, OFOXMFieldType.VLAN_VID, 
         			OFOXMFieldType.ETH_SRC, OFOXMFieldType.ETH_DST,
                     OFOXMFieldType.IPV4_SRC, OFOXMFieldType.IPV4_DST));
+        	
             // We write FlowMods with Buffer ID none then explicitly PacketOut the buffered packet
             this.pushPacket(sw, match, pi, outPort);
             this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, OFPacketOut.BUFFER_ID_NONE, match, outPort);
@@ -493,11 +494,9 @@ public class LearningSwitch
         // send the packets to the wrong port (the matching input port of the
         // expired flow entry), so we must delete the reverse entry explicitly.
         this.writeFlowMod(sw, OFFlowMod.OFPFC_DELETE, -1, match.clone()
-                .wildcardAllExceptGiven(Arrays.asList(OFOXMFieldType.VLAN_VID, 
-                		OFOXMFieldType.ETH_SRC, OFOXMFieldType.ETH_DST,
-                		OFOXMFieldType.IPV4_SRC, OFOXMFieldType.IPV4_DST))
                 .setDataLayerSource(match.getDataLayerDestination())
                 .setDataLayerDestination(match.getDataLayerSource())
+                .setDataLayerVirtualLan(match.getDataLayerVirtualLan())
                 .setNetworkSource(match.getNetworkDestination())
                 .setNetworkDestination(match.getNetworkSource())
                 .setTransportSource(match.getTransportDestination())

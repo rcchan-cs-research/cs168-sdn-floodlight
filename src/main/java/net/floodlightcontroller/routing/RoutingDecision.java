@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.openflow.protocol.OFOXMFieldType;
+
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.devicemanager.IDevice;
 import net.floodlightcontroller.devicemanager.SwitchPort;
@@ -28,7 +30,7 @@ import net.floodlightcontroller.devicemanager.SwitchPort;
 public class RoutingDecision implements IRoutingDecision {
 
     protected RoutingAction action;
-    protected Integer wildcards;
+    protected List<OFOXMFieldType> nonWildcards;
     protected short hardTimeout;
     protected SwitchPort srcPort;
     protected IDevice srcDevice;
@@ -46,7 +48,7 @@ public class RoutingDecision implements IRoutingDecision {
         this.broadcastIntertfaces = 
                 Collections.synchronizedList(new ArrayList<SwitchPort>());
         this.action = action;
-        this.wildcards = null;
+        this.nonWildcards = null;
         this.hardTimeout = ForwardingBase.FLOWMOD_DEFAULT_HARD_TIMEOUT;
     }
     
@@ -93,13 +95,13 @@ public class RoutingDecision implements IRoutingDecision {
     }
     
     @Override
-    public Integer getWildcards() {
-        return this.wildcards;
+    public List<OFOXMFieldType> getNonWildcards() {
+        return this.nonWildcards;
     }
     
     @Override
-    public void setWildcards(Integer wildcards) {
-        this.wildcards = wildcards;
+    public void setNonWildcards(List<OFOXMFieldType> nonWildcards) {
+        this.nonWildcards = nonWildcards;
     }
    
     @Override
@@ -119,7 +121,6 @@ public class RoutingDecision implements IRoutingDecision {
     
     public String toString() {
         return "action " + action +
-               " wildcard " +
-               ((wildcards == null) ? null : "0x"+Integer.toHexString(wildcards.intValue()));
+               " nonWildcards " + nonWildcards;
     }
 }

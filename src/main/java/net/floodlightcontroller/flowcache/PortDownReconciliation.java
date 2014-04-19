@@ -364,7 +364,7 @@ public class PortDownReconciliation implements IFloodlightModule,
     public void clearFlowMods(IOFSwitch sw, OFMatch match, Integer outPort) {
         // Delete pre-existing flows with the same match, and output action port
         // or outPort
-        match.wildcardAllExceptGiven(null);
+        match.setNonWildcards(null);
         OFMessage fm = ((OFFlowMod) floodlightProvider.getOFMessageFactory()
                                                       .getMessage(OFType.FLOW_MOD)).setMatch(match)
                                                                                    .setCommand(OFFlowMod.OFPFC_DELETE)
