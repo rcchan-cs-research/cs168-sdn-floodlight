@@ -61,8 +61,8 @@ public class OFMatch implements Cloneable {
     }
 
     protected OFMatchType type;
-    protected short length;
-    protected short matchLength;
+    protected short length; //total length including padding
+    protected short matchLength; // length excluding padding
     protected List<OFMatchField> matchFields;
 
     /**
@@ -538,7 +538,7 @@ public class OFMatch implements Cloneable {
         }
         this.matchFields.add(newMatchField);
         this.matchLength += newMatchField.getOXMFieldLength();
-        this.length = U16.t(8*((this.matchLength + 4 + 7)/8)); //includes padding
+        this.length = U16.t(8*((this.matchLength + 7)/8)); //includes padding
     }
 
     public void setField(OFOXMFieldType matchFieldType, Object matchFieldValue) {
