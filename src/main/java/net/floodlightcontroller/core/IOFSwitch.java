@@ -37,6 +37,7 @@ import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFMultipartReply;
 import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.multipart.OFPortDescription;
 import org.openflow.protocol.multipart.OFDescriptionStatistics;
 import org.openflow.protocol.multipart.OFMultipartData;
 
@@ -260,8 +261,15 @@ public interface IOFSwitch {
     public void setFeaturesReply(OFFeaturesReply featuresReply);
 
     /**
+     * Set the OFFeaturesReply message returned by the switch during initial
+     * handshake.
+     * @param featuresReply
+     */
+    public void setPortDescriptions(List<OFPortDescription> portDescriptions);
+
+    /**
      * Get list of all enabled ports. This will typically be different from
-     * the list of ports in the OFFeaturesReply, since that one is a static
+     * the list of ports in the OFPortDescription rpely, since that one is a static
      * snapshot of the ports at the time the switch connected to the controller
      * whereas this port list also reflects the port status messages that have
      * been received.

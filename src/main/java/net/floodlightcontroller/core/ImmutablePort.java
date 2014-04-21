@@ -13,6 +13,7 @@ import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
 import org.openflow.protocol.OFPhysicalPort.OFPortFeatures;
 import org.openflow.protocol.OFPhysicalPort.OFPortState;
 import org.openflow.protocol.OFPhysicalPort.OFPortSpeed;
+import org.openflow.protocol.multipart.OFPortDescription;
 import org.openflow.util.HexString;
 
 
@@ -456,6 +457,29 @@ public class ImmutablePort {
         } else if (!supportedFeatures.equals(other.supportedFeatures))
             return false;
         return true;
+    }
+
+    /**
+     * Convert a List of OFPortDescription to a list of ImmutablePorts.
+     * All OFPhysicalPorts within the OFPortDescription must be non-null and valid.
+     * No other checks (name / number uniqueness) are performed
+     * @param portDescriptions
+     * @return a list of {@link ImmutablePort}s. This is list is owned by
+     * the caller. The returned list is not thread-safe
+     * @throws NullPointerException if any OFPhysicalPort or important fields
+     * of any OFPhysicalPort are null
+     * @throws IllegalArgumentException
+     */
+    public static List<ImmutablePort>
+            immutablePortListOf(List<OFPortDescription> portDescriptions) {
+        if (portDescriptions == null) {
+            throw new NullPointerException("Port descriptions must not be null");
+        }
+        ArrayList<ImmutablePort> immutablePorts =
+                new ArrayList<ImmutablePort>(portDescriptions.size());
+        for (OFPortDescription pd: portDescriptions) 
+     	   immutablePorts.add(fromOFPhysicalPort(pd.getPort()));
+        return immutablePorts;
     }
 
     /**

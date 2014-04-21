@@ -54,6 +54,7 @@ import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFVendor;
 import org.openflow.protocol.OFError.*;
 import org.openflow.protocol.factory.BasicFactory;
+import org.openflow.protocol.multipart.OFPortDescription;
 import org.openflow.protocol.multipart.OFDescriptionStatistics;
 import org.openflow.protocol.multipart.OFMultipartData;
 import org.openflow.protocol.multipart.OFMultipartDataType;
@@ -90,6 +91,7 @@ class OFChannelHandler
     private volatile ChannelState state;
     private RoleChanger roleChanger;
     private OFFeaturesReply featuresReply;
+    private List<OFPortDescription> portDescriptions;
 
     private final ArrayList<OFPortStatus> pendingPortStatusMsg;
 
@@ -580,8 +582,8 @@ class OFChannelHandler
                             h.getSwitchInfoString(),
                             m.getMissSendLength());
                 }
-                h.sendHandshakeDescriptionStatsRequest();
-                h.setState(WAIT_DESCRIPTION_STAT_REPLY);
+                h.sendHandshakePortDescriptionRequest();
+                h.setState(WAIT_PORT_DESCRIPTION_REPLY);
             }
 
             @Override
@@ -599,6 +601,54 @@ class OFChannelHandler
             void processOFMultipartReply(OFChannelHandler h,
                                           OFMultipartReply  m)
                     throws IOException {
+                illegalMessageReceived(h, m);
+            }
+
+            @Override
+            void processOFError(OFChannelHandler h, OFError m) {
+                if (m.getErrorType() == OFErrorType.OFPET_BAD_REQUEST.ordinal()
+                        && m.getErrorCode() ==
+                            OFBadRequestCode.OFPBRC_BAD_VENDOR.ordinal()) {
+                    log.debug("Switch {} has multiple tables but does not " +
+                            "support L2 table extension",
+                            h.getSwitchInfoString());
+                    return;
+                }
+                logErrorDisconnect(h, m);
+            }
+
+            @Override
+            void processOFPortStatus(OFChannelHandler h, OFPortStatus m)
+                    throws IOException {
+                h.pendingPortStatusMsg.add(m);
+            }
+        },
+
+        /**
+         * We are waiting for a port description message. Once we receive it
+         * we send a DescriptionStatsRequest to the switch.
+         * Next state: WAIT_DESCRIPTION_STAT_REPLY
+         */
+        WAIT_PORT_DESCRIPTION_REPLY(false) {
+            @Override
+            void processOFMultipartReply(OFChannelHandler h,
+                                          OFMultipartReply m) {
+                // Read port description, if it has been updated
+                h.portDescriptions = m.getMultipartData();
+
+                h.sendHandshakeDescriptionStatsRequest();
+                h.setState(WAIT_DESCRIPTION_STAT_REPLY);
+            }
+
+            @Override
+            void processOFBarrierReply(OFChannelHandler h, OFBarrierReply m) {
+                // do nothing;
+            }
+
+            @Override
+            void processOFFeaturesReply(OFChannelHandler h, OFFeaturesReply  m)
+                    throws IOException {
+                // TODO: we could re-set the features reply
                 illegalMessageReceived(h, m);
             }
 
@@ -657,6 +707,7 @@ class OFChannelHandler
                 // set features reply and channel first so we a DPID and
                 // channel info.
                 h.sw.setFeaturesReply(h.featuresReply);
+                h.sw.setPortDescriptions(h.portDescriptions);
                 h.sw.setConnected(true);
                 h.sw.setChannel(h.channel);
                 h.sw.setFloodlightProvider(h.controller);
@@ -1756,7 +1807,19 @@ class OFChannelHandler
     }
 
     /**
-     * send a description state request
+     * send a port description request
+     * @throws IOException
+     */
+    private void sendHandshakePortDescriptionRequest() throws IOException {
+        OFMultipartRequest req = new OFMultipartRequest();
+        req.setMultipartDataType(OFMultipartDataType.PORT_DESC);
+        req.setXid(handshakeTransactionIds--);
+
+        channel.write(Collections.singletonList(req));
+    }
+
+    /**
+     * send a description stat request
      * @throws IOException
      */
     private void sendHandshakeDescriptionStatsRequest() throws IOException {

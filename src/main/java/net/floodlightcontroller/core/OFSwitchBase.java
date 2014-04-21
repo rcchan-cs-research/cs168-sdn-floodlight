@@ -73,6 +73,7 @@ import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFMultipartReply;
 import org.openflow.protocol.OFMultipartRequest;
 import org.openflow.protocol.OFType;
+import org.openflow.protocol.multipart.OFPortDescription;
 import org.openflow.protocol.multipart.OFDescriptionStatistics;
 import org.openflow.protocol.multipart.OFMultipartData;
 import org.openflow.protocol.multipart.OFMultipartDataType;
@@ -836,23 +837,25 @@ public abstract class OFSwitchBase implements IOFSwitch {
     @Override
     @JsonIgnore
     public void setFeaturesReply(OFFeaturesReply featuresReply) {
-        /*
-         if (stringId == null) {         
-            /* ports are updated via port status message, so we
-             * only fill in ports on initial connection.
-             *
-            List<ImmutablePort> immutablePorts = ImmutablePort
-                    .immutablePortListOf(featuresReply.getPorts());
-            portManager.updatePorts(immutablePorts);
-        }
-        */
         this.datapathId = featuresReply.getDatapathId();
         this.stringId = HexString.toHexString(featuresReply.getDatapathId());
         this.capabilities = featuresReply.getCapabilities();
         this.buffers = featuresReply.getBuffers();
         this.actions = featuresReply.getActions();
         this.tables = featuresReply.getTables();
-}
+    }
+
+    @Override
+    @JsonIgnore
+    public void setPortDescriptions(List<OFPortDescription> portDescriptions) {
+    	/* This method is called only in the first channel handling.
+		 * Ports are later updated via port status message, so we
+		 * only fill in ports on initial connection.
+		 */
+       List<ImmutablePort> immutablePorts = ImmutablePort
+               .immutablePortListOf(portDescriptions);
+       portManager.updatePorts(immutablePorts);
+    }
 
     @Override
     @JsonIgnore
