@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Set;
 import java.util.Map;
 
 import org.openflow.util.HexString;
@@ -13,6 +14,7 @@ import org.openflow.util.LRULinkedHashMap;
 /**
  * Represents ofp_phy_port
  * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 25, 2010
+ * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
 public class OFPhysicalPort {
     public static int MINIMUM_LENGTH = 64;
@@ -50,10 +52,10 @@ public class OFPhysicalPort {
         /**
          * Given a set of OFPortConfig enums, convert to bitmap value
          *
-         * @param configs EnumSet<OFPortConfig>
+         * @param configs Set<OFPortConfig>
          * @return bitmap value
          */
-        public static int toBitmap(EnumSet<OFPortConfig> configs) {
+        public static int toBitmap(Set<OFPortConfig> configs) {
             int bitmap = 0;
             for (OFPortConfig config: configs) 
                 bitmap |= config.getValue();
@@ -189,7 +191,7 @@ public class OFPhysicalPort {
          * associated with it
          *
          * @param i port features bitmap
-         * @return EnumSet<OFPortFeatures>
+         * @return Set<OFPortFeatures>
          */
         public static EnumSet<OFPortFeatures> valueOf(int i) {
             EnumSet<OFPortFeatures> features = EnumSet.noneOf(OFPortFeatures.class);
@@ -206,7 +208,7 @@ public class OFPhysicalPort {
          * @param configs EnumSet<OFPortFeatures>
          * @return bitmap value
          */
-        public static int toBitmap(EnumSet<OFPortFeatures> features) {
+        public static int toBitmap(Set<OFPortFeatures> features) {
             int bitmap = 0;
             for (OFPortFeatures feature: features)
                 bitmap |= feature.getValue();
