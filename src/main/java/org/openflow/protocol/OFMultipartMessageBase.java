@@ -17,12 +17,20 @@ import org.openflow.util.U16;
  */
 public abstract class OFMultipartMessageBase extends OFMessage implements
         OFMultipartFactoryAware {
-    public static int MINIMUM_LENGTH = 12;
+    public static int MINIMUM_LENGTH = 16;
 
     protected OFMultipartFactory multipartFactory;
     protected OFMultipartDataType multipartDataType;
     protected short flags;
     protected List<? extends OFMultipartData> multipartData;
+
+    /**
+     * Construct a ofp_multipart_* message
+     */
+    public OFMultipartMessageBase() {
+        super();
+        this.length = U16.t(MINIMUM_LENGTH);
+    }
 
     /**
      * @return the multipartDataType
@@ -71,7 +79,6 @@ public abstract class OFMultipartMessageBase extends OFMessage implements
         this.multipartData = multipartData;
     }
 
-
     @Override
     public void setMultipartFactory(OFMultipartFactory multipartFactory) {
         this.multipartFactory = multipartFactory;
@@ -83,6 +90,7 @@ public abstract class OFMultipartMessageBase extends OFMessage implements
         this.multipartDataType = OFMultipartDataType.valueOf(data.getShort(), this
                 .getType());
         this.flags = data.getShort();
+        data.getInt(); //pad
         if (this.multipartFactory == null)
             throw new RuntimeException("OFMultipartFactory not set");
         this.multipartData = multipartFactory.parseMultipartData(this.getType(),
@@ -94,6 +102,7 @@ public abstract class OFMultipartMessageBase extends OFMessage implements
         super.writeTo(data);
         data.putShort(this.multipartDataType.getTypeValue());
         data.putShort(this.flags);
+        data.putInt(0); //pad
         if (this.multipartData != null) {
             for (OFMultipartData statistic : this.multipartData) {
                 statistic.writeTo(data);
@@ -143,6 +152,12 @@ public abstract class OFMultipartMessageBase extends OFMessage implements
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "OFMultipartMessage [type=" + type + ", flags=" + flags + 
+                ", data=" + multipartData + "]";
     }
 
     /* (non-Javadoc)
