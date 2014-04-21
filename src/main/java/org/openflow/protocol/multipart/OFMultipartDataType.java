@@ -6,13 +6,8 @@ import org.openflow.protocol.Instantiable;
 import org.openflow.protocol.OFType;
 
 public enum OFMultipartDataType {
-    DESC        (0, OFDescriptionStatistics.class, OFDescriptionStatistics.class,
-                    new Instantiable<OFMultipartData>() {
-                        @Override
-                        public OFMultipartData instantiate() {
-                            return new OFDescriptionStatistics();
-                        }
-                    },
+    DESC        (0, null, OFDescriptionStatistics.class,
+                    null,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
@@ -99,7 +94,7 @@ public enum OFMultipartDataType {
                         }
                     }),
 
-    GROUP_DESC   (6, OFGroupDescriptionStatisticsRequest.class, OFGroupDescriptionStatisticsReply.class,
+    GROUP_DESC   (7, OFGroupDescriptionStatisticsRequest.class, OFGroupDescriptionStatisticsReply.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
@@ -112,7 +107,7 @@ public enum OFMultipartDataType {
                             return new OFGroupDescriptionStatisticsReply();
                         }
                     }),
-    GROUP_FEATURES (7, OFGroupFeaturesStatisticsRequest.class, OFGroupFeaturesStatisticsReply.class,
+    GROUP_FEATURES (8, OFGroupFeaturesStatisticsRequest.class, OFGroupFeaturesStatisticsReply.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
@@ -125,7 +120,7 @@ public enum OFMultipartDataType {
                             return new OFGroupFeaturesStatisticsReply();
                         }
                     }),
-    METER         (8, OFMeterStatisticsRequest.class, OFMeterStatisticsReply.class,
+    METER         (9, OFMeterStatisticsRequest.class, OFMeterStatisticsReply.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
@@ -139,7 +134,7 @@ public enum OFMultipartDataType {
                         }
                     }),
 
-    METER_CONFIG   (9, OFMeterConfigStatisticsRequest.class, OFMeterConfigStatisticsReply.class,
+    METER_CONFIG   (10, OFMeterConfigStatisticsRequest.class, OFMeterConfigStatisticsReply.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
@@ -152,7 +147,7 @@ public enum OFMultipartDataType {
                             return new OFMeterConfigStatisticsReply();
                         }
                     }),
-    METER_FEATURES (10, OFMeterFeaturesStatisticsRequest.class, OFMeterFeaturesStatisticsReply.class,
+    METER_FEATURES (11, OFMeterFeaturesStatisticsRequest.class, OFMeterFeaturesStatisticsReply.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
@@ -165,7 +160,7 @@ public enum OFMultipartDataType {
                             return new OFMeterFeaturesStatisticsReply();
                         }
                     }),
-    TABLE_FEATURES (11, OFTableFeaturesStatisticsRequest.class, OFTableFeaturesStatisticsReply.class,
+    TABLE_FEATURES (12, OFTableFeaturesStatisticsRequest.class, OFTableFeaturesStatisticsReply.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
@@ -178,20 +173,15 @@ public enum OFMultipartDataType {
                             return new OFTableFeaturesStatisticsReply();
                         }
                     }),
-    PORT_DESC (12, OFPortDescriptionStatisticsRequest.class, OFPortDescriptionStatisticsReply.class,
+ */
+    PORT_DESC (13, null, OFPortDescription.class,
+                    null,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
-                            return new OFPortDescriptionStatisticsRequest();
-                        }
-                    },
-                    new Instantiable<OFMultipartData>() {
-                        @Override
-                        public OFMultipartData instantiate() {
-                            return new OFPortDescriptionStatisticsReply();
+                            return new OFPortDescription();
                         }
                     }),
- */
     VENDOR     (0xffff, OFVendorStatistics.class, OFVendorStatistics.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
@@ -233,13 +223,15 @@ public enum OFMultipartDataType {
             Instantiable<OFMultipartData> replyInstantiable) {
         this.type = (short) type;
         this.requestClass = requestClass;
-        try {
-            this.requestConstructor = requestClass.getConstructor(new Class[]{});
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    "Failure getting constructor for class: " + requestClass, e);
+        if (requestClass != null) {
+            try {
+                this.requestConstructor = requestClass.getConstructor(new Class[]{});
+            } catch (Exception e) {
+                throw new RuntimeException(
+                        "Failure getting constructor for class: " + requestClass, e);
+            }
         }
-
+        
         this.replyClass = replyClass;
         try {
             this.replyConstructor = replyClass.getConstructor(new Class[]{});
@@ -247,9 +239,13 @@ public enum OFMultipartDataType {
             throw new RuntimeException(
                     "Failure getting constructor for class: " + replyClass, e);
         }
-        this.requestInstantiable = requestInstantiable;
+        
+        if (requestClass !=null) {
+            this.requestInstantiable = requestInstantiable;
+            OFMultipartDataType.addMapping(this.type, OFType.MULTIPART_REQUEST, this);
+        }
+        
         this.replyInstantiable = replyInstantiable;
-        OFMultipartDataType.addMapping(this.type, OFType.MULTIPART_REQUEST, this);
         OFMultipartDataType.addMapping(this.type, OFType.MULTIPART_REPLY, this);
     }
 
