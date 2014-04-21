@@ -17,9 +17,11 @@
 
 package net.floodlightcontroller.firewall;
 
-import org.openflow.protocol.OFMatch;
+import org.openflow.protocol.OFOXMFieldType;
+
+import java.util.List;
 
 public class RuleWildcardsPair {
     public FirewallRule rule;
-    public int wildcards = OFMatch.OFPFW_ALL;
+    public List<OFOXMFieldType> nonWildcards = null;
 }
