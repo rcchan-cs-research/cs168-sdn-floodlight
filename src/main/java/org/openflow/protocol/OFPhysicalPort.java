@@ -35,7 +35,7 @@ public class OFPhysicalPort {
          * Given a port config value, return the set of OFPortConfig enums
          * associated with it
          *
-         * @param i port config value
+         * @param i port config bitmap
          * @return EnumSet<OFPortConfig>
          */
         public static EnumSet<OFPortConfig> valueOf(int i) {
@@ -46,6 +46,20 @@ public class OFPhysicalPort {
             }
             return configs;
         }
+
+        /**
+         * Given a set of OFPortConfig enums, convert to bitmap value
+         *
+         * @param configs EnumSet<OFPortConfig>
+         * @return bitmap value
+         */
+        public static int toBitmap(EnumSet<OFPortConfig> configs) {
+            int bitmap = 0;
+            for (OFPortConfig config: configs) 
+                bitmap |= config.getValue();
+            return bitmap;
+        }
+
         /**
          * @return the value
          */
@@ -174,7 +188,7 @@ public class OFPhysicalPort {
          * Given a port features value, return the set of OFPortFeatures
          * associated with it
          *
-         * @param i port features value
+         * @param i port features bitmap
          * @return EnumSet<OFPortFeatures>
          */
         public static EnumSet<OFPortFeatures> valueOf(int i) {
@@ -184,6 +198,19 @@ public class OFPhysicalPort {
                     features.add(value);
             }
             return features;
+        }
+
+        /**
+         * Given a set of OFPortFeatures enums, convert to bitmap value
+         *
+         * @param configs EnumSet<OFPortFeatures>
+         * @return bitmap value
+         */
+        public static int toBitmap(EnumSet<OFPortFeatures> features) {
+            int bitmap = 0;
+            for (OFPortFeatures feature: features)
+                bitmap |= feature.getValue();
+            return bitmap;
         }
 
         /**
