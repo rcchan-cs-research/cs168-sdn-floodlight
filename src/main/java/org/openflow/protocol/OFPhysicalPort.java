@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.openflow.util.HexString;
 import org.openflow.util.LRULinkedHashMap;
-import net.floodlightcontroller.util.EnumBitmaps.BitmapableEnum;
 
 /**
  * Represents ofp_phy_port
@@ -21,7 +20,7 @@ public class OFPhysicalPort {
     public static int OFP_ETH_ALEN = 6;
     public static int OFP_MAX_PORT_NAME_LEN = 16;
 
-    public enum OFPortConfig implements BitmapableEnum {
+    public enum OFPortConfig {
         OFPPC_PORT_DOWN    (1 << 0),
         OFPPC_NO_RECV      (1 << 2),
         OFPPC_NO_FWD       (1 << 5),
@@ -41,7 +40,7 @@ public class OFPhysicalPort {
         }
     }
 
-    public enum OFPortState implements BitmapableEnum {
+    public enum OFPortState {
         OFPPS_LINK_DOWN   (1 << 0, "DOWN"),
         OFPPS_BLOCKED     (1 << 1, "BLOCKED"),
         OFPPS_LIVE        (1 << 2, "UP");
@@ -127,7 +126,7 @@ public class OFPhysicalPort {
         }
     }
 
-    public enum OFPortFeatures implements BitmapableEnum {
+    public enum OFPortFeatures {
         OFPPF_10MB_HD    (1 << 0, OFPortSpeed.SPEED_10MB, false, "10MB half-duplex"),
         OFPPF_10MB_FD    (1 << 1, OFPortSpeed.SPEED_10MB, true, "10MB full-duplex"),
         OFPPF_100MB_HD   (1 << 2, OFPortSpeed.SPEED_100MB, false, "100MB half-duplex"),

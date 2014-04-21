@@ -8,8 +8,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import net.floodlightcontroller.util.EnumBitmaps;
-
 import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
 import org.openflow.protocol.OFPhysicalPort.OFPortFeatures;
@@ -206,17 +204,13 @@ public class ImmutablePort {
                 p.getPortNumber(),
                 Arrays.copyOf(p.getHardwareAddress(), 6),
                 p.getName(),
-                EnumBitmaps.toEnumSet(OFPortConfig.class, p.getConfig()),
+                OFPortConfig.valueOf(p.getConfig()),
                 OFPortState.valueOf(p.getState()),
-                EnumBitmaps.toEnumSet(OFPortFeatures.class,
-                                      p.getCurrentFeatures()),
-                EnumBitmaps.toEnumSet(OFPortFeatures.class,
-                                      p.getAdvertisedFeatures()),
-                EnumBitmaps.toEnumSet(OFPortFeatures.class,
-                                      p.getSupportedFeatures()),
-                EnumBitmaps.toEnumSet(OFPortFeatures.class,
-                                      p.getPeerFeatures())
-                                      );
+                OFPortFeatures.valueOf(p.getCurrentFeatures()),
+                OFPortFeatures.valueOf(p.getAdvertisedFeatures()),
+                OFPortFeatures.valueOf(p.getSupportedFeatures()),
+                OFPortFeatures.valueOf(p.getPeerFeatures())
+             );
     }
 
     public static ImmutablePort create(String name, Short portNumber) {
@@ -372,17 +366,17 @@ public class ImmutablePort {
         ofpp.setPortNumber(this.getPortNumber());
         ofpp.setHardwareAddress(this.getHardwareAddress());
         ofpp.setName(this.getName());
-        ofpp.setConfig(EnumBitmaps.toBitmap(this.getConfig()));
+        ofpp.setConfig(OFPortConfig.toBitmap(this.getConfig()));
         int state = this.getPortState().getValue();
         if (this.isLinkDown())
             state |= OFPortState.OFPPS_LINK_DOWN.getValue();
         ofpp.setState(state);
-        ofpp.setCurrentFeatures(EnumBitmaps.toBitmap(this.getCurrentFeatures()));
+        ofpp.setCurrentFeatures(OFPortFeatures.toBitmap(this.getCurrentFeatures()));
         ofpp.setAdvertisedFeatures(
-                EnumBitmaps.toBitmap(this.getAdvertisedFeatures()));
+                OFPortFeatures.toBitmap(this.getAdvertisedFeatures()));
         ofpp.setSupportedFeatures(
-                EnumBitmaps.toBitmap(this.getSupportedFeatures()));
-        ofpp.setPeerFeatures(EnumBitmaps.toBitmap(this.getPeerFeatures()));
+                OFPortFeatures.toBitmap(this.getSupportedFeatures()));
+        ofpp.setPeerFeatures(OFPortFeatures.toBitmap(this.getPeerFeatures()));
         return ofpp;
     }
 
