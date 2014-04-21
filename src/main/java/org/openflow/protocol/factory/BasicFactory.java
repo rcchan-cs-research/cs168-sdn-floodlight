@@ -236,6 +236,9 @@ public enum BasicFactory implements OFMessageFactory, OFActionFactory,
             // TODO Create a separate MUX/DEMUX path for vendor stats
             if (multipartData instanceof OFVendorStatistics)
                 ((OFVendorStatistics)multipartData).setLength(length);
+            // Create a separate MUX/DEMUX path for port description
+            if (multipartData instanceof OFPortDescription)
+                ((OFPortDescription)multipartData).setLength(length);
 
             /**
              * can't use data.remaining() here, b/c there could be other data
