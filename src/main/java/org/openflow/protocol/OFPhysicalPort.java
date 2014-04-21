@@ -3,8 +3,12 @@ package org.openflow.protocol;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
+import org.openflow.util.HexString;
 import org.openflow.util.LRULinkedHashMap;
 import net.floodlightcontroller.util.EnumBitmaps.BitmapableEnum;
 
@@ -15,6 +19,7 @@ import net.floodlightcontroller.util.EnumBitmaps.BitmapableEnum;
 public class OFPhysicalPort {
     public static int MINIMUM_LENGTH = 64;
     public static int OFP_ETH_ALEN = 6;
+    public static int OFP_MAX_PORT_NAME_LEN = 16;
 
     public enum OFPortConfig implements BitmapableEnum {
         OFPPC_PORT_DOWN    (1 << 0),
@@ -53,7 +58,7 @@ public class OFPhysicalPort {
         }
 
         /**
-         * Adds a mapping from type value to OFPortFeatures enum
+         * Adds a mapping from type value to OFPortState enum
          *
          * @param i state values
          * @param t type
@@ -66,11 +71,11 @@ public class OFPhysicalPort {
         }
 
         /**
-         * Given a wire protocol OpenFlow type number, return the OFType associated
-         * with it
+         * Given a port state value, return the
+         * OFPortState associated with it
          *
-         * @param i state values
-         * @return OFPortFeatures enum type
+         * @param i state value
+         * @return OFPortState enum type
          */
 
         public static OFPortState valueOf(int i) {
@@ -150,6 +155,23 @@ public class OFPhysicalPort {
             this.speed = speed;
             this.isFullDuplex = isFullDuplex;
             this.name = name;
+        }
+
+        /**
+         * Given a port features value, return the list of OFPortFeatures
+         * associated with it
+         *
+         * @param i port features value
+         * @return List<OFPortFeatures enum type>
+         */
+    
+        public static List<OFPortFeatures> valueOf(int i) {
+            List<OFPortFeatures> features = new ArrayList<OFPortFeatures>();
+            for (OFPortFeatures value: OFPortFeatures.values()) {
+                if ((i & value.getValue()) != 0)
+                    features.add(value);
+            }
+            return features;
         }
 
         /**
@@ -370,7 +392,7 @@ public class OFPhysicalPort {
             this.hardwareAddress = new byte[OFP_ETH_ALEN];
         data.get(this.hardwareAddress);
         data.position(data.position() + 2); // pad
-        byte[] name = new byte[16];
+        byte[] name = new byte[OFP_MAX_PORT_NAME_LEN];
         data.get(name);
         // find the first index of 0
         int index = 0;
@@ -430,6 +452,18 @@ public class OFPhysicalPort {
         int result = 1;
         result = prime * result + portNumber;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "OFPhysicalPort [name=" + name + ", portNumber=" + portNumber + 
+                ", hardwareAddress=" + HexString.toHexString(hardwareAddress) + 
+                ", config=" + config + ", state=" + OFPortState.valueOf(state) + 
+                ", currSpeed=" + currSpeed + "kbps, maxSpeed=" + maxSpeed + 
+                "kbps, currentFeatures=" + OFPortFeatures.valueOf(currentFeatures) + 
+                ", advertisedFeatures=" + OFPortFeatures.valueOf(advertisedFeatures) + 
+                ", supportedFeatures=" + OFPortFeatures.valueOf(supportedFeatures) + 
+                ", peerFeatures=" + OFPortFeatures.valueOf(peerFeatures) + "]";    
     }
 
     @Override
