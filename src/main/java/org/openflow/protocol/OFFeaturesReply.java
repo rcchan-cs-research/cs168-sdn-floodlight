@@ -1,8 +1,7 @@
 package org.openflow.protocol;
 
 import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.EnumSet;
 
 import org.openflow.util.U16;
 import org.openflow.util.U8;
@@ -39,11 +38,11 @@ public class OFFeaturesReply extends OFMessage {
          * associated with it
          *
          * @param i capabilities value
-         * @return List<OFCapabilities enum type>
+         * @return EnumSet<OFCapabilities>
          */
     
-        public static List<OFCapabilities> valueOf(int i) {
-            List<OFCapabilities> capabilities = new ArrayList<OFCapabilities>();
+        public static EnumSet<OFCapabilities> valueOf(int i) {
+            EnumSet<OFCapabilities> capabilities = EnumSet.noneOf(OFCapabilities.class);
             for (OFCapabilities value: OFCapabilities.values()) {
                 if ((i & value.getValue()) != 0)
                     capabilities.add(value);

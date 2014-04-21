@@ -3,9 +3,8 @@ package org.openflow.protocol;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.EnumSet;
 import java.util.Map;
 
 import org.openflow.util.HexString;
@@ -32,6 +31,21 @@ public class OFPhysicalPort {
             this.value = value;
         }
 
+        /**
+         * Given a port config value, return the set of OFPortConfig enums
+         * associated with it
+         *
+         * @param i port config value
+         * @return EnumSet<OFPortConfig>
+         */
+        public static EnumSet<OFPortConfig> valueOf(int i) {
+            EnumSet<OFPortConfig> configs = EnumSet.noneOf(OFPortConfig.class);
+            for (OFPortConfig value: OFPortConfig.values()) {
+                if ((i & value.getValue()) != 0)
+                    configs.add(value);
+            }
+            return configs;
+        }
         /**
          * @return the value
          */
@@ -157,15 +171,14 @@ public class OFPhysicalPort {
         }
 
         /**
-         * Given a port features value, return the list of OFPortFeatures
+         * Given a port features value, return the set of OFPortFeatures
          * associated with it
          *
          * @param i port features value
-         * @return List<OFPortFeatures enum type>
+         * @return EnumSet<OFPortFeatures>
          */
-    
-        public static List<OFPortFeatures> valueOf(int i) {
-            List<OFPortFeatures> features = new ArrayList<OFPortFeatures>();
+        public static EnumSet<OFPortFeatures> valueOf(int i) {
+            EnumSet<OFPortFeatures> features = EnumSet.noneOf(OFPortFeatures.class);
             for (OFPortFeatures value: OFPortFeatures.values()) {
                 if ((i & value.getValue()) != 0)
                     features.add(value);
