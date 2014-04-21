@@ -1,9 +1,11 @@
 package org.openflow.protocol;
 
 import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.openflow.util.U16;
-
+import org.openflow.util.U8;
 
 /**
  * Represents a features reply message
@@ -27,9 +29,26 @@ public class OFFeaturesReply extends OFMessage {
         OFPC_PORT_BLOCKED   (1 << 8);
 
         protected int value;
-
+        
         private OFCapabilities(int value) {
             this.value = value;
+        }
+        
+        /**
+         * Given a capabilities value, return the list of OFCapabilities
+         * associated with it
+         *
+         * @param i capabilities value
+         * @return List<OFCapabilities enum type>
+         */
+    
+        public static List<OFCapabilities> valueOf(int i) {
+            List<OFCapabilities> capabilities = new ArrayList<OFCapabilities>();
+            for (OFCapabilities value: OFCapabilities.values()) {
+                if ((i & value.getValue()) != 0)
+                    capabilities.add(value);
+            }
+            return capabilities;
         }
 
         /**
@@ -220,5 +239,13 @@ public class OFFeaturesReply extends OFMessage {
     @Override
     public void computeLength() {
         this.length = U16.t(MINIMUM_LENGTH);
+    }
+    
+    @Override
+    public String toString() {
+        return "OFFeaturesReply [datapathId=" + Long.toHexString(datapathId) + 
+                ", buffers=" + buffers + ", tables=" + U8.f(tables) +
+                ", auxiliaryId=" + U8.f(auxiliaryId) + ", capabilities=" + 
+                OFCapabilities.valueOf(capabilities) + ", reserved=" + reserved + "]";
     }
 }
