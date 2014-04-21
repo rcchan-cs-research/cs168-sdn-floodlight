@@ -631,10 +631,14 @@ class OFChannelHandler
          */
         WAIT_PORT_DESCRIPTION_REPLY(false) {
             @Override
-            void processOFMultipartReply(OFChannelHandler h,
-                                          OFMultipartReply m) {
+            void processOFMultipartReply(OFChannelHandler h, OFMultipartReply m) 
+            		throws IOException {
                 // Read port description, if it has been updated
-                h.portDescriptions = m.getMultipartData();
+                h.portDescriptions = new ArrayList<OFPortDescription>(); 
+                List <? extends OFMultipartData> portDescriptions = m.getMultipartData();
+                for (OFMultipartData portDesc: portDescriptions)
+                	if (portDesc instanceof OFPortDescription) 
+                		h.portDescriptions.add(((OFPortDescription)portDesc));
 
                 h.sendHandshakeDescriptionStatsRequest();
                 h.setState(WAIT_DESCRIPTION_STAT_REPLY);
