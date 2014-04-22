@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.ArrayList;
 
 import org.openflow.util.HexString;
+import org.openflow.util.U8;
 import org.openflow.util.U16;
 import org.openflow.util.U32;
 
@@ -896,4 +897,154 @@ public class OFMatch implements Cloneable {
     public String toString() {
         return "OFMatch [type=" + type + "length=" + length + "matchFields=" + matchFields + "]";
     }
-}
+
+    /**
+     * Set the networkSource or networkDestination address and their OXM
+     * field mask from the CIDR string
+     *
+     * @param cidr
+     *            "192.168.0.0/16" or "172.16.1.5"
+     * @param which
+     *            one of IPV4_DST or IPV4_SRC
+     * @throws IllegalArgumentException
+     */
+    private void setNetworkAddressFromCIDR(OFMatch m, String cidr, OFOXMFieldType which)
+                 throws IllegalArgumentException {
+        String values[] = cidr.split("/");
+        String[] ip_str = values[0].split("\\.");
+        int ip = 0;
+        ip += Integer.valueOf(ip_str[0]) << 24;
+        ip += Integer.valueOf(ip_str[1]) << 16;
+        ip += Integer.valueOf(ip_str[2]) << 8;
+        ip += Integer.valueOf(ip_str[3]);
+        int prefix = 32; // all bits are fixed, by default
+
+        if (values.length >= 2) 
+        	prefix = Integer.valueOf(values[1]);
+        int mask = (Integer.MAX_VALUE - 1) << (32 - prefix);
+        m.setField(which, ip, mask);
+    }
+
+    /**
+     * Set this OFMatch's parameters based on a comma-separated key=value pair
+     * dpctl-style string, e.g., from the output of OFMatch.toString() <br>
+     * <p>
+     * Supported keys/values include <br>
+     * <p>
+     * <TABLE border=1>
+     * <TR>
+     * <TD>KEY(s)
+     * <TD>VALUE
+     * </TR>
+     * <TR>
+     * <TD>"in_port","input_port"
+     * <TD>integer
+     * </TR>
+     * <TR>
+     * <TD>"dl_src","eth_src", "dl_dst","eth_dst"
+     * <TD>hex-string
+     * </TR>
+     * <TR>
+     * <TD>"dl_type", "dl_vlan", "dl_vlan_pcp"
+     * <TD>integer
+     * </TR>
+     * <TR>
+     * <TD>"nw_src", "nw_dst", "ip_src", "ip_dst"
+     * <TD>CIDR-style netmask
+     * </TR>
+     * <TR>
+     * <TD>"tp_src","tp_dst"
+     * <TD>integer (max 64k)
+     * </TR>
+     * </TABLE>
+     * <p>
+     * The CIDR-style netmasks assume 32 netmask if none given, so:
+     * "128.8.128.118/32" is the same as "128.8.128.118"
+     *
+     * @param match
+     *            a key=value comma separated string, e.g.
+     *            "in_port=5,ip_dst=192.168.0.0/16,tp_src=80"
+     * @throws IllegalArgumentException
+     *             on unexpected key or value
+     */
+    public OFMatch fromString(String match) throws IllegalArgumentException {
+    	OFMatch m = new OFMatch();
+        if (match.equals("") || match.equalsIgnoreCase("any")
+            || match.equalsIgnoreCase("all") || match.equals("[]"))
+        	match = "OFMatch[]";
+        
+        String[] tokens = match.split("[\\[,\\]]");
+        String[] values;
+        byte networkProtocol = 0;
+        int initArg = 0;
+        if (tokens[0].equals("OFMatch")) 
+        	initArg = 1;
+        int i;
+        for (i = initArg; i < tokens.length; i++) {
+            values = tokens[i].split("=");
+            if (values.length != 2)
+                   throw new IllegalArgumentException(
+                                                      "Token " + tokens[i]
+                                                              + " does not have form 'key=value' parsing "
+                                                              + match);
+            values[0] = values[0].toLowerCase(); // try to make this case insensitive
+            if (values[0].equals(OFOXMFieldType.IN_PORT.getFieldName())
+            		|| values[0].equals("input_port")) {
+                m.setInPort(U16.t(Integer.valueOf(values[1])));
+            } else if (values[0].equals(OFOXMFieldType.ETH_DST.getFieldName())
+                    || values[0].equals("dl_dst")) {
+                m.setDataLayerDestination(HexString.fromHexString(values[1]));
+            } else if (values[0].equals(OFOXMFieldType.ETH_SRC.getFieldName())
+                    || values[0].equals("dl_src")) {
+            	m.setDataLayerSource(HexString.fromHexString(values[1]));
+            } else if (values[0].equals(OFOXMFieldType.ETH_TYPE.getFieldName())
+                    || values[0].equals("dl_type")) {
+                if (values[1].startsWith("0x"))
+                    m.setDataLayerType(U16.t(Integer.valueOf(values[1].replaceFirst("0x", ""), 16)));
+                else
+                    m.setDataLayerType(U16.t(Integer.valueOf(values[1])));
+            } else if (values[0].equals(OFOXMFieldType.VLAN_VID.getFieldName()) 
+            		|| values[0].equals("dl_vlan")) {
+                if (values[1].startsWith("0x"))
+                    m.setDataLayerVirtualLan(U16.t(Integer.valueOf(values[1].replaceFirst("0x", ""), 16)));
+                else
+                    m.setDataLayerVirtualLan(U16.t(Integer.valueOf(values[1])));
+            } else if (values[0].equals(OFOXMFieldType.VLAN_PCP.getFieldName()) 
+            		|| values[0].equals("dl_vlan_pcp")) {
+                m.setDataLayerVirtualLanPriorityCodePoint(U8.t(Short.valueOf(values[1])));
+            } else if (values[0].equals(OFOXMFieldType.IPV4_DST.getFieldName())
+            		|| values[0].equals("ip_dst") || values[0].equals("nw_dst")) {
+                setFromCIDR(m, values[1], OFOXMFieldType.IPV4_DST);
+            } else if (values[0].equals(OFOXMFieldType.IPV4_SRC.getFieldName())
+            		|| values[0].equals("ip_src") || values[0].equals("nw_src")) {
+                setFromCIDR(m, values[1], OFOXMFieldType.IPV4_SRC);
+            } else if (values[0].equals(OFOXMFieldType.IP_PROTO.getFieldName()) || values[0].equals("nw_proto")) {
+                if (values[1].startsWith("0x"))
+                    networkProtocol = U8.t(Short.valueOf(values[1].replaceFirst("0x",""),16));
+                else
+                	networkProtocol = U8.t(Short.valueOf(values[1]));
+            	m.setNetworkProtocol(networkProtocol);
+            } else if (values[0].equals(OFOXMFieldType.IP_DSCP.getFieldName()) 
+            		|| values[0].equals("nw_tos")) {
+                m.setNetworkTypeOfService(U8.t(Short.valueOf(values[1])));
+            } else if (values[0].equals(OFOXMFieldType.TCP_DST.getFieldName())
+            		|| values[0].equals(OFOXMFieldType.UDP_DST.getFieldName())
+            		|| values[0].equals("tp_dst")) {
+            	if (networkProtocol == 0)
+                    throw new IllegalArgumentException("specifying transport src/dst without establishing nw_proto first");
+                m.setTransportDestination(networkProtocol, U16.t(Integer.valueOf(values[1])));
+            } else if (values[0].equals(OFOXMFieldType.TCP_SRC.getFieldName())
+            		|| values[0].equals(OFOXMFieldType.UDP_SRC.getFieldName())
+            		|| values[0].equals("tp_src")) {
+            	if (networkProtocol == 0)
+                    throw new IllegalArgumentException("specifying transport src/dst without establishing nw_proto first");
+                m.setTransportSource(networkProtocol, U16.t(Integer.valueOf(values[1])));
+            } else {
+                throw new IllegalArgumentException("unknown token "
+                                                   + tokens[i] + " parsing "
+                                                   + match);
+            }
+        }
+        return m;
+    }
+} 
