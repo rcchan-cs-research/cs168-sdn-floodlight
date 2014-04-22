@@ -1014,10 +1014,10 @@ public class OFMatch implements Cloneable {
                 m.setDataLayerVirtualLanPriorityCodePoint(U8.t(Short.valueOf(values[1])));
             } else if (values[0].equals(OFOXMFieldType.IPV4_DST.getFieldName())
             		|| values[0].equals("ip_dst") || values[0].equals("nw_dst")) {
-                setFromCIDR(m, values[1], OFOXMFieldType.IPV4_DST);
+                setNetworkAddressFromCIDR(m, values[1], OFOXMFieldType.IPV4_DST);
             } else if (values[0].equals(OFOXMFieldType.IPV4_SRC.getFieldName())
             		|| values[0].equals("ip_src") || values[0].equals("nw_src")) {
-                setFromCIDR(m, values[1], OFOXMFieldType.IPV4_SRC);
+                setNetworkAddressFromCIDR(m, values[1], OFOXMFieldType.IPV4_SRC);
             } else if (values[0].equals(OFOXMFieldType.IP_PROTO.getFieldName()) || values[0].equals("nw_proto")) {
                 if (values[1].startsWith("0x"))
                     networkProtocol = U8.t(Short.valueOf(values[1].replaceFirst("0x",""),16));
