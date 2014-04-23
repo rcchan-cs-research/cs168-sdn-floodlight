@@ -43,10 +43,14 @@ public class OFMessageEncoder extends OneToOneEncoder {
         List<OFMessage> msglist = (List<OFMessage>)msg;
         int size = 0;
         for (OFMessage ofm :  msglist) {
-                size += ofm.getLengthU();
+        	/* Many OF1.3+ messages are variable in length. So, call 
+        	 * must be made to computeLength() before sizing the buffer.
+        	 */
+            ofm.computeLength(); 
+            size += ofm.getLengthU();
         }
 
-        ChannelBuffer buf = ChannelBuffers.buffer(size);;
+        ChannelBuffer buf = ChannelBuffers.directBuffer(size);;
         for (OFMessage ofm :  msglist) {
             ofm.writeTo(buf.toByteBuffer());
         }
