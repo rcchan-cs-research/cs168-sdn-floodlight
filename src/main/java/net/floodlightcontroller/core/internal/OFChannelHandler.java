@@ -53,6 +53,8 @@ import org.openflow.protocol.OFSwitchConfig;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFVendor;
 import org.openflow.protocol.OFError.*;
+import org.openflow.protocol.hello.OFHelloElement;
+import org.openflow.protocol.hello.OFHelloElementVersionBitmap;
 import org.openflow.protocol.factory.BasicFactory;
 import org.openflow.protocol.multipart.OFPortDescription;
 import org.openflow.protocol.multipart.OFDescriptionStatistics;
@@ -1405,7 +1407,7 @@ class OFChannelHandler
         channel = e.getChannel();
         log.info("New switch connection from {}",
                  channel.getRemoteAddress());
-        sendHandShakeMessage(OFType.HELLO);
+        sendHandShakeHello();
         setState(ChannelState.WAIT_HELLO);
     }
 
@@ -1749,6 +1751,24 @@ class OFChannelHandler
         // Send initial Features Request
         OFMessage m = BasicFactory.getInstance().getMessage(type);
         m.setXid(handshakeTransactionIds--);
+        channel.write(Collections.singletonList(m));
+    }
+
+    /**
+     * Send a hello message to the switch using the handshake transactions ids.
+     */
+    private void sendHandShakeHello() {
+        // Send initial Features Request
+        OFHello m = (OFHello)
+            BasicFactory.getInstance().getMessage(OFType.HELLO);
+        m.setXid(handshakeTransactionIds--);
+        List<OFHelloElement> helloElements = new ArrayList<OFHelloElement>();
+        OFHelloElementVersionBitmap hevb = new OFHelloElementVersionBitmap();
+        List<Integer> bitmaps = new ArrayList<Integer>();
+        bitmaps.add(0x10);
+        hevb.setBitmaps(bitmaps);
+        helloElements.add(hevb);
+        m.setHelloElements(helloElements);
         channel.write(Collections.singletonList(m));
     }
 
