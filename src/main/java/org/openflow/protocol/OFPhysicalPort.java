@@ -84,6 +84,9 @@ public class OFPhysicalPort {
             this.name = name;
 
             OFPortState.addMapping(this.value, this);
+            // To accommodate some vSwitches that report "0" for up
+            if (name.equals("UP"))
+                OFPortState.addMapping(0, this);
         }
 
         /**
