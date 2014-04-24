@@ -566,6 +566,12 @@ public class OFMatch implements Cloneable {
      */
     public OFMatch setMatchFields(List<OFMatchField> matchFields) {
         this.matchFields = matchFields;
+
+        //Recalculate lengths
+        this.matchLength = 4; //No padding
+        for (OFMatchField newMatchField: this.matchFields) 
+        	this.matchLength += newMatchField.getOXMFieldLength();
+        this.length = U16.t(8*((this.matchLength + 7)/8)); //includes padding
         return this;
     }
 
