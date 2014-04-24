@@ -106,4 +106,21 @@ public abstract class OFInstructionActions extends OFInstruction implements OFAc
         return "OFInstructionActions [type=" + type + ", length=" + length + "]";
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public OFInstructionActions clone() throws CloneNotSupportedException {
+	    try {
+	    	OFInstructionActions instruction = (OFInstructionActions) super.clone();
+	        List<OFAction> neoActions = new LinkedList<OFAction>();
+	        for(OFAction action: this.actions)
+	            neoActions.add((OFAction) action.clone());
+	        instruction.setActions(neoActions);
+	        return instruction;
+	    } catch (CloneNotSupportedException e) {
+	        // Won't happen
+	        throw new RuntimeException(e);
+	    }
+    }
 }
