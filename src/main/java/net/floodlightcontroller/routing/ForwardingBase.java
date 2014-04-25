@@ -382,8 +382,6 @@ public abstract class ForwardingBase
 
         po.setActions(actions)
           .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
-        short poLength =
-                (short) (po.getActionsLength() + OFPacketOut.MINIMUM_LENGTH);
 
         if (useBufferId) {
             po.setBufferId(pi.getBufferId());
@@ -393,13 +391,10 @@ public abstract class ForwardingBase
 
         if (po.getBufferId() == OFPacketOut.BUFFER_ID_NONE) {
             byte[] packetData = pi.getPacketData();
-            poLength += packetData.length;
             po.setPacketData(packetData);
         }
 
         po.setInPort(pi.getInPort());
-        po.setLength(poLength);
-
         try {
             counterStore.updatePktOutFMCounterStoreLocal(sw, po);
             messageDamper.write(sw, po, cntx);

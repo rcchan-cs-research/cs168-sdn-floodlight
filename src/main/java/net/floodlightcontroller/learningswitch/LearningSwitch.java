@@ -248,7 +248,6 @@ public class LearningSwitch
         List<OFAction> actions = Arrays.asList((OFAction) new OFActionOutput(outPort, (short) 0xffff));
         List<OFInstruction> instructions = Arrays.asList((OFInstruction) new OFInstructionApplyActions().setActions(actions));
         flowMod.setInstructions(instructions);
-        flowMod.setLength((short) (OFFlowMod.MINIMUM_LENGTH + OFActionOutput.MINIMUM_LENGTH));
 
         if (log.isTraceEnabled()) {
             log.trace("{} {} flow mod {}",
@@ -327,11 +326,8 @@ public class LearningSwitch
         // we send the data with the packet out
         if (pi.getBufferId() == OFPacketOut.BUFFER_ID_NONE) {
             byte[] packetData = pi.getPacketData();
-            poLength += packetData.length;
             po.setPacketData(packetData);
         }
-
-        po.setLength(poLength);
 
         try {
             counterStore.updatePktOutFMCounterStoreLocal(sw, po);

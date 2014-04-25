@@ -143,8 +143,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule {
           .setHardTimeout((short) 0)
           .setIdleTimeout((short) 5)
           .setBufferId(OFPacketOut.BUFFER_ID_NONE)
-          .setMatch(match)
-          .setLengthU(OFFlowMod.MINIMUM_LENGTH); // +OFActionOutput.MINIMUM_LENGTH);
+          .setMatch(match);
 
         try {
             if (log.isDebugEnabled()) {
