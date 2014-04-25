@@ -61,6 +61,10 @@ public class OFPacketOut extends OFMessage implements OFActionFactoryAware {
      * @param bufferId
      */
     public OFPacketOut setBufferId(int bufferId) {
+        if (packetData != null && packetData.length > 0 && bufferId != BUFFER_ID_NONE) {
+            throw new IllegalArgumentException(
+                    "PacketOut should not have both bufferId and packetData set");
+        }
         this.bufferId = bufferId;
         return this;
     }
@@ -78,6 +82,10 @@ public class OFPacketOut extends OFMessage implements OFActionFactoryAware {
      * @param packetData
      */
     public OFPacketOut setPacketData(byte[] packetData) {
+        if (packetData != null && packetData.length > 0 && bufferId != BUFFER_ID_NONE) {
+            throw new IllegalArgumentException(
+                    "PacketOut should not have both bufferId and packetData set");
+        }
         this.packetData = packetData;
         return this;
     }
@@ -244,7 +252,7 @@ public class OFPacketOut extends OFMessage implements OFActionFactoryAware {
         return "OFPacketOut [actionFactory=" + actionFactory + ", actions="
                 + actions + ", actionsLength=" + actionsLength + ", bufferId=0x"
                 + Integer.toHexString(bufferId) + ", inPort=" + inPort + ", packetData="
-                + Arrays.toString(packetData) + "]";
+                + HexString.toHexString(packetData) + "]";
     }
 
     /* (non-Javadoc)
