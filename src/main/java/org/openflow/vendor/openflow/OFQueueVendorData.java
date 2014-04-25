@@ -87,7 +87,7 @@ public class OFQueueVendorData extends OFOpenFlowVendorData {
      */
     public void readFrom(ByteBuffer data, int length) {
         super.readFrom(data, length);
-        portNumber = data.getShort();
+        portNumber = data.getInt();
         data.getInt();   // pad
 
         int availLength = (length - MINIMUM_LENGTH);
