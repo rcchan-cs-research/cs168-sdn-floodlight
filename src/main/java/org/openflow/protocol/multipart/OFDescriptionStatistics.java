@@ -222,11 +222,11 @@ public class OFDescriptionStatistics implements OFMultipartData {
 
     @Override
     public String toString() {
-        return "OFDescriptionStatistics [manufacturerDescription="
-                + manufacturerDescription + ", hardwareDescription="
-                + hardwareDescription + ", softwareDescription="
-                + softwareDescription + ", serialNumber=" + serialNumber
-                + ", datapathDescription=" + datapathDescription + "]";
+        return "OFDescriptionStatistics [Vendor: " + manufacturerDescription
+                + ", Model: " + hardwareDescription
+                + ", Make: " + datapathDescription
+                + ", Version: " + softwareDescription 
+                + ", S/N: " + serialNumber + "]";
     }
 
     @Override
