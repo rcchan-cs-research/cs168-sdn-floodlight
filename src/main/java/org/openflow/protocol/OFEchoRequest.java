@@ -53,6 +53,34 @@ public class OFEchoRequest extends OFMessage {
     }
 
     /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Arrays.hashCode(payload);
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OFEchoRequest other = (OFEchoRequest) obj;
+        if (!Arrays.equals(payload, other.payload))
+            return false;
+        return true;
+    }
+
+    /* (non-Javadoc)
      * @see org.openflow.protocol.OFMessage#computeLength()
      */
     @Override
