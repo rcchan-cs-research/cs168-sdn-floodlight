@@ -21,8 +21,6 @@ import net.floodlightcontroller.storage.IResultSet;
 import net.floodlightcontroller.storage.StorageException;
 import net.floodlightcontroller.util.LoadMonitor;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -554,8 +552,8 @@ class OFChannelHandler
 
         /**
          * We are waiting for a config reply message. Once we receive it
-         * we send a DescriptionStatsRequest to the switch.
-         * Next state: WAIT_DESCRIPTION_STAT_REPLY
+         * we send a PortDescriptionRequest to the switch.
+         * Next state: WAIT_PORT_DESCRIPTION_REPLY
          */
         WAIT_CONFIG_REPLY(false) {
             @Override
@@ -635,12 +633,15 @@ class OFChannelHandler
             @Override
             void processOFMultipartReply(OFChannelHandler h, OFMultipartReply m) 
             		throws IOException {
+                // If invalid multipart reply, then return and stay in same state
+                if (m.getMultipartDataType() != OFMultipartDataType.PORT_DESC)
+                	return;
+
                 // Read port description, if it has been updated
                 h.portDescriptions = new ArrayList<OFPortDescription>(); 
                 List <? extends OFMultipartData> portDescriptions = m.getMultipartData();
                 for (OFMultipartData portDesc: portDescriptions)
-                	if (portDesc instanceof OFPortDescription) 
-                		h.portDescriptions.add(((OFPortDescription)portDesc));
+                	h.portDescriptions.add(((OFPortDescription)portDesc));
 
                 h.sendHandshakeDescriptionStatsRequest();
                 h.setState(WAIT_DESCRIPTION_STAT_REPLY);
@@ -700,14 +701,13 @@ class OFChannelHandler
             @Override
             void processOFMultipartReply(OFChannelHandler h,
                                           OFMultipartReply m) {
-                // Read description, if it has been updated
-                OFDescriptionStatistics description =
-                        new OFDescriptionStatistics();
-                ChannelBuffer data =
-                        ChannelBuffers.buffer(description.getLength());
-                OFMultipartData f = m.getFirstMultipartData();
-                f.writeTo(data.toByteBuffer());
-                description.readFrom(data.toByteBuffer());
+                // If invalid multipart reply, then return and stay in same state
+                if (m.getMultipartDataType() != OFMultipartDataType.DESC)
+                	return;
+                	
+                // Read switch description, if it has been updated
+                OFDescriptionStatistics description = 
+                		(OFDescriptionStatistics)m.getFirstMultipartData();
                 h.sw = h.controller.getOFSwitchInstance(description);
                 // set switch information
                 // set features reply and channel first so we a DPID and
