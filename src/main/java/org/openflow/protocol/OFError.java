@@ -21,7 +21,21 @@ public class OFError extends OFMessage implements OFMessageFactoryAware {
         OFPET_HELLO_FAILED, OFPET_BAD_REQUEST, OFPET_BAD_ACTION, OFPET_BAD_INSTRUCTION, OFPET_BAD_MATCH, 
         OFPET_FLOW_MOD_FAILED, OFPET_GROUP_MOD_FAILED, OFPET_PORT_MOD_FAILED, OFPET_TABLE_MOD_FAILED, 
         OFPET_QUEUE_OP_FAILED, OFPET_SWITCH_CONFIG_FAILED, OFPET_ROLE_REQUEST_FAILED, OFPET_METER_MOD_FAILED,
-        OFPET_TABLE_FEATURES_FAILED, OFPET_VENDOR
+        OFPET_TABLE_FEATURES_FAILED, OFPET_VENDOR;
+
+        protected short value;
+
+        private OFErrorType() {
+            this.value = (short) this.ordinal();
+        }
+
+        private OFErrorType(short value) {
+            this.value = value;
+        }
+
+        public short getValue() {
+            return value;
+        }
     }
 
     public enum OFHelloFailedCode {
@@ -204,6 +218,7 @@ public class OFError extends OFMessage implements OFMessageFactoryAware {
         } else {
             this.error = new byte[offendingMsg.getLengthU()];
             ByteBuffer data = ByteBuffer.wrap(this.error);
+            //data.writerIndex(0);
             offendingMsg.writeTo(data);
             super.setLengthU(MINIMUM_LENGTH + offendingMsg.getLengthU());
         }
