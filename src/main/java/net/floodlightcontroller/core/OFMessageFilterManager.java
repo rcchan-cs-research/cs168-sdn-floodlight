@@ -516,6 +516,7 @@ public class OFMessageFilterManager
         Packet packet = new Packet();
         ChannelBuffer bb;
         sendMsg.setPacket(packet);
+        msg.computeLength(); //Call computeLength to update length of the OF message
 
         List<String> sids = new ArrayList<String>(matchedFilters);
 
