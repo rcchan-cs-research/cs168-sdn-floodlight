@@ -30,12 +30,12 @@ import org.openflow.protocol.meter.OFMeterBandType;
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  *
  */
-public enum BasicFactory implements OFMessageFactory, OFActionFactory,
+public class BasicFactory implements OFMessageFactory, OFActionFactory,
         OFQueuePropertyFactory, OFMultipartFactory,
         OFInstructionFactory, OFHelloElementFactory,
         OFMeterBandFactory {
 
-    SINGLETON_INSTANCE;
+    private static final BasicFactory SINGLETON_INSTANCE = new BasicFactory();
 
     private BasicFactory() { }
 
@@ -43,13 +43,23 @@ public enum BasicFactory implements OFMessageFactory, OFActionFactory,
         return SINGLETON_INSTANCE;
     }
 
+    /**
+     * create and return a new instance of a message for OFType t. Also injects
+     * factories for those message types that implement the *FactoryAware
+     * interfaces.
+     *
+     * @return a newly created instance that may be modified / used freely by
+     *         the caller
+     */
     @Override
     public OFMessage getMessage(OFType t) {
-        return t.newInstance();
+        OFMessage message = t.newInstance();
+        injectFactories(message);
+        return message;
     }
 
     @Override
-    public List<OFMessage> parseMessages(ByteBuffer data) { 
+    public List<OFMessage> parseMessages(ByteBuffer data) {
         return parseMessages(data, 0);
     }
 
@@ -71,24 +81,10 @@ public enum BasicFactory implements OFMessageFactory, OFActionFactory,
                 return results;
 
             ofm = getMessage(demux.getType());
-            if (ofm instanceof OFActionFactoryAware) {
-                ((OFActionFactoryAware)ofm).setActionFactory(this);
-            }
-            if (ofm instanceof OFMessageFactoryAware) {
-                ((OFMessageFactoryAware)ofm).setMessageFactory(this);
-            }
-            if (ofm instanceof OFQueuePropertyFactoryAware) {
-                ((OFQueuePropertyFactoryAware)ofm).setQueuePropertyFactory(this);
-            }
-            if (ofm instanceof OFMultipartFactoryAware) {
-                ((OFMultipartFactoryAware)ofm).setMultipartFactory(this);
-            }
-            if (ofm instanceof OFHelloElementFactoryAware) {
-                ((OFHelloElementFactoryAware)ofm).setHelloElementFactory(this);
-            }
-            if (ofm instanceof OFMeterBandFactoryAware) {
-                ((OFMeterBandFactoryAware)ofm).setMeterBandFactory(this);
-            }
+            if (ofm == null)
+                return null;
+
+            injectFactories(ofm);
             ofm.readFrom(data);
             if (OFMessage.class.equals(ofm.getClass())) {
                 // advance the position for un-implemented messages
@@ -99,6 +95,27 @@ public enum BasicFactory implements OFMessageFactory, OFActionFactory,
         }
 
         return results;
+    }
+
+    private void injectFactories(OFMessage ofm) {
+        if (ofm instanceof OFActionFactoryAware) {
+            ((OFActionFactoryAware)ofm).setActionFactory(this);
+        }
+        if (ofm instanceof OFMessageFactoryAware) {
+            ((OFMessageFactoryAware)ofm).setMessageFactory(this);
+        }
+        if (ofm instanceof OFQueuePropertyFactoryAware) {
+            ((OFQueuePropertyFactoryAware)ofm).setQueuePropertyFactory(this);
+        }
+        if (ofm instanceof OFMultipartFactoryAware) {
+            ((OFMultipartFactoryAware)ofm).setMultipartFactory(this);
+        }
+        if (ofm instanceof OFHelloElementFactoryAware) {
+            ((OFHelloElementFactoryAware)ofm).setHelloElementFactory(this);
+        }
+        if (ofm instanceof OFMeterBandFactoryAware) {
+            ((OFMeterBandFactoryAware)ofm).setMeterBandFactory(this);
+        }
     }
 
     @Override
@@ -233,7 +250,7 @@ public enum BasicFactory implements OFMessageFactory, OFActionFactory,
         int count = 0;
 
         while (limit == 0 || results.size() <= limit) {
-            // TODO Create a separate MUX/DEMUX path for vendor stats
+            // Create a separate MUX/DEMUX path for vendor stats
             if (multipartData instanceof OFVendorStatistics)
                 ((OFVendorStatistics)multipartData).setLength(length);
 
