@@ -217,9 +217,9 @@ public class OFError extends OFMessage implements OFMessageFactoryAware {
             super.setLengthU(MINIMUM_LENGTH);
         } else {
             this.error = new byte[offendingMsg.getLengthU()];
-            ByteBuffer data = ByteBuffer.wrap(this.error);
+            ByteBuffer errorMsg = ByteBuffer.wrap(this.error);
             //data.writerIndex(0);
-            offendingMsg.writeTo(data);
+            offendingMsg.writeTo(errorMsg);
             super.setLengthU(MINIMUM_LENGTH + offendingMsg.getLengthU());
         }
         return this;
