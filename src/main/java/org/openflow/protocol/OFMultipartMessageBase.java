@@ -156,7 +156,7 @@ public abstract class OFMultipartMessageBase extends OFMessage implements
 
     @Override
     public String toString() {
-        return "OFMultipartMessage [type=" + type + ", flags=" + flags + 
+        return "OFMultipartMessage [type=" + multipartDataType + ", flags=" + flags + 
                 ", data=" + multipartData + "]";
     }
 
