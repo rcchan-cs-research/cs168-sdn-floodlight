@@ -268,9 +268,9 @@ public abstract class ForwardingBase
             int inPort = switchPortList.get(indx-1).getPortId();
             // set input and output ports on the switch
             fm.getMatch().setInPort(inPort);
-            // TODO: Verify if setting port on this object is sufficient instead of
-            //((OFActionOutput)fm.getActions().get(0)).setPort(outPort);
-            action.setPort(outPort);
+            // Need to perform set outport for each fm.clone()
+            // Caution: Will not work when there are multiple actions
+            ((OFActionOutput)((OFInstructionApplyActions)fm.getInstructions().get(0)).getActions().get(0)).setPort(outPort);
 
             try {
                 counterStore.updatePktOutFMCounterStoreLocal(sw, fm);
