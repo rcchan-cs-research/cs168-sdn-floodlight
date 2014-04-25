@@ -1,7 +1,7 @@
 package org.openflow.protocol;
 
 import java.nio.ByteBuffer;
-
+import java.util.Arrays;
 import org.openflow.util.U16;
 
 /**

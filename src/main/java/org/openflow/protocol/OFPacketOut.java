@@ -8,6 +8,7 @@ import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.factory.OFActionFactory;
 import org.openflow.protocol.factory.OFActionFactoryAware;
 import org.openflow.util.U16;
+import org.openflow.util.HexString;
 
 /**
  * Represents an ofp_packet_out message
