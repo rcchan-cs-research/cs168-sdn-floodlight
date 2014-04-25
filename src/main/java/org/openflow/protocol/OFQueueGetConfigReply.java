@@ -31,16 +31,16 @@ public class OFQueueGetConfigReply extends OFMessage implements Cloneable, OFQue
     }
 
     /**
-     * @return the port
+     * @return the portNumber
      */
-    public int getPort() {
+    public int getPortNumber() {
         return portNumber;
     }
 
     /**
-     * @param port the port to set
+     * @param port the portNumber to set
      */
-    public OFQueueGetConfigReply setPort(int portNumber) {
+    public OFQueueGetConfigReply setPortNumber(int portNumber) {
         this.portNumber = portNumber;
         return this;
     }
