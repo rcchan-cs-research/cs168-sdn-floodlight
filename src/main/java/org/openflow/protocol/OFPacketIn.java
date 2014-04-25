@@ -177,7 +177,9 @@ public class OFPacketIn extends OFMessage {
             this.match = new OFMatch();
         this.match.readFrom(data);
         data.getShort(); // pad
-        this.packetData = new byte[getTotalLength()];
+
+        // safeguard in case miss_send_len is left at default value of 128 bytes
+        this.packetData = new byte[Math.min(data.remaining(), getTotalLength())];
         data.get(this.packetData);
     }
 
