@@ -246,9 +246,9 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule {
                     if (!srcDap.equals(dstDap)) {
                         Route route =
                                 routingEngine.getRoute(srcDap.getSwitchDPID(),
-                                                       (short)srcDap.getPort(),
+                                                       srcDap.getPort(),
                                                        dstDap.getSwitchDPID(),
-                                                       (short)dstDap.getPort(), 0); //cookie = 0, i.e., default route
+                                                       dstDap.getPort(), 0); //cookie = 0, i.e., default route
                         if (route != null) {
                             if (log.isTraceEnabled()) {
                                 log.trace("pushRoute match={} route={} " +
@@ -274,6 +274,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule {
                             	// L2 only wildcard if there is no prior route decision
                                 nonWildcards = Arrays.asList(OFOXMFieldType.IN_PORT, OFOXMFieldType.VLAN_VID,
                                 		                     OFOXMFieldType.ETH_SRC, OFOXMFieldType.ETH_DST,
+                                		                     OFOXMFieldType.ETH_TYPE, //prereq
                                 		                     OFOXMFieldType.IPV4_SRC, OFOXMFieldType.IPV4_DST);
                             }
 
