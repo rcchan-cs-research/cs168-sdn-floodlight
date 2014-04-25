@@ -28,7 +28,7 @@ import org.openflow.protocol.vendor.OFVendorData;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
-    public static int MINIMUM_LENGTH = 12;
+    public static int MINIMUM_LENGTH = 16;
 
     protected int vendor;
     protected int vendorType;
@@ -147,5 +147,13 @@ public class OFVendor extends OFMessage implements OFVendorDataFactoryAware {
             return false;
         }
         return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.openflow.protocol.OFMessage#computeLength()
+     */
+    @Override
+    public void computeLength() {
+        this.length = U16.t(MINIMUM_LENGTH + ((vendorData != null) ?  vendorData.getLength() : 0));
     }
 }
