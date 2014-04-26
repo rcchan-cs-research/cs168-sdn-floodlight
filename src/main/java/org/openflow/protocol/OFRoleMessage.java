@@ -15,7 +15,10 @@ public class OFRoleMessage extends OFMessage {
 
     // Comtroller role values
     public enum OFControllerRole {
-        NOCHANGE, EQUAL, MASTER, SLAVE
+        OFPCR_NOCHANGE,
+        OFPCR_EQUAL,
+        OFPCR_MASTER,
+        OFPCR_SLAVE
     }
 
     protected int role;
