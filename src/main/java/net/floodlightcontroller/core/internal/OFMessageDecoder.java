@@ -48,10 +48,14 @@ public class OFMessageDecoder extends FrameDecoder {
 
         ByteBuffer data = buffer.toByteBuffer();
         List<OFMessage> message = factory.parseMessages(data);
-        //Following call to readerIndex is necessary in case of 
-        // channelBuffer to byteBuffer conversion above
-        buffer.readerIndex(data.position());
-        return message;
+        if (message.size() == 0)
+        	return null;
+        else {
+            //Following call to readerIndex is necessary in case of 
+            // channelBuffer to byteBuffer conversion above
+            buffer.readerIndex(data.position());
+	        return message;
+        }
     }
 
     @Override
