@@ -61,7 +61,7 @@ public class OFGroupMod extends OFMessage {
     /**
      * @param type the type to set
      */
-    public OFGroupMod setType(byte groupType) {
+    public OFGroupMod setGroupType(byte groupType) {
         this.groupType = groupType;
         return this;
     }
@@ -130,7 +130,7 @@ public class OFGroupMod extends OFMessage {
         super.writeTo(data);
         data.putShort(this.command);
         data.put(this.groupType);
-        data.putInt(0); // pad
+        data.put(0); // pad
         data.putInt(this.groupId);
         if (buckets != null) {
             for (OFBucket bucket : buckets ) {
