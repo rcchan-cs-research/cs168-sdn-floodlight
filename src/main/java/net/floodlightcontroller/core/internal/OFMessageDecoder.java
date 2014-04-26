@@ -18,6 +18,7 @@
 package net.floodlightcontroller.core.internal;
 
 import java.util.List;
+import java.nio.ByteBuffer;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
@@ -45,7 +46,11 @@ public class OFMessageDecoder extends FrameDecoder {
             return null;
         }
 
-        List<OFMessage> message = factory.parseMessages(buffer.toByteBuffer());
+        ByteBuffer data = buffer.toByteBuffer();
+        List<OFMessage> message = factory.parseMessages(data);
+        //Following call to readerIndex is necessary in case of 
+        // channelBuffer to byteBuffer conversion above
+        buffer.readerIndex(data.position());
         return message;
     }
 
