@@ -216,8 +216,12 @@ public class SimpleController implements SelectListener {
         List<OFMessage> l = new ArrayList<OFMessage>();
         l.add(hm);
         l.add(factory.getMessage(OFType.FEATURES_REQUEST));
-        
+
         OFMultipartRequest omr = (OFMultipartRequest) factory.getMessage(OFType.MULTIPART_REQUEST);
+        omr.setMultipartDataType(OFMultipartDataType.DESC);
+        l.add(omr);
+
+        omr = (OFMultipartRequest) factory.getMessage(OFType.MULTIPART_REQUEST);
         omr.setMultipartDataType(OFMultipartDataType.PORT_DESC);
         l.add(omr);
         stream.write(l);
