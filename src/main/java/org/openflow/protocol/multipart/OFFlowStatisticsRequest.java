@@ -26,7 +26,7 @@ public class OFFlowStatisticsRequest implements OFMultipartData {
         super();
         this.outPort = OFPort.OFPP_ANY.getValue();
         this.outGroup = OFGroup.OFPG_ANY.getValue();
-        this.tableId = OFTable.OFPTT_ALL.getValue();
+        this.tableId = OFTable.OFPTT_ALL;
         this.cookieMask = 0;
     }
 
