@@ -130,7 +130,7 @@ public class OFGroupMod extends OFMessage {
         super.writeTo(data);
         data.putShort(this.command);
         data.put(this.groupType);
-        data.put(0); // pad
+        data.put((byte)0); // pad
         data.putInt(this.groupId);
         if (buckets != null) {
             for (OFBucket bucket : buckets ) {
