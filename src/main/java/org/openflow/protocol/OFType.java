@@ -100,13 +100,11 @@ public enum OFType {
                             public OFMessage instantiate() {
                                 return new OFPortMod();
                             }}),
-/* TODO
     TABLE_MOD           (17, OFTableMod.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
                                 return new OFTableMod();
                             }}),
-*/
     MULTIPART_REQUEST       (18, OFMultipartRequest.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
