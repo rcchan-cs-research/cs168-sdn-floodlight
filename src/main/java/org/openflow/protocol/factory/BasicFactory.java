@@ -37,7 +37,7 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
 
     private static final BasicFactory SINGLETON_INSTANCE = new BasicFactory();
 
-    private BasicFactory() { }
+    protected BasicFactory() { }
 
     public static BasicFactory getInstance() {
         return SINGLETON_INSTANCE;
@@ -97,7 +97,7 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
         return results;
     }
 
-    private void injectFactories(OFMessage ofm) {
+    protected void injectFactories(OFMessage ofm) {
         if (ofm instanceof OFActionFactoryAware) {
             ((OFActionFactoryAware)ofm).setActionFactory(this);
         }
