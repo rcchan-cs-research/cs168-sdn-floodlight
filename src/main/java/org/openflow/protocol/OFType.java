@@ -90,7 +90,7 @@ public enum OFType {
                             public OFMessage instantiate() {
                                 return new OFFlowMod();
                             }}),
-     GROUP_MOD           (15, OFGroupMod.class, new Instantiable<OFMessage>() {
+    GROUP_MOD           (15, OFGroupMod.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
                                 return new OFGroupMod();
@@ -135,17 +135,17 @@ public enum OFType {
                             public OFMessage instantiate() {
                                 return new OFQueueGetConfigReply();
                             }}),
-/* TODO
     ROLE_REQUEST        (24, OFMessage.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
-                                return new OFRoleRequest();
+                                return new OFRoleMessage().setType(ROLE_REQUEST);
                             }}),
     ROLE_REPLY          (25, OFMessage.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
-                                return new OFRoleReply();
-                            }}),                            
+                                return new OFRoleMessage().setType(ROLE_REPLY);
+                            }}), 
+/* TODO
     GET_ASYNC_REQUEST   (26, OFMessage.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
