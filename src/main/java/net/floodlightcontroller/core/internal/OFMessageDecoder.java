@@ -25,7 +25,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
 import org.openflow.protocol.OFMessage;
-import org.openflow.protocol.factory.BasicFactory;
+import org.openflow.protocol.factory.FloodlightFactory;
 import org.openflow.protocol.factory.OFMessageFactory;
 
 /**
@@ -35,7 +35,7 @@ import org.openflow.protocol.factory.OFMessageFactory;
  */
 public class OFMessageDecoder extends FrameDecoder {
 
-    OFMessageFactory factory = BasicFactory.getInstance();
+    OFMessageFactory factory = FloodlightFactory.getInstance();
     
     @Override
     protected Object decode(ChannelHandlerContext ctx, Channel channel,

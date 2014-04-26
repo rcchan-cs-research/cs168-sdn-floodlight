@@ -53,7 +53,7 @@ import org.openflow.protocol.OFVendor;
 import org.openflow.protocol.OFError.*;
 import org.openflow.protocol.hello.OFHelloElement;
 import org.openflow.protocol.hello.OFHelloElementVersionBitmap;
-import org.openflow.protocol.factory.BasicFactory;
+import org.openflow.protocol.factory.FloodlightFactory;
 import org.openflow.protocol.multipart.OFPortDescription;
 import org.openflow.protocol.multipart.OFDescriptionStatistics;
 import org.openflow.protocol.multipart.OFMultipartData;
@@ -168,7 +168,7 @@ class OFChannelHandler
             int nxRole = role.toNxRole();
 
             // Construct the role request message
-            OFVendor roleRequest = (OFVendor)BasicFactory.getInstance()
+            OFVendor roleRequest = (OFVendor)FloodlightFactory.getInstance()
                     .getMessage(OFType.VENDOR);
             roleRequest.setXid(xid);
             roleRequest.setVendor(OFNiciraVendorData.NX_VENDOR_ID);
@@ -1282,7 +1282,7 @@ class OFChannelHandler
         void processOFEchoRequest(OFChannelHandler h, OFEchoRequest m)
             throws IOException {
             OFEchoReply reply = (OFEchoReply)
-                    BasicFactory.getInstance().getMessage(OFType.ECHO_REPLY);
+                    FloodlightFactory.getInstance().getMessage(OFType.ECHO_REPLY);
             reply.setXid(m.getXid());
             reply.setPayload(m.getPayload());
             reply.setLengthU(m.getLengthU());
@@ -1529,7 +1529,7 @@ class OFChannelHandler
     @Override
     public void channelIdle(ChannelHandlerContext ctx, IdleStateEvent e)
             throws Exception {
-        OFMessage m = BasicFactory.getInstance().getMessage(OFType.ECHO_REQUEST);
+        OFMessage m = FloodlightFactory.getInstance().getMessage(OFType.ECHO_REQUEST);
         e.getChannel().write(Collections.singletonList(m));
     }
 
@@ -1749,7 +1749,7 @@ class OFChannelHandler
      */
     private void sendHandShakeMessage(OFType type) throws IOException {
         // Send initial Features Request
-        OFMessage m = BasicFactory.getInstance().getMessage(type);
+        OFMessage m = FloodlightFactory.getInstance().getMessage(type);
         m.setXid(handshakeTransactionIds--);
         channel.write(Collections.singletonList(m));
     }
@@ -1760,7 +1760,7 @@ class OFChannelHandler
     private void sendHandShakeHello() {
         // Send initial Features Request
         OFHello m = (OFHello)
-            BasicFactory.getInstance().getMessage(OFType.HELLO);
+            FloodlightFactory.getInstance().getMessage(OFType.HELLO);
         m.setXid(handshakeTransactionIds--);
         List<OFHelloElement> helloElements = new ArrayList<OFHelloElement>();
         OFHelloElementVersionBitmap hevb = new OFHelloElementVersionBitmap();
@@ -1777,7 +1777,7 @@ class OFChannelHandler
      */
     private void sendHandshakeL2TableSet() {
         OFVendor l2TableSet = (OFVendor)
-                BasicFactory.getInstance().getMessage(OFType.VENDOR);
+                FloodlightFactory.getInstance().getMessage(OFType.VENDOR);
         l2TableSet.setXid(handshakeTransactionIds--);
         OFBsnL2TableSetVendorData l2TableSetData =
                 new OFBsnL2TableSetVendorData(true,
@@ -1809,7 +1809,7 @@ class OFChannelHandler
 
         // Ensure we receive the full packet via PacketIn
         // FIXME: We don't set the reassembly flags.
-        OFSetConfig configSet = (OFSetConfig) BasicFactory.getInstance()
+        OFSetConfig configSet = (OFSetConfig) FloodlightFactory.getInstance()
                 .getMessage(OFType.SET_CONFIG);
         configSet.setMissSendLength((short) 0xffff)
             .setLengthU(OFSwitchConfig.MINIMUM_LENGTH);
@@ -1817,14 +1817,14 @@ class OFChannelHandler
         msglist.add(configSet);
 
         // Barrier
-        OFBarrierRequest barrier = (OFBarrierRequest) BasicFactory.getInstance()
+        OFBarrierRequest barrier = (OFBarrierRequest) FloodlightFactory.getInstance()
                 .getMessage(OFType.BARRIER_REQUEST);
         barrier.setXid(handshakeTransactionIds--);
         msglist.add(barrier);
 
         // Verify (need barrier?)
         OFGetConfigRequest configReq = (OFGetConfigRequest)
-                BasicFactory.getInstance().getMessage(OFType.GET_CONFIG_REQUEST);
+                FloodlightFactory.getInstance().getMessage(OFType.GET_CONFIG_REQUEST);
         configReq.setXid(handshakeTransactionIds--);
         msglist.add(configReq);
         channel.write(msglist);
