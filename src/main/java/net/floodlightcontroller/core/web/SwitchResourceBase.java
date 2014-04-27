@@ -86,7 +86,7 @@ public class SwitchResourceBase extends ServerResource {
                 OFMatch match = new OFMatch();
                 specificReq.setMatch(match);
                 specificReq.setOutPort(OFPort.OFPP_ANY.getValue());
-                specificReq.setTableId(OFTable.OFPTT_ALL.getValue());
+                specificReq.setTableId(OFTable.OFPTT_ALL);
                 req.setMultipartData(specificReq);
                 requestLength += specificReq.getLength();
             } else if (statType == OFMultipartDataType.AGGREGATE) {
