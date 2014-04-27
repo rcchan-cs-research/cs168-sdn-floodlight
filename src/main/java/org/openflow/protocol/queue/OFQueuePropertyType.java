@@ -82,11 +82,11 @@ public class OFQueuePropertyType {
     }
 
     /**
-     * Given a wire protocol OpenFlow type number, return the OFType associated
+     * Given a wire protocol OpenFlow type number, return the OFQueuePropertyType associated
      * with it
      *
      * @param i wire protocol number
-     * @return OFType enum type
+     * @return OFQueuePropertyType enum type
      */
 
     static public OFQueuePropertyType valueOf(short i) {

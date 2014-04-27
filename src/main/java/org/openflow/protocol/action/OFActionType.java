@@ -107,14 +107,12 @@ public enum OFActionType {
     protected Class<? extends OFAction> clazz;
     protected Constructor<? extends OFAction> constructor;
     protected Instantiable<OFAction> instantiable;
-    protected int minLen;
     protected short type;
 
     /**
      * Store some information about the OpenFlow Action type, including wire
      * protocol type number, length, and derrived class
      *
-     * @param type Wire protocol number associated with this OFType
      * @param clazz The Java class corresponding to this type of OpenFlow Action
      * @param instantiable the instantiable for the OFAction this type represents
      */
@@ -145,11 +143,11 @@ public enum OFActionType {
     }
 
     /**
-     * Given a wire protocol OpenFlow type number, return the OFType associated
+     * Given a wire protocol OpenFlow type number, return the OFActionType associated
      * with it
      *
      * @param i wire protocol number
-     * @return OFType enum type
+     * @return OFActionType enum type
      */
 
     static public OFActionType valueOf(short i) {

@@ -53,7 +53,7 @@ public enum OFHelloElementType {
      * OFHelloElementType associated with it
      *
      * @param i wire protocol number
-     * @return OFType enum type
+     * @return OFHelloElementType enum 
      */
 
     static public OFHelloElementType valueOf(short i) {

@@ -57,14 +57,13 @@ public enum OFInstructionType {
     protected Class<? extends OFInstruction> clazz;
     protected Constructor<? extends OFInstruction> constructor;
     protected Instantiable<OFInstruction> instantiable;
-    protected int minLen;
     protected short type;
 
     /**
      * Store some information about the OpenFlow Instruction type, including wire
      * protocol type number, length, and derrived class
      *
-     * @param type Wire protocol number associated with this OFType
+     * @param type Wire protocol number associated with this OFInstructionType
      * @param clazz The Java class corresponding to this type of OpenFlow Instruction
      * @param instantiable the instantiable for the OFInstruction this type represents
      */
@@ -97,11 +96,11 @@ public enum OFInstructionType {
     }
 
     /**
-     * Given a wire protocol OpenFlow type number, return the OFType associated
+     * Given a wire protocol OpenFlow type number, return the OFInstructionType associated
      * with it
      *
      * @param i wire protocol number
-     * @return OFType enum type
+     * @return OFInstructionType enum type
      */
 
     static public OFInstructionType valueOf(short i) {

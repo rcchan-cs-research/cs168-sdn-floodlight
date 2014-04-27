@@ -82,11 +82,11 @@ public class OFMeterBandType {
     }
 
     /**
-     * Given a wire protocol OpenFlow type number, return the OFType associated
+     * Given a wire protocol OpenFlow type number, return the OFMeterBandType associated
      * with it
      *
      * @param i wire protocol number
-     * @return OFType enum type
+     * @return OFMeterBandType enum type
      */
 
     static public OFMeterBandType valueOf(short i) {
