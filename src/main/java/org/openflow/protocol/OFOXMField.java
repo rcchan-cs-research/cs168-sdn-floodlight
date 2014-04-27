@@ -27,6 +27,14 @@ public class OFOXMField implements Cloneable {
         this.oxmFieldHasMask = 0;
     }
 
+    public OFOXMField(int oxmHeader, Object oxmFieldValue) {
+        byte typeVal = (byte)((oxmHeader >> 9) & 0x7F);
+        this.oxmFieldType = OFOXMFieldType.valueOf(typeVal);
+        this.oxmFieldHasMask = (byte) ((oxmHeader >> 8) & 0x1);
+        this.oxmFieldLength = (oxmHeader & 0xFF);
+        this.oxmFieldValue = oxmFieldValue;
+    }
+
     public OFOXMFieldType getOXMFieldType() {
         return oxmFieldType;
     }
@@ -137,6 +145,8 @@ public class OFOXMField implements Cloneable {
     public int hashCode() {
         final int prime = 367;
         int result = 1;
+        result = prime * result + ((oxmFieldValue == null) ? 0 : oxmFieldValue.hashCode());
+        result = prime * result + getOXMFieldHeader();
         return result;
     }
 
@@ -172,7 +182,9 @@ public class OFOXMField implements Cloneable {
      */
     @Override
     public OFOXMField clone() throws CloneNotSupportedException {
-        return (OFOXMField) super.clone();
+        OFOXMField oxmField = new OFOXMField();
+        oxmField.setOXMFieldValue(oxmFieldValue);
+        return oxmField;
     }
 
     /* (non-Javadoc)

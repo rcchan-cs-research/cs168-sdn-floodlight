@@ -1,12 +1,6 @@
 package org.openflow.protocol;
 
 import java.nio.ByteBuffer;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-
-import org.openflow.protocol.OFMatch.OFMatchClass;
-import org.openflow.protocol.OFPhysicalPort;
-import org.openflow.util.U16;
 
 /**
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
@@ -55,7 +49,8 @@ public class OFMatchField extends OFOXMField implements Cloneable {
 
     public int hashCode() {
         final int prime = 367;
-        int result = 1;
+        int result = super.hashCode();
+        result = result * prime + ((oxmFieldMask==null)? 0: oxmFieldMask.hashCode());
         return result;
     }
 
