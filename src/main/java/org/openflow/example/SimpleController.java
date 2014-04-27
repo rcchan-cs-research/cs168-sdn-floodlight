@@ -29,9 +29,8 @@ import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMultipartRequest;
 import org.openflow.protocol.OFMultipartReply;
 import org.openflow.protocol.OFFeaturesReply;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
-import org.openflow.protocol.multipart.OFPortDescription;
 import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.OFError;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFOXMFieldType;
 import org.openflow.protocol.OFPacketIn;
@@ -224,6 +223,7 @@ public class SimpleController implements SelectListener {
         omr = (OFMultipartRequest) factory.getMessage(OFType.MULTIPART_REQUEST);
         omr.setMultipartDataType(OFMultipartDataType.PORT_DESC);
         l.add(omr);
+
         stream.write(l);
 
         int ops = SelectionKey.OP_READ;
@@ -265,6 +265,10 @@ public class SimpleController implements SelectListener {
                             break;
                         case HELLO:
                             System.err.println("GOT HELLO from " + sw);
+                            break;
+                        case ERROR:
+                            System.err.println("GOT ERROR from " + sw);
+                            System.err.println("--> Data:" + ((OFError) m).toString());
                             break;
                         case ECHO_REQUEST:
                             OFEchoReply reply = (OFEchoReply) stream

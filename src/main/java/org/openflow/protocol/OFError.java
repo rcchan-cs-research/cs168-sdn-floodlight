@@ -330,6 +330,62 @@ public class OFError extends OFMessage implements OFMessageFactoryAware {
         return true;
     }
 
+    public String getErrorCodeName(OFErrorType errorType, int errorCode) {
+        switch (errorType) {
+            case OFPET_HELLO_FAILED:
+                return OFHelloFailedCode.values()[errorCode].name();
+
+            case OFPET_BAD_REQUEST:
+                return OFBadRequestCode.values()[errorCode].name();
+        
+            case OFPET_BAD_ACTION:
+                return OFBadActionCode.values()[errorCode].name();
+        
+            case OFPET_BAD_INSTRUCTION:
+                return OFBadInstructionCode.values()[errorCode].name();
+        
+            case OFPET_BAD_MATCH:
+                return OFBadMatchCode.values()[errorCode].name();
+        
+            case OFPET_FLOW_MOD_FAILED:
+                return OFFlowModFailedCode.values()[errorCode].name();
+        
+            case OFPET_GROUP_MOD_FAILED:
+                return OFGroupModFailedCode.values()[errorCode].name();
+        
+            case OFPET_PORT_MOD_FAILED:
+                return OFPortModFailedCode.values()[errorCode].name();
+        
+            case OFPET_TABLE_MOD_FAILED:
+                return OFTableModFailedCode.values()[errorCode].name();
+        
+            case OFPET_QUEUE_OP_FAILED:
+                return OFQueueOpFailedCode.values()[errorCode].name();
+        
+            case OFPET_SWITCH_CONFIG_FAILED:
+                return OFSwitchConfigFailedCode.values()[errorCode].name();
+        
+            case OFPET_ROLE_REQUEST_FAILED:
+                return OFRoleRequestFailedCode.values()[errorCode].name();
+        
+            case OFPET_METER_MOD_FAILED:
+                return OFMeterModFailedCode.values()[errorCode].name();
+        
+            case OFPET_TABLE_FEATURES_FAILED:
+                return OFTableFeaturesFailedCode.values()[errorCode].name();
+                
+            default:
+                return null;
+        }
+    }
+    
+    @Override
+    public String toString() {
+        OFErrorType eType = OFErrorType.values()[errorType];
+        return "OFError [type=" +  eType.name() + 
+                ", code=" + getErrorCodeName(eType, errorCode) + "]";
+    }
+    
     /* (non-Javadoc)
      * @see org.openflow.protocol.OFMessage#computeLength()
      */
