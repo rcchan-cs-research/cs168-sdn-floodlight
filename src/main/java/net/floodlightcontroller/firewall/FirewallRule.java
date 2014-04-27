@@ -17,7 +17,10 @@
 
 package net.floodlightcontroller.firewall;
 
+import java.util.Arrays;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import org.openflow.protocol.OFOXMFieldType;
 
 import net.floodlightcontroller.packet.Ethernet;
@@ -185,6 +188,8 @@ public class FirewallRule implements Comparable<FirewallRule> {
         // tp_src and tp_dst (tp port numbers)
         short pkt_tp_src = 0;
         short pkt_tp_dst = 0;
+
+        OFOXMFieldType pkt_nw_src_field=null, pkt_nw_dst_field=null;
         OFOXMFieldType pkt_tp_src_field=null, pkt_tp_dst_field=null;
 
         // switchID matches?
@@ -228,7 +233,9 @@ public class FirewallRule implements Comparable<FirewallRule> {
                 if (packet.getEtherType() != Ethernet.TYPE_ARP)
                     return false;
                 else {
-                    if (action == FirewallRule.FirewallAction.DENY) {
+                	pkt_nw_src_field = OFOXMFieldType.ARP_SHA;
+                	pkt_nw_dst_field = OFOXMFieldType.ARP_THA;
+                	if (action == FirewallRule.FirewallAction.DENY) {
                         nonWildcards.drop.add(OFOXMFieldType.ETH_TYPE);
                     } else {
                         nonWildcards.allow.add(OFOXMFieldType.ETH_TYPE);
@@ -238,105 +245,115 @@ public class FirewallRule implements Comparable<FirewallRule> {
                 if (packet.getEtherType() != Ethernet.TYPE_IPv4)
                     return false;
                 else {
+                	pkt_nw_src_field = OFOXMFieldType.IPV4_SRC;
+                	pkt_nw_dst_field = OFOXMFieldType.IPV4_DST;
                     if (action == FirewallRule.FirewallAction.DENY) {
-                        nonWildcards.drop.add(OFOXMFieldType.IP_PROTO);
+                        nonWildcards.drop.add(OFOXMFieldType.ETH_TYPE);
                     } else {
-                        nonWildcards.allow.add(OFOXMFieldType.IP_PROTO);
+                        nonWildcards.allow.add(OFOXMFieldType.ETH_TYPE);
                     }
-                    // IP packets, proceed with ip address check
-                    pkt_ip = (IPv4) pkt;
-
-                    // IP addresses (src and dst) match?
-                    if (wildcard_nw_src == false
-                            && this.matchIPAddress(nw_src_prefix,
-                                    nw_src_maskbits, pkt_ip.getSourceAddress()) == false)
-                        return false;
-                    if (action == FirewallRule.FirewallAction.DENY) {
-                        nonWildcards.drop.add(OFOXMFieldType.IPV4_SRC);
-                        //TODO: Figure out how to set the IPv4 mask
-                        //nonWildcards.drop |= (nw_src_maskbits << OFMatch.OFPFW_NW_SRC_SHIFT);
-                    } else {
-                        nonWildcards.allow.add(OFOXMFieldType.IPV4_SRC);
-                        //TODO: Figure out how to set the IPv4 mask
-                        //nonWildcards.allow |= (nw_src_maskbits << OFMatch.OFPFW_NW_SRC_SHIFT);
-                    }
-
-                    if (wildcard_nw_dst == false
-                            && this.matchIPAddress(nw_dst_prefix,
-                                    nw_dst_maskbits,
-                                    pkt_ip.getDestinationAddress()) == false)
-                        return false;
-                    if (action == FirewallRule.FirewallAction.DENY) {
-                        nonWildcards.drop.add(OFOXMFieldType.IPV4_DST);
-                        //nonWildcards.drop |= (nw_dst_maskbits << OFMatch.OFPFW_NW_DST_SHIFT);
-                    } else {
-                        nonWildcards.allow.add(OFOXMFieldType.IPV4_DST);
-                        //nonWildcards.allow |= (nw_dst_maskbits << OFMatch.OFPFW_NW_DST_SHIFT);
-                    }
-
-                    // nw_proto check
-                    if (wildcard_nw_proto == false) {
-                        if (nw_proto == IPv4.PROTOCOL_TCP) {
-                            if (pkt_ip.getProtocol() != IPv4.PROTOCOL_TCP)
-                                return false;
-                            else {
-                                pkt_tcp = (TCP) pkt_ip.getPayload();
-                                pkt_tp_src = pkt_tcp.getSourcePort();
-                                pkt_tp_dst = pkt_tcp.getDestinationPort();
-                                pkt_tp_src_field = OFOXMFieldType.TCP_SRC;
-                                pkt_tp_dst_field = OFOXMFieldType.TCP_DST;
-                            }
-                        } else if (nw_proto == IPv4.PROTOCOL_UDP) {
-                            if (pkt_ip.getProtocol() != IPv4.PROTOCOL_UDP)
-                                return false;
-                            else {
-                                pkt_udp = (UDP) pkt_ip.getPayload();
-                                pkt_tp_src = pkt_udp.getSourcePort();
-                                pkt_tp_dst = pkt_udp.getDestinationPort();
-                                pkt_tp_src_field = OFOXMFieldType.UDP_SRC;
-                                pkt_tp_dst_field = OFOXMFieldType.UDP_DST;
-                            }
-                        } else if (nw_proto == IPv4.PROTOCOL_ICMP) {
-                            if (pkt_ip.getProtocol() != IPv4.PROTOCOL_ICMP)
-                                return false;
-                            else {
-                                // nothing more needed for ICMP
-                            }
-                        }
-                        if (action == FirewallRule.FirewallAction.DENY) {
-                            nonWildcards.drop.add(OFOXMFieldType.IP_PROTO);
-                        } else {
-                            nonWildcards.allow.add(OFOXMFieldType.IP_PROTO);
-                        }
-
-                        // TCP/UDP source and destination ports match?
-                        if (pkt_tcp != null || pkt_udp != null) {
-                            // does the source port match?
-                            if ((tp_src != 0 && tp_src != pkt_tp_src) || (pkt_tp_dst_field != null))
-                                return false;
-                            if (action == FirewallRule.FirewallAction.DENY) {
-                                nonWildcards.drop.add(pkt_tp_src_field);
-                            } else {
-                                nonWildcards.allow.add(pkt_tp_src_field);
-                            }
-
-                            // does the destination port match?
-                            if ((tp_dst != 0 && tp_dst != pkt_tp_dst) || (pkt_tp_dst_field != null))
-                                return false;
-                            if (action == FirewallRule.FirewallAction.DENY) {
-                                nonWildcards.drop.add(pkt_tp_dst_field);
-                            } else {
-                                nonWildcards.allow.add(pkt_tp_dst_field);
-                            }
-                        }
-                    }
-
                 }
             } else {
                 // non-IP packet - not supported - report no match
                 return false;
             }
+                
+            // For IPv4 or ARP packet, proceed with ip address check
+            pkt_ip = (IPv4) pkt;
+
+            // IP addresses (src and dst) match?
+            if (wildcard_nw_src == false
+                    && this.matchIPAddress(nw_src_prefix,
+                            nw_src_maskbits, pkt_ip.getSourceAddress()) == false)
+                return false;
+            if (action == FirewallRule.FirewallAction.DENY) {
+                nonWildcards.drop.add(pkt_nw_src_field);
+                //TODO: Figure out how to set the IPv4 mask
+                //nonWildcards.drop |= (nw_src_maskbits << OFMatch.OFPFW_NW_SRC_SHIFT);
+            } else {
+                nonWildcards.allow.add(pkt_nw_src_field);
+                //TODO: Figure out how to set the IPv4 mask
+                //nonWildcards.allow |= (nw_src_maskbits << OFMatch.OFPFW_NW_SRC_SHIFT);
+            }
+
+            if (wildcard_nw_dst == false
+                    && this.matchIPAddress(nw_dst_prefix,
+                            nw_dst_maskbits,
+                            pkt_ip.getDestinationAddress()) == false)
+                return false;
+            if (action == FirewallRule.FirewallAction.DENY) {
+                nonWildcards.drop.add(pkt_nw_dst_field);
+                //nonWildcards.drop |= (nw_dst_maskbits << OFMatch.OFPFW_NW_DST_SHIFT);
+            } else {
+                nonWildcards.allow.add(pkt_nw_dst_field);
+                //nonWildcards.allow |= (nw_dst_maskbits << OFMatch.OFPFW_NW_DST_SHIFT);
+            }
+
+            // nw_proto check
+            if ((wildcard_nw_proto == false) && (dl_type == Ethernet.TYPE_IPv4)) {
+                if (nw_proto == IPv4.PROTOCOL_TCP) {
+                    if (pkt_ip.getProtocol() != IPv4.PROTOCOL_TCP)
+                        return false;
+                    else {
+                        pkt_tcp = (TCP) pkt_ip.getPayload();
+                        pkt_tp_src = pkt_tcp.getSourcePort();
+                        pkt_tp_dst = pkt_tcp.getDestinationPort();
+                        pkt_tp_src_field = OFOXMFieldType.TCP_SRC;
+                        pkt_tp_dst_field = OFOXMFieldType.TCP_DST;
+                    }
+                } else if (nw_proto == IPv4.PROTOCOL_UDP) {
+                    if (pkt_ip.getProtocol() != IPv4.PROTOCOL_UDP)
+                        return false;
+                    else {
+                        pkt_udp = (UDP) pkt_ip.getPayload();
+                        pkt_tp_src = pkt_udp.getSourcePort();
+                        pkt_tp_dst = pkt_udp.getDestinationPort();
+                        pkt_tp_src_field = OFOXMFieldType.UDP_SRC;
+                        pkt_tp_dst_field = OFOXMFieldType.UDP_DST;
+                    }
+                } else if (nw_proto == IPv4.PROTOCOL_ICMP) {
+                    if (pkt_ip.getProtocol() != IPv4.PROTOCOL_ICMP)
+                        return false;
+                    else {
+                        // nothing more needed for ICMP
+                    }
+                }
+                if (action == FirewallRule.FirewallAction.DENY) {
+                    nonWildcards.drop.add(OFOXMFieldType.ETH_TYPE);//prereq
+                    nonWildcards.drop.add(OFOXMFieldType.IP_PROTO);
+                } else {
+                    nonWildcards.drop.add(OFOXMFieldType.ETH_TYPE);//prereq
+                    nonWildcards.allow.add(OFOXMFieldType.IP_PROTO);
+                }
+
+                // TCP/UDP source and destination ports match?
+                if (pkt_tcp != null || pkt_udp != null) {
+                    // does the source port match?
+                    if ((tp_src != 0 && tp_src != pkt_tp_src) || (pkt_tp_dst_field != null))
+                        return false;
+                    if (action == FirewallRule.FirewallAction.DENY) {
+                        nonWildcards.drop.addAll(Arrays.asList(OFOXMFieldType.ETH_TYPE, OFOXMFieldType.IP_PROTO, //prereq
+                        		pkt_tp_src_field));
+                    } else {
+                        nonWildcards.allow.addAll(Arrays.asList(OFOXMFieldType.ETH_TYPE, OFOXMFieldType.IP_PROTO, //prereq 
+                        		pkt_tp_src_field));
+                    }
+
+                    // does the destination port match?
+                    if ((tp_dst != 0 && tp_dst != pkt_tp_dst) || (pkt_tp_dst_field != null))
+                        return false;
+                    if (action == FirewallRule.FirewallAction.DENY) {
+                        nonWildcards.drop.addAll(Arrays.asList(OFOXMFieldType.ETH_TYPE, OFOXMFieldType.IP_PROTO, //prereq
+                        		pkt_tp_dst_field));
+                    } else {
+                        nonWildcards.allow.addAll(Arrays.asList(OFOXMFieldType.ETH_TYPE, OFOXMFieldType.IP_PROTO, //prereq
+                        		pkt_tp_dst_field));
+                    }
+                }
+            }
         }
+        /* This code is probably not needed. TODO: Check
+         */
         if (action == FirewallRule.FirewallAction.DENY) {
             nonWildcards.drop.add(OFOXMFieldType.ETH_TYPE);
         } else {
