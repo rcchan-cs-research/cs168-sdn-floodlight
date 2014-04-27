@@ -14,13 +14,17 @@ import org.openflow.util.U16;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
 public class OFPacketQueue implements Cloneable, OFQueuePropertyFactoryAware {
-    public static int MINIMUM_LENGTH = 16;
+    public static short MINIMUM_LENGTH = 16;
 
     protected OFQueuePropertyFactory queuePropertyFactory;
     protected int portNumber;
     protected int queueId;
     protected short length;
     protected List<OFQueueProperty> properties;
+
+    public OFPacketQueue() {
+        this.length = MINIMUM_LENGTH;
+    }
 
     /**
      * @return the queueId
@@ -60,14 +64,6 @@ public class OFPacketQueue implements Cloneable, OFQueuePropertyFactoryAware {
     }
 
     /**
-     * Get the unsigned int length
-     * @return
-     */
-    public int getLengthU() {
-        return U16.f(this.length);
-    }
-
-    /**
      * @param length the length to set
      */
     public void setLength(short length) {
@@ -86,6 +82,13 @@ public class OFPacketQueue implements Cloneable, OFQueuePropertyFactoryAware {
      */
     public OFPacketQueue setProperties(List<OFQueueProperty> properties) {
         this.properties = properties;
+        int l = MINIMUM_LENGTH;
+        if (this.properties != null) {
+            for (OFQueueProperty prop : this.properties) {
+                l += prop.getLengthU();
+            }
+        }
+        this.length = U16.t(l);
         return this;
     }
 
@@ -187,13 +190,6 @@ public class OFPacketQueue implements Cloneable, OFQueuePropertyFactoryAware {
      * @return the length
      */
     public int computeLength() {
-        int l = MINIMUM_LENGTH;
-        if (this.properties != null) {
-            for (OFQueueProperty prop : this.properties) {
-                l += prop.getLengthU();
-            }
-        }
-        this.length = U16.t(l);
-        return l;
+        return getLength();
     }
 }
