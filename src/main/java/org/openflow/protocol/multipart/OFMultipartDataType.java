@@ -160,20 +160,20 @@ public enum OFMultipartDataType {
                             return new OFMeterFeaturesStatisticsReply();
                         }
                     }),
-    TABLE_FEATURES (12, OFTableFeaturesStatisticsRequest.class, OFTableFeaturesStatisticsReply.class,
+ */
+    TABLE_FEATURES (12, OFTableFeatures.class, OFTableFeatures.class,
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
-                            return new OFTableFeaturesStatisticsRequest();
+                            return new OFTableFeatures();
                         }
                     },
                     new Instantiable<OFMultipartData>() {
                         @Override
                         public OFMultipartData instantiate() {
-                            return new OFTableFeaturesStatisticsReply();
+                            return new OFTableFeatures();
                         }
                     }),
- */
     PORT_DESC (13, null, OFPortDescription.class,
                     null,
                     new Instantiable<OFMultipartData>() {

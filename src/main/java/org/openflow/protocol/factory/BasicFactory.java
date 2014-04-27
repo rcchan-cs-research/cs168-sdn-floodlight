@@ -19,6 +19,8 @@ import org.openflow.protocol.hello.OFHelloElementType;
 import org.openflow.protocol.multipart.OFVendorStatistics;
 import org.openflow.protocol.meter.OFMeterBand;
 import org.openflow.protocol.meter.OFMeterBandType;
+import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesProperty;
+import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesPropertyType;
 
 
 /**
@@ -33,7 +35,7 @@ import org.openflow.protocol.meter.OFMeterBandType;
 public class BasicFactory implements OFMessageFactory, OFActionFactory,
         OFQueuePropertyFactory, OFMultipartFactory,
         OFInstructionFactory, OFHelloElementFactory,
-        OFMeterBandFactory {
+        OFMeterBandFactory, OFTableFeaturesPropertyFactory {
 
     private static final BasicFactory SINGLETON_INSTANCE = new BasicFactory();
 
@@ -115,6 +117,9 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
         }
         if (ofm instanceof OFMeterBandFactoryAware) {
             ((OFMeterBandFactoryAware)ofm).setMeterBandFactory(this);
+        }
+        if (ofm instanceof OFTableFeaturesPropertyFactoryAware) {
+            ((OFTableFeaturesPropertyFactoryAware)ofm).setTableFeaturesPropertyFactory(this);
         }
     }
 
@@ -416,4 +421,50 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
 
         return results;
     }
+
+    @Override
+    public OFTableFeaturesProperty getTableFeaturesProperty(OFTableFeaturesPropertyType t) {
+        return t.newInstance();
+    }
+
+    @Override
+    public List<OFTableFeaturesProperty> parseTableFeaturesProperties(ByteBuffer data,
+            int length) {
+        return parseTableFeaturesProperties(data, length, 0);
+    }
+
+    @Override
+    public List<OFTableFeaturesProperty> parseTableFeaturesProperties(ByteBuffer data,
+            int length, int limit) {
+        List<OFTableFeaturesProperty> results = new ArrayList<OFTableFeaturesProperty>();
+        OFTableFeaturesProperty demux = new OFTableFeaturesProperty();
+        OFTableFeaturesProperty oftfp;
+        int end = data.position() + length;
+
+        while (limit == 0 || results.size() <= limit) {
+            if (data.remaining() < OFTableFeaturesProperty.MINIMUM_LENGTH ||
+                    (data.position() + OFTableFeaturesProperty.MINIMUM_LENGTH) > end)
+                return results;
+
+            data.mark();
+            demux.readFrom(data);
+            data.reset();
+
+            if (demux.getLengthU() > data.remaining() ||
+                    (data.position() + demux.getLengthU()) > end)
+                return results;
+
+            oftfp = getTableFeaturesProperty(demux.getType());
+            oftfp.readFrom(data);
+            if (OFTableFeaturesProperty.class.equals(oftfp.getClass())) {
+                // advance the position for un-implemented messages
+                data.position(data.position()+(oftfp.getLengthU() -
+                        OFTableFeaturesProperty.MINIMUM_LENGTH));
+            }
+            results.add(oftfp);
+        }
+
+        return results;
+    }    
 }
+
