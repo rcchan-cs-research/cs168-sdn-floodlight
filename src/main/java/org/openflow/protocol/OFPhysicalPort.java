@@ -468,13 +468,13 @@ public class OFPhysicalPort {
         data.putShort((short)0); // pad
         try {
             byte[] name = this.name.getBytes("ASCII");
-            if (name.length < 16) {
+            if (name.length < OFP_MAX_PORT_NAME_LEN) {
                 data.put(name);
-                for (int i = name.length; i < 16; ++i) {
+                for (int i = name.length; i < OFP_MAX_PORT_NAME_LEN; ++i) {
                     data.put((byte) 0);
                 }
             } else {
-                data.put(name, 0, 15);
+                data.put(name, 0, OFP_MAX_PORT_NAME_LEN-1);
                 data.put((byte) 0);
             }
         } catch (UnsupportedEncodingException e) {
@@ -522,9 +522,31 @@ public class OFPhysicalPort {
             return false;
         }
         OFPhysicalPort other = (OFPhysicalPort) obj;
-        if (portNumber != other.portNumber) {
+        if (portNumber != other.portNumber) 
             return false;
-        }
+        if (portNumber != other.portNumber) 
+            return false;
+        if (name != other.name) 
+                return false;
+        if (config != other.config) 
+                return false;
+        if (state != other.state) 
+                return false;
+        if (currentFeatures != other.currentFeatures) 
+                return false;
+        if (advertisedFeatures != other.advertisedFeatures) 
+                return false;
+        if (supportedFeatures != other.supportedFeatures) 
+                return false;
+        if (peerFeatures != other.peerFeatures) 
+                return false;
+        if (hardwareAddress.equals(other.hardwareAddress))
+                return false;
+        if (currSpeed != other.currSpeed) 
+                return false;
+        if (maxSpeed != other.maxSpeed) 
+                return false;
+
         return true;
     }
 }
