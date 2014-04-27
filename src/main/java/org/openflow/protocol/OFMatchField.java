@@ -81,7 +81,9 @@ public class OFMatchField extends OFOXMField implements Cloneable {
      */
     @Override
     public OFMatchField clone() throws CloneNotSupportedException {
-        return (OFMatchField) super.clone();
+        OFMatchField matchField = (OFMatchField)super.clone();
+        matchField.setOXMFieldMask(oxmFieldMask);
+        return matchField;
     }
 
     /* (non-Javadoc)

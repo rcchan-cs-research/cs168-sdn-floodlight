@@ -182,7 +182,7 @@ public class OFOXMField implements Cloneable {
      */
     @Override
     public OFOXMField clone() throws CloneNotSupportedException {
-        OFOXMField oxmField = new OFOXMField();
+        OFOXMField oxmField = (OFOXMField)super.clone();
         oxmField.setOXMFieldValue(oxmFieldValue);
         return oxmField;
     }
