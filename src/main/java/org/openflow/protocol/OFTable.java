@@ -4,8 +4,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class OFTable {
-    public static final int OFPTT_MAX = ((byte)0xfe);
-    public static final int OFPTT_ALL = ((byte)0xff);
+    public static final byte OFPTT_MAX = ((byte)0xfe);
+    public static final byte OFPTT_ALL = ((byte)0xff);
 
     public enum OFTableConfig {
         OFPTC_DEPRECATED_MASK (3);
