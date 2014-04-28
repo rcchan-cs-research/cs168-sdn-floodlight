@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.openflow.util.HexString;
 import org.openflow.util.U8;
@@ -581,7 +582,7 @@ public class OFMatch implements Cloneable {
      * @param nonWildcardedFieldTypes set of match field types preserved,
      * if null all fields are wildcarded
      */
-    public OFMatch setNonWildcards(Set<OFOXMFieldType> nonWildcardedFieldTypes) {
+    public OFMatch setNonWildcards(List<OFOXMFieldType> nonWildcardedFieldTypes) {
         if (nonWildcardedFieldTypes == null)
             this.matchFields.clear();
         else if (nonWildcardedFieldTypes.size() == 0)
