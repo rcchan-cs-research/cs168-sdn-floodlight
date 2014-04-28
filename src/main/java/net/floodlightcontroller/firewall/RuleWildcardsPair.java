@@ -19,9 +19,9 @@ package net.floodlightcontroller.firewall;
 
 import org.openflow.protocol.OFOXMFieldType;
 
-import java.util.List;
+import java.util.EnumSet;
 
 public class RuleWildcardsPair {
     public FirewallRule rule;
-    public List<OFOXMFieldType> nonWildcards = null;
+    public EnumSet<OFOXMFieldType> nonWildcards = EnumSet.noneOf(OFOXMFieldType.class);
 }

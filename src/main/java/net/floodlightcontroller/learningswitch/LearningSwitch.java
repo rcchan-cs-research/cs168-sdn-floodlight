@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -440,7 +441,7 @@ public class LearningSwitch
             // FIXME: current HP switches ignore DL_SRC and DL_DST fields, so we have to match on
             // NW_SRC and NW_DST as well
 
-        	match.setNonWildcards(Arrays.asList(OFOXMFieldType.IN_PORT, OFOXMFieldType.VLAN_VID, 
+        	match.setNonWildcards(EnumSet.of(OFOXMFieldType.IN_PORT, OFOXMFieldType.VLAN_VID, 
         			OFOXMFieldType.ETH_SRC, OFOXMFieldType.ETH_DST,
                     OFOXMFieldType.IPV4_SRC, OFOXMFieldType.IPV4_DST));
         	

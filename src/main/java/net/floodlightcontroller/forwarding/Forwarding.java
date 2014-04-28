@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -260,7 +261,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule {
                                     AppCookie.makeCookie(FORWARDING_APP_ID, 0);
 
                             // if there is prior routing decision use wildcard
-                            List <OFOXMFieldType> nonWildcards = null;
+                            EnumSet<OFOXMFieldType> nonWildcards = EnumSet.noneOf(OFOXMFieldType.class);
                             IRoutingDecision decision = null;
                             if (cntx != null) {
                                 decision = IRoutingDecision.rtStore
@@ -271,7 +272,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule {
                                 nonWildcards = decision.getNonWildcards();
                             } else {
                             	// L2 only wildcard if there is no prior route decision
-                                nonWildcards = Arrays.asList(OFOXMFieldType.IN_PORT, OFOXMFieldType.VLAN_VID,
+                                nonWildcards = EnumSet.of(OFOXMFieldType.IN_PORT, OFOXMFieldType.VLAN_VID,
                                 		                     OFOXMFieldType.ETH_SRC, OFOXMFieldType.ETH_DST,
                                 		                     OFOXMFieldType.ETH_TYPE, //prereq
                                 		                     OFOXMFieldType.IPV4_SRC, OFOXMFieldType.IPV4_DST);

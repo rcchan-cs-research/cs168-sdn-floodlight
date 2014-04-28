@@ -209,7 +209,7 @@ public abstract class ForwardingBase
             recommendation=LogMessageDoc.CHECK_SWITCH)
     })
     public boolean pushRoute(Route route, OFMatch match,
-                             List <OFOXMFieldType> nonWildcards,
+                             EnumSet<OFOXMFieldType> nonWildcards,
                              OFPacketIn pi,
                              long pinSwitch,
                              long cookie,

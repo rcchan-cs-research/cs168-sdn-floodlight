@@ -19,6 +19,7 @@ package net.floodlightcontroller.routing;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.EnumSet;
 
 import org.openflow.protocol.OFOXMFieldType;
 
@@ -30,7 +31,7 @@ import net.floodlightcontroller.devicemanager.SwitchPort;
 public class RoutingDecision implements IRoutingDecision {
 
     protected RoutingAction action;
-    protected List<OFOXMFieldType> nonWildcards;
+    protected EnumSet<OFOXMFieldType> nonWildcards;
     protected short hardTimeout;
     protected SwitchPort srcPort;
     protected IDevice srcDevice;
@@ -95,12 +96,12 @@ public class RoutingDecision implements IRoutingDecision {
     }
     
     @Override
-    public List<OFOXMFieldType> getNonWildcards() {
+    public EnumSet<OFOXMFieldType> getNonWildcards() {
         return this.nonWildcards;
     }
     
     @Override
-    public void setNonWildcards(List<OFOXMFieldType> nonWildcards) {
+    public void setNonWildcards(EnumSet<OFOXMFieldType> nonWildcards) {
         this.nonWildcards = nonWildcards;
     }
    
