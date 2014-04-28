@@ -18,6 +18,7 @@
 package net.floodlightcontroller.firewall;
 
 import java.util.Arrays;
+import java.nio.ByteBuffer;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -25,6 +26,7 @@ import org.openflow.protocol.OFOXMFieldType;
 
 import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPacket;
+import net.floodlightcontroller.packet.ARP;
 import net.floodlightcontroller.packet.IPv4;
 import net.floodlightcontroller.packet.TCP;
 import net.floodlightcontroller.packet.UDP;
@@ -79,6 +81,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
         this.tp_src = 0;
         this.tp_dst = 0;
         this.dl_dst = 0;
+        this.dl_type = 0;
         this.nw_dst_prefix = 0;
         this.nw_dst_maskbits = 0; 
         this.dpid = -1;
@@ -179,12 +182,17 @@ public class FirewallRule implements Comparable<FirewallRule> {
         IPacket pkt = packet.getPayload();
 
         // dl_type type
+        ARP pkt_arp = null;
         IPv4 pkt_ip = null;
 
         // nw_proto types
         TCP pkt_tcp = null;
         UDP pkt_udp = null;
-
+        
+        // nw_src and nw_dst (IP addresses)
+        int pkt_nw_src = 0;
+        int pkt_nw_dst = 0;
+        
         // tp_src and tp_dst (tp port numbers)
         short pkt_tp_src = 0;
         short pkt_tp_dst = 0;
@@ -233,25 +241,31 @@ public class FirewallRule implements Comparable<FirewallRule> {
                 if (packet.getEtherType() != Ethernet.TYPE_ARP)
                     return false;
                 else {
-                	pkt_nw_src_field = OFOXMFieldType.ARP_SHA;
-                	pkt_nw_dst_field = OFOXMFieldType.ARP_THA;
                 	if (action == FirewallRule.FirewallAction.DENY) {
                         nonWildcards.drop.add(OFOXMFieldType.ETH_TYPE);
                     } else {
                         nonWildcards.allow.add(OFOXMFieldType.ETH_TYPE);
                     }
+                	pkt_nw_src_field = OFOXMFieldType.ARP_SHA;
+                	pkt_nw_dst_field = OFOXMFieldType.ARP_THA;
+                	pkt_arp = (ARP) pkt;
+                	pkt_nw_src = ByteBuffer.wrap(pkt_arp.getSenderProtocolAddress()).getInt();
+                	pkt_nw_dst = ByteBuffer.wrap(pkt_arp.getTargetProtocolAddress()).getInt();
                 }
             } else if (dl_type == Ethernet.TYPE_IPv4) {
                 if (packet.getEtherType() != Ethernet.TYPE_IPv4)
                     return false;
                 else {
-                	pkt_nw_src_field = OFOXMFieldType.IPV4_SRC;
-                	pkt_nw_dst_field = OFOXMFieldType.IPV4_DST;
                     if (action == FirewallRule.FirewallAction.DENY) {
                         nonWildcards.drop.add(OFOXMFieldType.ETH_TYPE);
                     } else {
                         nonWildcards.allow.add(OFOXMFieldType.ETH_TYPE);
                     }
+                	pkt_nw_src_field = OFOXMFieldType.IPV4_SRC;
+                	pkt_nw_dst_field = OFOXMFieldType.IPV4_DST;
+                    pkt_ip = (IPv4) pkt;
+                	pkt_nw_src = pkt_ip.getSourceAddress();
+                	pkt_nw_dst = pkt_ip.getDestinationAddress();
                 }
             } else {
                 // non-IP packet - not supported - report no match
@@ -259,12 +273,11 @@ public class FirewallRule implements Comparable<FirewallRule> {
             }
                 
             // For IPv4 or ARP packet, proceed with ip address check
-            pkt_ip = (IPv4) pkt;
 
             // IP addresses (src and dst) match?
             if (wildcard_nw_src == false
                     && this.matchIPAddress(nw_src_prefix,
-                            nw_src_maskbits, pkt_ip.getSourceAddress()) == false)
+                            nw_src_maskbits, pkt_nw_src) == false)
                 return false;
             if (action == FirewallRule.FirewallAction.DENY) {
                 nonWildcards.drop.add(pkt_nw_src_field);
@@ -279,7 +292,7 @@ public class FirewallRule implements Comparable<FirewallRule> {
             if (wildcard_nw_dst == false
                     && this.matchIPAddress(nw_dst_prefix,
                             nw_dst_maskbits,
-                            pkt_ip.getDestinationAddress()) == false)
+                            pkt_nw_dst) == false)
                 return false;
             if (action == FirewallRule.FirewallAction.DENY) {
                 nonWildcards.drop.add(pkt_nw_dst_field);
