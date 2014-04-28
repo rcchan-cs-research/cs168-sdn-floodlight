@@ -306,10 +306,7 @@ public class LearningSwitch
         List<OFAction> actions = new ArrayList<OFAction>();
         actions.add(new OFActionOutput(outport, (short) 0xffff));
 
-        po.setActions(actions)
-          .setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
-        short poLength =
-                (short) (po.getActionsLength() + OFPacketOut.MINIMUM_LENGTH);
+        po.setActions(actions);
 
         // If the switch doens't support buffering set the buffer id to be none
         // otherwise it'll be the the buffer id of the PacketIn
@@ -357,13 +354,10 @@ public class LearningSwitch
                                   (Only meaningful if buffer_id == -1.) */
 
         OFPacketOut packetOutMessage = (OFPacketOut) floodlightProvider.getOFMessageFactory().getMessage(OFType.PACKET_OUT);
-        short packetOutLength = (short)OFPacketOut.MINIMUM_LENGTH; // starting length
 
         // Set buffer_id, in_port, actions_len
         packetOutMessage.setBufferId(packetInMessage.getBufferId());
         packetOutMessage.setInPort(packetInMessage.getInPort());
-        packetOutMessage.setActionsLength((short)OFActionOutput.MINIMUM_LENGTH);
-        packetOutLength += OFActionOutput.MINIMUM_LENGTH;
 
         // set actions
         List<OFAction> actions = new ArrayList<OFAction>(1);
@@ -374,11 +368,7 @@ public class LearningSwitch
         if (packetInMessage.getBufferId() == OFPacketOut.BUFFER_ID_NONE) {
             byte[] packetData = packetInMessage.getPacketData();
             packetOutMessage.setPacketData(packetData);
-            packetOutLength += (short)packetData.length;
         }
-
-        // finally, set the total length
-        packetOutMessage.setLength(packetOutLength);
 
         // and write it out
         try {
