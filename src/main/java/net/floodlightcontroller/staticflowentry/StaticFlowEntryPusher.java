@@ -322,17 +322,17 @@ public class StaticFlowEntryPusher
             }
         }
 
-        OFMatch ofMatch = new OFMatch();
+        OFMatch ofMatch;
         String match = matchString.toString();
         try {
-            ofMatch.fromString(match);
+            ofMatch = OFMatch.fromString(match);
+            flowMod.setMatch(ofMatch);
         } catch (IllegalArgumentException e) {
             log.debug(
                     "ignoring flow entry {} on switch {} with illegal OFMatch() key: "
                             + match, entryName, switchName);
             return;
         }
-        flowMod.setMatch(ofMatch);
 
         entries.get(switchName).put(entryName, flowMod);
     }
