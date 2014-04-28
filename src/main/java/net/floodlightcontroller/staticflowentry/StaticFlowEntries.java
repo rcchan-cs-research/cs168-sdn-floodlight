@@ -228,8 +228,8 @@ public class StaticFlowEntries {
                 case SET_FIELD:
                 	//TODO: Support old style string names for fields
                 	OFActionSetField setField = (OFActionSetField)a;
-                	sb.append("set-" + setField.getOXMField().getOXMFieldType().getFieldName() + 
-                			"=" + setField.getOXMField().getOXMFieldValue().toString());
+                	sb.append("set-" + setField.getField().getType().getName() + 
+                			"=" + setField.getField().getValue().toString());
                     break;
                 default:
                     log.error("Could not decode action: {}", a);
