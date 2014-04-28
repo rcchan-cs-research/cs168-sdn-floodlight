@@ -559,6 +559,8 @@ public class Firewall implements IFirewallService, IOFMessageListener,
         }
 
         // make a pair of rule and wildcards, then return it
+        // TODO: Fix rule such that it only drops this flow,
+        // and not blanket block this switch
         RuleWildcardsPair ret = new RuleWildcardsPair();
         ret.rule = matched_rule;
         if (matched_rule == null || matched_rule.action == FirewallRule.FirewallAction.DENY) {
