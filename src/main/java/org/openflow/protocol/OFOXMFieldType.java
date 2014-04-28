@@ -50,20 +50,20 @@ public enum OFOXMFieldType {
     IPV6_EXTHDR     ("ipv6_exthdr", 39, 2);
 
     static OFOXMFieldType[] mapping;
-    protected short fieldType;
-    protected String fieldName;
-    protected short fieldClass;
-    protected byte fieldPayloadLength;
+    protected short value;
+    protected String name;
+    protected short matchClass;
+    protected byte payloadLength;
 
-    private OFOXMFieldType(String fieldName, int fieldType, int fieldPayloadLength) {
-        this.fieldName = fieldName;
-        this.fieldType = (short) fieldType;
-        this.fieldClass = OFMatchClass.OPENFLOW_BASIC.getValue();
-        this.fieldPayloadLength = (byte) fieldPayloadLength;
+    private OFOXMFieldType(String name, int value, int payloadLength) {
+        this.name = name;
+        this.value = (short) value;
+        this.matchClass = OFMatchClass.OPENFLOW_BASIC.getValue();
+        this.payloadLength = (byte) payloadLength;
 
         // Ideally the mapping should be class specific. For now,
         // only supporting OpenFlowBasic
-        OFOXMFieldType.addMapping(this.fieldType, this);
+        OFOXMFieldType.addMapping(this.value, this);
     }
 
     /**
@@ -101,17 +101,17 @@ public enum OFOXMFieldType {
     /**
      * @return the values
      */
-    public short getFieldClass() {
-        return fieldClass;
+    public short getMatchClass() {
+        return matchClass;
     }
-    public String getFieldName() {
-        return fieldName;
+    public String getName() {
+        return name;
     }
-    public short getFieldType() {
-        return fieldType;
+    public short getValue() {
+        return value;
     }
-    public byte getFieldPayloadLength() {
-        return fieldPayloadLength;
+    public byte getPayloadLength() {
+        return payloadLength;
     }
 
     /* (non-Javadoc)
@@ -119,7 +119,7 @@ public enum OFOXMFieldType {
      */
     @Override
         public String toString() {
-            return "OFOXMFieldType [fieldName=" + fieldName + ", fieldTypeVal=" + fieldType +
-                ", fieldPayloadLength=" + fieldPayloadLength + "]";
+            return "OFOXMFieldType [name=" + name + ", valueVal=" + value +
+                ", payloadLength=" + payloadLength + "]";
     }
 }

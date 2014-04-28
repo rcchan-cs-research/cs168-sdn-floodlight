@@ -7,50 +7,50 @@ import java.nio.ByteBuffer;
  */
 
 public class OFMatchField extends OFOXMField implements Cloneable {
-    protected Object oxmFieldMask;
+    protected Object mask;
 
     public OFMatchField() {
         super();
     }
     
-    public OFMatchField(OFOXMFieldType oxmFieldType, Object oxmFieldValue) {
-        super(oxmFieldType, oxmFieldValue);
-        this.oxmFieldMask = null;
+    public OFMatchField(OFOXMFieldType type, Object value) {
+        super(type, value);
+        this.mask = null;
     }
 
-    public OFMatchField(OFOXMFieldType oxmFieldType, Object oxmFieldValue, Object oxmFieldMask) {
-        super(oxmFieldType, oxmFieldValue);
-        this.oxmFieldLength = 4 + 2 * oxmFieldType.getFieldPayloadLength();
-        if (isAllZero(oxmFieldMask)) {
-	        this.oxmFieldHasMask = 1;
-	        this.oxmFieldMask = oxmFieldMask;
+    public OFMatchField(OFOXMFieldType type, Object value, Object mask) {
+        super(type, value);
+        this.length = 4 + 2 * type.getPayloadLength();
+        if (isAllZero(mask)) {
+	        this.hasMask = 1;
+	        this.mask = mask;
         }
     }
 
-    public Object getOXMFieldMask() {
-        return oxmFieldMask;
+    public Object getMask() {
+        return mask;
     }
     
-    public void setOXMFieldMask(Object oxmFieldMask) {
-        this.oxmFieldMask = oxmFieldMask;
+    public void setMask(Object mask) {
+        this.mask = mask;
     }
 
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
-        if (this.oxmFieldHasMask == 1)
-            this.oxmFieldMask = readObject(data, this.oxmFieldType.getFieldPayloadLength());
+        if (this.hasMask == 1)
+            this.mask = readObject(data, this.type.getPayloadLength());
     }
 
     public void writeTo(ByteBuffer data) {
         super.writeTo(data);
-        if (this.oxmFieldHasMask == 1)
-            writeObject(data, oxmFieldMask, oxmFieldType.getFieldPayloadLength());
+        if (this.hasMask == 1)
+            writeObject(data, mask, type.getPayloadLength());
     }
 
     public int hashCode() {
         final int prime = 367;
         int result = super.hashCode();
-        result = result * prime + ((oxmFieldMask==null)? 0: oxmFieldMask.hashCode());
+        result = result * prime + ((mask==null)? 0: mask.hashCode());
         return result;
     }
 
@@ -66,11 +66,11 @@ public class OFMatchField extends OFOXMField implements Cloneable {
             return false;
         }
         OFMatchField other = (OFMatchField) obj;
-        if (oxmFieldMask == null) {
-            if (other.oxmFieldMask != null) {
+        if (mask == null) {
+            if (other.mask != null) {
                 return false;
             }
-        } else if (!oxmFieldMask.equals(other.oxmFieldMask)) {
+        } else if (!mask.equals(other.mask)) {
             return false;
         }
         return true;
@@ -82,7 +82,7 @@ public class OFMatchField extends OFOXMField implements Cloneable {
     @Override
     public OFMatchField clone() throws CloneNotSupportedException {
         OFMatchField matchField = (OFMatchField)super.clone();
-        matchField.setOXMFieldMask(oxmFieldMask);
+        matchField.setMask(mask);
         return matchField;
     }
 
@@ -91,8 +91,8 @@ public class OFMatchField extends OFOXMField implements Cloneable {
      */
     @Override
     public String toString() {
-        return "OFMatchField [oxmFieldType=" + oxmFieldType + ",oxmFieldHasMask=" +
-            oxmFieldHasMask + ", oxmFieldLength=" + oxmFieldLength + ", oxmFieldValue=" + oxmFieldValue +
-            ((oxmFieldHasMask == 1) ? ", oxmFieldMask=" + oxmFieldMask : "") + "]";
+        return "OFMatchField [type=" + type + ",hasMask=" +
+            hasMask + ", length=" + length + ", value=" + value +
+            ((hasMask == 1) ? ", mask=" + mask : "") + "]";
     }
 }

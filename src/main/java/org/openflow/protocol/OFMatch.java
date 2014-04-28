@@ -84,10 +84,10 @@ public class OFMatch implements Cloneable {
      */
     public Object getMatchFieldValue(OFOXMFieldType matchType) {
         for (OFMatchField matchField: matchFields) {
-            if (matchField.getOXMFieldType() == matchType)
-                return matchField.getOXMFieldValue();
+            if (matchField.getType() == matchType)
+                return matchField.getValue();
         }
-        throw new IllegalArgumentException("No match exists for matchfield " + matchType.getFieldName());
+        throw new IllegalArgumentException("No match exists for matchfield " + matchType.getName());
     }
 
     /**
@@ -96,10 +96,10 @@ public class OFMatch implements Cloneable {
      */
     public Object getMatchFieldMask(OFOXMFieldType matchType) {
         for (OFMatchField matchField: matchFields) {
-            if (matchField.getOXMFieldType() == matchType)
-                return matchField.getOXMFieldMask();
+            if (matchField.getType() == matchType)
+                return matchField.getMask();
         }
-        throw new IllegalArgumentException("No match exists for matchfield " + matchType.getFieldName());
+        throw new IllegalArgumentException("No match exists for matchfield " + matchType.getName());
     }
 
     /**
@@ -532,14 +532,14 @@ public class OFMatch implements Cloneable {
         if (this.matchFields == null)
             this.matchFields = new ArrayList<OFMatchField>();
         for (OFMatchField matchField: this.matchFields) {
-            if (matchField.getOXMFieldType() == newMatchField.getOXMFieldType()) {
-                matchField.setOXMFieldValue(newMatchField.getOXMFieldValue());
-                matchField.setOXMFieldMask(newMatchField.getOXMFieldMask());
+            if (matchField.getType() == newMatchField.getType()) {
+                matchField.setValue(newMatchField.getValue());
+                matchField.setMask(newMatchField.getMask());
                 return;
             }
         }
         this.matchFields.add(newMatchField);
-        this.matchLength += newMatchField.getOXMFieldLength();
+        this.matchLength += newMatchField.getLength();
         this.length = U16.t(8*((this.matchLength + 7)/8)); //includes padding
     }
 
@@ -572,7 +572,7 @@ public class OFMatch implements Cloneable {
         this.matchLength = 4; //No padding
         if (matchFields != null)
             for (OFMatchField newMatchField: this.matchFields) 
-                this.matchLength += newMatchField.getOXMFieldLength();
+                this.matchLength += newMatchField.getLength();
         this.length = U16.t(8*((this.matchLength + 7)/8)); //includes padding
         return this;
     }
@@ -592,7 +592,7 @@ public class OFMatch implements Cloneable {
 
             if (nonWildcardedFieldTypes != null) {
                 for (OFMatchField matchField: matchFields) {
-                    OFOXMFieldType type = matchField.getOXMFieldType();
+                    OFOXMFieldType type = matchField.getType();
                     if (nonWildcardedFieldTypes.contains(type))
                         newMatchFields.add(matchField);
                 }
@@ -631,7 +631,7 @@ public class OFMatch implements Cloneable {
                 OFMatchField matchField = new OFMatchField();
                 matchField.readFrom(data);
                 this.matchFields.add(matchField);
-                remaining -= U32.f(matchField.getOXMFieldLength()+4); //value length + header length
+                remaining -= U32.f(matchField.getLength()+4); //value length + header length
             }
         } else {
             this.setField(OFOXMFieldType.IN_PORT, data.getInt());
@@ -1003,53 +1003,53 @@ public class OFMatch implements Cloneable {
                                                               + " does not have form 'key=value' parsing "
                                                               + match);
             values[0] = values[0].toLowerCase(); // try to make this case insensitive
-            if (values[0].equals(OFOXMFieldType.IN_PORT.getFieldName())
+            if (values[0].equals(OFOXMFieldType.IN_PORT.getName())
             		|| values[0].equals("input_port")) {
                 m.setInPort(U16.t(Integer.valueOf(values[1])));
-            } else if (values[0].equals(OFOXMFieldType.ETH_DST.getFieldName())
+            } else if (values[0].equals(OFOXMFieldType.ETH_DST.getName())
                     || values[0].equals("dl_dst")) {
                 m.setDataLayerDestination(HexString.fromHexString(values[1]));
-            } else if (values[0].equals(OFOXMFieldType.ETH_SRC.getFieldName())
+            } else if (values[0].equals(OFOXMFieldType.ETH_SRC.getName())
                     || values[0].equals("dl_src")) {
             	m.setDataLayerSource(HexString.fromHexString(values[1]));
-            } else if (values[0].equals(OFOXMFieldType.ETH_TYPE.getFieldName())
+            } else if (values[0].equals(OFOXMFieldType.ETH_TYPE.getName())
                     || values[0].equals("dl_type")) {
                 if (values[1].startsWith("0x"))
                     m.setDataLayerType(U16.t(Integer.valueOf(values[1].replaceFirst("0x", ""), 16)));
                 else
                     m.setDataLayerType(U16.t(Integer.valueOf(values[1])));
-            } else if (values[0].equals(OFOXMFieldType.VLAN_VID.getFieldName()) 
+            } else if (values[0].equals(OFOXMFieldType.VLAN_VID.getName()) 
             		|| values[0].equals("dl_vlan")) {
                 if (values[1].startsWith("0x"))
                     m.setDataLayerVirtualLan(U16.t(Integer.valueOf(values[1].replaceFirst("0x", ""), 16)));
                 else
                     m.setDataLayerVirtualLan(U16.t(Integer.valueOf(values[1])));
-            } else if (values[0].equals(OFOXMFieldType.VLAN_PCP.getFieldName()) 
+            } else if (values[0].equals(OFOXMFieldType.VLAN_PCP.getName()) 
             		|| values[0].equals("dl_vlan_pcp")) {
                 m.setDataLayerVirtualLanPriorityCodePoint(U8.t(Short.valueOf(values[1])));
-            } else if (values[0].equals(OFOXMFieldType.IPV4_DST.getFieldName())
+            } else if (values[0].equals(OFOXMFieldType.IPV4_DST.getName())
             		|| values[0].equals("ip_dst") || values[0].equals("nw_dst")) {
                 m.setNetworkAddressFromCIDR(m, values[1], OFOXMFieldType.IPV4_DST);
-            } else if (values[0].equals(OFOXMFieldType.IPV4_SRC.getFieldName())
+            } else if (values[0].equals(OFOXMFieldType.IPV4_SRC.getName())
             		|| values[0].equals("ip_src") || values[0].equals("nw_src")) {
             	m.setNetworkAddressFromCIDR(m, values[1], OFOXMFieldType.IPV4_SRC);
-            } else if (values[0].equals(OFOXMFieldType.IP_PROTO.getFieldName()) || values[0].equals("nw_proto")) {
+            } else if (values[0].equals(OFOXMFieldType.IP_PROTO.getName()) || values[0].equals("nw_proto")) {
                 if (values[1].startsWith("0x"))
                     networkProtocol = U8.t(Short.valueOf(values[1].replaceFirst("0x",""),16));
                 else
                 	networkProtocol = U8.t(Short.valueOf(values[1]));
             	m.setNetworkProtocol(networkProtocol);
-            } else if (values[0].equals(OFOXMFieldType.IP_DSCP.getFieldName()) 
+            } else if (values[0].equals(OFOXMFieldType.IP_DSCP.getName()) 
             		|| values[0].equals("nw_tos")) {
                 m.setNetworkTypeOfService(U8.t(Short.valueOf(values[1])));
-            } else if (values[0].equals(OFOXMFieldType.TCP_DST.getFieldName())
-            		|| values[0].equals(OFOXMFieldType.UDP_DST.getFieldName())
+            } else if (values[0].equals(OFOXMFieldType.TCP_DST.getName())
+            		|| values[0].equals(OFOXMFieldType.UDP_DST.getName())
             		|| values[0].equals("tp_dst")) {
             	if (networkProtocol == 0)
                     throw new IllegalArgumentException("specifying transport src/dst without establishing nw_proto first");
                 m.setTransportDestination(networkProtocol, U16.t(Integer.valueOf(values[1])));
-            } else if (values[0].equals(OFOXMFieldType.TCP_SRC.getFieldName())
-            		|| values[0].equals(OFOXMFieldType.UDP_SRC.getFieldName())
+            } else if (values[0].equals(OFOXMFieldType.TCP_SRC.getName())
+            		|| values[0].equals(OFOXMFieldType.UDP_SRC.getName())
             		|| values[0].equals("tp_src")) {
             	if (networkProtocol == 0)
                     throw new IllegalArgumentException("specifying transport src/dst without establishing nw_proto first");

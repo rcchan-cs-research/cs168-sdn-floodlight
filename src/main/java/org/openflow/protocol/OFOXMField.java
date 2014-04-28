@@ -10,55 +10,55 @@ import org.openflow.protocol.OFOXMFieldType;
 public class OFOXMField implements Cloneable {
     public static int MINIMUM_LENGTH = 4;
 
-    protected OFOXMFieldType oxmFieldType;
-    protected Object oxmFieldValue;
-    protected byte oxmFieldHasMask;
-    protected int oxmFieldLength;
+    protected OFOXMFieldType type;
+    protected Object value;
+    protected byte hasMask;
+    protected int length;
 
     public OFOXMField() {
-        this.oxmFieldLength = 0;
-        this.oxmFieldHasMask = 0;
+        this.length = 0;
+        this.hasMask = 0;
     }
     
-    public OFOXMField(OFOXMFieldType oxmFieldType, Object oxmFieldValue) {
-        this.oxmFieldType = oxmFieldType;
-        this.oxmFieldValue = oxmFieldValue;
-        this.oxmFieldLength = 4 + oxmFieldType.getFieldPayloadLength();
-        this.oxmFieldHasMask = 0;
+    public OFOXMField(OFOXMFieldType type, Object value) {
+        this.type = type;
+        this.value = value;
+        this.length = 4 + type.getPayloadLength();
+        this.hasMask = 0;
     }
 
-    public OFOXMField(int oxmHeader, Object oxmFieldValue) {
-        byte typeVal = (byte)((oxmHeader >> 9) & 0x7F);
-        this.oxmFieldType = OFOXMFieldType.valueOf(typeVal);
-        this.oxmFieldHasMask = (byte) ((oxmHeader >> 8) & 0x1);
-        this.oxmFieldLength = (oxmHeader & 0xFF);
-        this.oxmFieldValue = oxmFieldValue;
+    public OFOXMField(int header, Object value) {
+        byte typeVal = (byte)((header >> 9) & 0x7F);
+        this.type = OFOXMFieldType.valueOf(typeVal);
+        this.hasMask = (byte) ((header >> 8) & 0x1);
+        this.length = (header & 0xFF);
+        this.value = value;
     }
 
-    public OFOXMFieldType getOXMFieldType() {
-        return oxmFieldType;
+    public OFOXMFieldType getType() {
+        return type;
     }
 
-    public int getOXMFieldHasMask() {
-        return oxmFieldHasMask;
+    public int getHasMask() {
+        return hasMask;
     }
-    public int getOXMFieldLength() {
-        return oxmFieldLength;
-    }
-
-    public Object getOXMFieldValue() {
-        return oxmFieldValue;
+    public int getLength() {
+        return length;
     }
 
-    public void setOXMFieldValue(Object oxmFieldValue) {
-        this.oxmFieldValue = oxmFieldValue;
+    public Object getValue() {
+        return value;
     }
 
-    public int getOXMFieldHeader() {
-        return (oxmFieldType.getFieldClass() << 16)
-            | (oxmFieldType.getFieldType() << 9)
-            | (oxmFieldHasMask << 8)
-            | ((byte)oxmFieldType.getFieldPayloadLength());
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
+    public int getHeader() {
+        return (type.getMatchClass() << 16)
+            | (type.getValue() << 9)
+            | (hasMask << 8)
+            | ((byte)type.getPayloadLength());
     }
 
     public boolean isAllZero(Object val) {
@@ -105,15 +105,15 @@ public class OFOXMField implements Cloneable {
     
     public void readFrom(ByteBuffer data) {
         int header = data.getInt();
-        short fieldClass =  (short) (header >> 16);
-        byte fieldType = (byte) ((header >> 9) & 0x7f);
+        short matchClass =  (short) (header >> 16);
+        byte value = (byte) ((header >> 9) & 0x7f);
         
         //TODO: Sanity check the field payload length reported
 
-        this.oxmFieldHasMask = (byte) ((header >> 8) & 1);
-        this.oxmFieldLength = (header & 0xff);
-        this.oxmFieldType = OFOXMFieldType.valueOf(fieldType);
-        this.oxmFieldValue = readObject(data, this.oxmFieldType.getFieldPayloadLength());
+        this.hasMask = (byte) ((header >> 8) & 1);
+        this.length = (header & 0xff);
+        this.type = OFOXMFieldType.valueOf(value);
+        this.value = readObject(data, this.type.getPayloadLength());
     }
 
     public void writeObject(ByteBuffer data, Object value, int length)
@@ -138,15 +138,15 @@ public class OFOXMField implements Cloneable {
     }       
             
     public void writeTo(ByteBuffer data) {
-        data.putInt(getOXMFieldHeader());
-        writeObject(data, oxmFieldValue, oxmFieldType.getFieldPayloadLength());
+        data.putInt(getHeader());
+        writeObject(data, value, type.getPayloadLength());
     }
 
     public int hashCode() {
         final int prime = 367;
         int result = 1;
-        result = prime * result + ((oxmFieldValue == null) ? 0 : oxmFieldValue.hashCode());
-        result = prime * result + getOXMFieldHeader();
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + getHeader();
         return result;
     }
 
@@ -162,16 +162,16 @@ public class OFOXMField implements Cloneable {
             return false;
         }
         OFOXMField other = (OFOXMField) obj;
-        if (oxmFieldType != other.oxmFieldType) {
+        if (type != other.type) {
             return false;
         }
-        if (oxmFieldLength != other.oxmFieldLength) {
+        if (length != other.length) {
             return false;
         }
-        if (oxmFieldHasMask != other.oxmFieldHasMask) {
+        if (hasMask != other.hasMask) {
             return false;
         }
-        if (!oxmFieldValue.equals(other.oxmFieldValue)) {
+        if (!value.equals(other.value)) {
             return false;
         }
         return true;
@@ -183,7 +183,7 @@ public class OFOXMField implements Cloneable {
     @Override
     public OFOXMField clone() throws CloneNotSupportedException {
         OFOXMField oxmField = (OFOXMField)super.clone();
-        oxmField.setOXMFieldValue(oxmFieldValue);
+        oxmField.setValue(value);
         return oxmField;
     }
 
@@ -192,8 +192,8 @@ public class OFOXMField implements Cloneable {
      */
     @Override
     public String toString() {
-        return "OFOXMField [oxmFieldType=" + oxmFieldType + ",oxmFieldHasMask=" +
-            oxmFieldHasMask + ", oxmFieldLength=" + oxmFieldLength +
-            ", oxmFieldValue=" + oxmFieldValue + "]";
+        return "OFOXMField [type=" + type + ",hasMask=" +
+            hasMask + ", length=" + length +
+            ", value=" + value + "]";
     }
 }

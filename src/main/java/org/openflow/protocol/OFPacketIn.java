@@ -125,8 +125,8 @@ public class OFPacketIn extends OFMessage {
      */
     public int getInPort() {
         for (OFMatchField matchField: match.matchFields) {
-            if (matchField.getOXMFieldType() == OFOXMFieldType.IN_PORT)
-                return (Integer) matchField.oxmFieldValue;
+            if (matchField.getType() == OFOXMFieldType.IN_PORT)
+                return (Integer) matchField.value;
         }
         return -1;
     }

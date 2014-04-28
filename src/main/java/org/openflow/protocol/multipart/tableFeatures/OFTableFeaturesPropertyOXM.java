@@ -37,10 +37,10 @@ public class OFTableFeaturesPropertyOXM extends OFTableFeaturesProperty {
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
         this.oxmFields = new LinkedList<OFOXMField>();
-        int oxmHeader;
+        int header;
         for (int i=(getLength() - MINIMUM_LENGTH)/4; i>0; i--) {
-            oxmHeader = data.getInt();
-            this.oxmFields.add(new OFOXMField(oxmHeader, null));
+            header = data.getInt();
+            this.oxmFields.add(new OFOXMField(header, null));
         }
         int padLength = 8*((length + 7)/8) - length;
         data.position(data.position() + padLength);
@@ -51,7 +51,7 @@ public class OFTableFeaturesPropertyOXM extends OFTableFeaturesProperty {
         super.writeTo(data);
         if (oxmFields != null) {
             for (OFOXMField oxmField: oxmFields)
-                data.putInt(oxmField.getOXMFieldHeader());
+                data.putInt(oxmField.getHeader());
         }
         int padLength = 8*((length + 7)/8) - length;
         for (;padLength > 0; padLength--) 
