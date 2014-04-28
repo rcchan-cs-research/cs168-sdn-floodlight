@@ -17,6 +17,7 @@
 
 package net.floodlightcontroller.firewall;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.openflow.protocol.OFOXMFieldType;
@@ -24,4 +25,9 @@ import org.openflow.protocol.OFOXMFieldType;
 public class NonWildcardsPair {
     public List<OFOXMFieldType> allow = null;
     public List<OFOXMFieldType> drop = null;
+    
+    public NonWildcardsPair() {
+    	this.allow = new LinkedList<OFOXMFieldType>();
+    	this.drop = new LinkedList<OFOXMFieldType>();
+    }
 }
