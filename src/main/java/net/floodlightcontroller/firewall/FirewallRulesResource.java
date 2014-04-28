@@ -209,8 +209,9 @@ public class FirewallRulesResource extends ServerResource {
                 if (tmp.equalsIgnoreCase("ANY") == false) {
                     rule.wildcard_nw_src = false;
                     rule.wildcard_dl_type = false;
-                    //Could be ARP too
-                    //rule.dl_type = Ethernet.TYPE_IPv4;
+                    //If dl_type is unspecified, assume IPv4
+                    if (rule.dl_type==0)
+                    	rule.dl_type = Ethernet.TYPE_IPv4;
                     int[] cidr = IPCIDRToPrefixBits(tmp);
                     rule.nw_src_prefix = cidr[0];
                     rule.nw_src_maskbits = cidr[1];
@@ -222,8 +223,9 @@ public class FirewallRulesResource extends ServerResource {
                 if (tmp.equalsIgnoreCase("ANY") == false) {
                     rule.wildcard_nw_dst = false;
                     rule.wildcard_dl_type = false;
-                    //Could be ARP too
-                    //rule.dl_type = Ethernet.TYPE_IPv4;
+                    //If dl_type is unspecified, assume IPv4
+                    if (rule.dl_type==0)
+                    	rule.dl_type = Ethernet.TYPE_IPv4;
                     int[] cidr = IPCIDRToPrefixBits(tmp);
                     rule.nw_dst_prefix = cidr[0];
                     rule.nw_dst_maskbits = cidr[1];
