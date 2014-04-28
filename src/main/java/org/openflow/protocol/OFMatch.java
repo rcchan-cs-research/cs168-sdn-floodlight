@@ -583,10 +583,14 @@ public class OFMatch implements Cloneable {
      * if null all fields are wildcarded
      */
     public OFMatch setNonWildcards(Set<OFOXMFieldType> nonWildcardedFieldTypes) {
-        if (nonWildcardedFieldTypes == null)
+        if (nonWildcardedFieldTypes == null) {
             this.matchFields.clear();
-        else if (nonWildcardedFieldTypes.size() == 0)
+            this.matchLength = 4; //No padding
+        }
+        else if (nonWildcardedFieldTypes.size() == 0) {
             this.matchFields.clear();
+            this.matchLength = 4; //No padding
+        }
         else {
             List <OFMatchField> newMatchFields = new ArrayList<OFMatchField>();
 
