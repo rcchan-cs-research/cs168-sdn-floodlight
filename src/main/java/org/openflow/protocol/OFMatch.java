@@ -569,28 +569,35 @@ public class OFMatch implements Cloneable {
 
         //Recalculate lengths
         this.matchLength = 4; //No padding
-        for (OFMatchField newMatchField: this.matchFields) 
-        	this.matchLength += newMatchField.getOXMFieldLength();
+        if (matchFields != null)
+            for (OFMatchField newMatchField: this.matchFields) 
+                this.matchLength += newMatchField.getOXMFieldLength();
         this.length = U16.t(8*((this.matchLength + 7)/8)); //includes padding
         return this;
     }
 
     /**
-     * Utility function to wildcard all fields except those specified in list
-     * @param nonWildcardedFieldTypes list of match field types preserved,
+     * Utility function to wildcard all fields except those specified in the set
+     * @param nonWildcardedFieldTypes set of match field types preserved,
      * if null all fields are wildcarded
      */
-    public OFMatch setNonWildcards(List<OFOXMFieldType> nonWildcardedFieldTypes) {
-        List <OFMatchField> newMatchFields = new ArrayList<OFMatchField>();
+    public OFMatch setNonWildcards(Set<OFOXMFieldType> nonWildcardedFieldTypes) {
+        if (nonWildcardedFieldTypes == null)
+            this.matchFields.clear();
+        else if (nonWildcardedFieldTypes.size() == 0)
+            this.matchFields.clear();
+        else {
+            List <OFMatchField> newMatchFields = new ArrayList<OFMatchField>();
 
-        if (nonWildcardedFieldTypes != null) {
-	        for (OFMatchField matchField: matchFields) {
-	            OFOXMFieldType type = matchField.getOXMFieldType();
-	            if (nonWildcardedFieldTypes.contains(type))
-	                newMatchFields.add(matchField);
-	        }
+            if (nonWildcardedFieldTypes != null) {
+                for (OFMatchField matchField: matchFields) {
+                    OFOXMFieldType type = matchField.getOXMFieldType();
+                    if (nonWildcardedFieldTypes.contains(type))
+                        newMatchFields.add(matchField);
+                }
+            }
+            setMatchFields(newMatchFields);
         }
-        setMatchFields(newMatchFields);
         return this;
     }
 
@@ -722,8 +729,9 @@ public class OFMatch implements Cloneable {
         short matchLength = getMatchLength();
         data.putShort((short)this.type.ordinal());
         data.putShort(matchLength); //length does not include padding
-        for (OFMatchField matchField : matchFields) 
-            matchField.writeTo(data);
+        if (matchFields != null)
+            for (OFMatchField matchField : matchFields) 
+                matchField.writeTo(data);
         
         int padLength = 8*((matchLength + 7)/8) - matchLength;
         for (;padLength>0;padLength--)
