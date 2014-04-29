@@ -46,7 +46,7 @@ public class OFMatch implements Cloneable {
         NXM_0                ((short)0x0000),
         NXM_1                ((short)0x0001),
         OPENFLOW_BASIC       ((short)0x8000),
-        VENDOR         ((short)0xffff);
+        VENDOR               ((short)0xffff);
 
         protected short value;
 
@@ -103,6 +103,18 @@ public class OFMatch implements Cloneable {
     }
 
     /**
+     * Check if a particular match field exists
+     * @return boolean indicating if the field value exists 
+     */
+    public boolean fieldExists(OFOXMFieldType matchType) {
+        for (OFMatchField matchField: matchFields) {
+            if (matchField.getType() == matchType)
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Get in_port
      * @return integer
      */
@@ -125,7 +137,11 @@ public class OFMatch implements Cloneable {
      * @return an arrays of bytes
      */
     public byte[] getDataLayerDestination() {
-       return (byte[])getMatchFieldValue(OFOXMFieldType.ETH_DST);
+        try {
+            return (byte[])getMatchFieldValue(OFOXMFieldType.ETH_DST);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     /**
@@ -159,7 +175,11 @@ public class OFMatch implements Cloneable {
      * @return an array of bytes
      */
     public byte[] getDataLayerSource() {
-        return (byte[])getMatchFieldValue(OFOXMFieldType.ETH_SRC);
+        try {
+            return (byte[])getMatchFieldValue(OFOXMFieldType.ETH_SRC);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     /**
@@ -274,21 +294,23 @@ public class OFMatch implements Cloneable {
     /**
      * Get nw_tos OFMatch stores the ToS bits as 6-bits in the lower significant bits
      *
-     * @return : 6-bit DSCP value (0-63)
+     * @return : 6-bit DSCP value (0-63) in higher bits and 2-bit ECN in lower bits
      */
     public byte getNetworkTypeOfService() {
         try {
-            return (byte)((Byte)getMatchFieldValue(OFOXMFieldType.IP_DSCP) & 0x3f);
+            byte dscp = (byte)((((Byte)getMatchFieldValue(OFOXMFieldType.IP_DSCP)) & 0x3f) << 2);
+            byte ecn = (byte)(((Byte)getMatchFieldValue(OFOXMFieldType.IP_ECN)) & 0x3);
+            return (byte)(dscp & ecn);
         } catch (IllegalArgumentException e) {
             return 0;
         }
     }
 
     /**
-     * Set nw_tos OFMatch stores the ToS bits as lower 6-bits
+     * Set nw_tos OFMatch stores the DSCP and ECN separately
      *
-     * @param networkTypeOfService TOS value including ECN in the lower 2 bits
-     *            : 6-bit DSCP value (0-63)
+     * @param networkTypeOfService TOS value with 6-bit DSCP value (0-63) 
+     * in higher significant bits and ECN in the lower 2 bits
      */
     public OFMatch setNetworkTypeOfService(byte networkTypeOfService) {
         this.setField(OFOXMFieldType.IP_DSCP, (byte)((networkTypeOfService >> 2) & 0x3f));
@@ -302,7 +324,11 @@ public class OFMatch implements Cloneable {
      * @return integer destination IP address
      */
     public int getNetworkDestination() {
-        return (Integer)getMatchFieldValue(OFOXMFieldType.IPV4_DST);
+        try {
+            return (Integer)getMatchFieldValue(OFOXMFieldType.IPV4_DST);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
     }
 
     /**
@@ -350,13 +376,28 @@ public class OFMatch implements Cloneable {
     }
 
     /**
+     * Set nw_dst and nw_dst_mask
+     *
+     * @param networkDestination destination IP address 
+     * @param networkMask network mask
+     */
+    public OFMatch setNetworkDestinationMask(int networkDestination, int networkMask) {
+        this.setField(OFOXMFieldType.IPV4_SRC, networkDestination, networkMask);
+        return this;
+    }
+
+    /**
      * Get nw_src
      *
      * @return integer source IP address
      */
     // TODO: Add support for IPv6
     public int getNetworkSource() {
-        return (Integer)getMatchFieldValue(OFOXMFieldType.IPV4_SRC);
+        try {
+            return (Integer)getMatchFieldValue(OFOXMFieldType.IPV4_SRC);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
     }
 
     /**
@@ -399,6 +440,17 @@ public class OFMatch implements Cloneable {
 		        this.setField(OFOXMFieldType.ARP_SHA, networkSource);
 		        break;
     	}
+        return this;
+    }
+
+    /**
+     * Set nw_src and nw_src_mask
+     *
+     * @param networkSource source IP address 
+     * @param networkMask network mask
+     */
+    public OFMatch setNetworkSourceMask(int networkSource, int networkMask) {
+        this.setField(OFOXMFieldType.IPV4_SRC, networkSource, networkMask);
         return this;
     }
 
