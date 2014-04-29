@@ -1,12 +1,12 @@
-/**
- * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 11, 2010
- */
 package org.openflow.protocol.action;
 
 import java.nio.ByteBuffer;
 
+import org.openflow.protocol.OFQueue;
+
 /**
- * Represents an ofp_action_enqueue
+ * Represents an ofp_action_set_queue
+ * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 11, 2010
  */
 public class OFActionSetQueue extends OFAction {
@@ -17,6 +17,7 @@ public class OFActionSetQueue extends OFAction {
     public OFActionSetQueue() {
         super.setType(OFActionType.SET_QUEUE);
         super.setLength((short) MINIMUM_LENGTH);
+        this.queueId = OFQueue.OFPQ_ALL.getValue(); 
     }
 
     /**

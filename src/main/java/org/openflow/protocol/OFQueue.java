@@ -14,7 +14,7 @@ public enum OFQueue {
     /**
      * @return the queueId
      */
-    public int getQueueId() {
+    public int getValue() {
         return queueId;
     }
 }

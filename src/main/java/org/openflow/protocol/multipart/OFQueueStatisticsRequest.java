@@ -48,7 +48,7 @@ public class OFQueueStatisticsRequest implements OFMultipartData {
      * @param queueId the queueId to set
      */
     public OFQueueStatisticsRequest setQueueId(OFQueue queue) {
-        this.queueId = queue.getQueueId();
+        this.queueId = queue.getValue();
         return this;
     }
 
