@@ -260,6 +260,15 @@ public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, C
     }
 
     /**
+     * Set out_group
+     * @param group object
+     */
+    public OFFlowMod setOutGroup(OFGroup group) {
+        this.outGroup = group.getValue();
+        return this;
+    }
+
+    /**
      * Get priority
      * @return
      */
