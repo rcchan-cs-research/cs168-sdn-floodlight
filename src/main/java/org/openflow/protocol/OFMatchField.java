@@ -20,9 +20,9 @@ public class OFMatchField extends OFOXMField implements Cloneable {
 
     public OFMatchField(OFOXMFieldType type, Object value, Object mask) {
         super(type, value);
-        this.length = 4 + 2 * type.getPayloadLength();
         if (mask != null)
             if (!isAllZero(mask)) {
+                this.length = 4 + 2 * type.getPayloadLength();
     	        this.hasMask = 1;
     	        //Handling case where OXM value bit 
     	        // should never be 1 when OXM mask bit is 0
@@ -116,7 +116,7 @@ public class OFMatchField extends OFOXMField implements Cloneable {
      */
     @Override
     public String toString() {
-        return "OFMatchField [type=" + type + ",hasMask=" +
+        return "OFMatchField [type=" + type + ",HasMask=" +
             hasMask + ", length=" + length + ", value=" + value +
             ((hasMask == 1) ? ", mask=" + mask : "") + "]";
     }

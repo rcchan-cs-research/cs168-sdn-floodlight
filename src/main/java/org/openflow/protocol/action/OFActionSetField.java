@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openflow.protocol.OFOXMField;
 import org.openflow.protocol.OFOXMFieldType;
+import org.openflow.util.U16;
 
 /**
  * Represents an ofp_action_set_action
@@ -32,8 +33,7 @@ public class OFActionSetField extends OFAction {
             type == OFOXMFieldType.IPV6_EXTHDR) { 
             throw new RuntimeException("Set field action disallowed for " + type);
         }
-        this.field = new OFOXMField(type, value);
-        this.length += field.getLength();    
+        setField(new OFOXMField(type, value));
     }
 
     public OFActionSetField(OFOXMField field) {
@@ -48,8 +48,7 @@ public class OFActionSetField extends OFAction {
                 type == OFOXMFieldType.IPV6_EXTHDR) { 
                 throw new RuntimeException("Set field action disallowed for " + type);
             }
-        this.field = field;
-        this.length += field.getLength();
+        setField(field);
     }
 
     /**
@@ -64,6 +63,9 @@ public class OFActionSetField extends OFAction {
      */
     public OFActionSetField setField(OFOXMField field) {
         this.field = field;
+        int l = 4 + field.getLength();
+        l = (8*((l + 7)/8)); //include padding
+        this.length = U16.t(l);
         return this;
     }
 
@@ -71,7 +73,7 @@ public class OFActionSetField extends OFAction {
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
         this.field.readFrom(data);
-        int padLength = length - this.field.getLength();
+        int padLength = length - this.field.getLength() - 4;
         data.position(data.position() + padLength); // pad
     }
 
@@ -79,7 +81,7 @@ public class OFActionSetField extends OFAction {
     public void writeTo(ByteBuffer data) {
         super.writeTo(data);
         field.writeTo(data);
-        int padLength = length - this.field.getLength();
+        int padLength = length - this.field.getLength() - 4;
         for (;padLength>0;padLength--)
             data.get(); //pad
     }
