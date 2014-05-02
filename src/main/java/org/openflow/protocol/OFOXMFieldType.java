@@ -1,7 +1,5 @@
 package org.openflow.protocol;
 
-import java.nio.ByteBuffer;
-
 import org.openflow.protocol.OFMatch.OFMatchClass;
 
 /**
@@ -119,7 +117,7 @@ public enum OFOXMFieldType {
      */
     @Override
         public String toString() {
-            return "OFOXMFieldType [name=" + name + ", valueVal=" + value +
+            return "OFOXMFieldType [name=" + name + ", value=" + value +
                 ", payloadLength=" + payloadLength + "]";
     }
 }

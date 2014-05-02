@@ -22,10 +22,34 @@ public class OFMatchField extends OFOXMField implements Cloneable {
         super(type, value);
         this.length = 4 + 2 * type.getPayloadLength();
         if (mask != null)
-            if (isAllZero(mask)) {
+            if (!isAllZero(mask)) {
     	        this.hasMask = 1;
+    	        //Handling case where OXM value bit 
+    	        // should never be 1 when OXM mask bit is 0
+    	        updateValue();
     	        this.mask = mask;
             }
+    }
+
+    public void updateValue() {
+        if (value instanceof Byte) {
+            this.value = ((Byte)value & (Byte)mask);
+        }
+        if (value instanceof Short) {
+            this.value = ((Short)value & (Short)mask);
+        }
+        if (value instanceof Integer) {
+            this.value = ((Integer)value & (Integer)mask);
+        }
+        if (value instanceof Long) {
+            this.value = ((Long)value & (Long)mask);
+        }
+        if (value instanceof byte[]) {
+            byte[] v = (byte[])this.value;
+            byte[] m = (byte[])this.mask;
+            for (int i = 0; i< v.length; i++)
+                v[i] = (byte) (v[i] & m[i]);
+        }
     }
 
     public Object getMask() {
