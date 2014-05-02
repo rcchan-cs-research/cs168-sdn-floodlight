@@ -962,7 +962,7 @@ public class OFMatch implements Cloneable {
      */
     @Override
     public String toString() {
-        return "OFMatch [type=" + type + "length=" + length + "matchFields=" + matchFields + "]";
+        return "OFMatch [type=" + type + ", length=" + length + ", matchFields=" + matchFields + "]";
     }
 
     /**
