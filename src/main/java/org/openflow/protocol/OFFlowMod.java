@@ -342,6 +342,8 @@ public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, C
         data.putInt(outGroup);
         data.putShort(flags);
         data.putShort((short) 0); // pad
+        if (match == null)
+            this.match = new OFMatch();
         this.match.writeTo(data);
 
         if (instructions != null) {
@@ -483,6 +485,8 @@ public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, C
                 l += instruction.getLengthU();
             }
         }
+        if (match == null)
+            match = new OFMatch();
         l += match.getLength();
         this.length = U16.t(l);
     }
