@@ -382,7 +382,7 @@ public class OFMatch implements Cloneable {
      * @param networkMask network mask
      */
     public OFMatch setNetworkDestinationMask(int networkDestination, int networkMask) {
-        this.setField(OFOXMFieldType.IPV4_SRC, networkDestination, networkMask);
+        this.setField(OFOXMFieldType.IPV4_DST, networkDestination, networkMask);
         return this;
     }
 
