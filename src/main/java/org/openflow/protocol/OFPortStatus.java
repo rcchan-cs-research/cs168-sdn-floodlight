@@ -36,6 +36,14 @@ public class OFPortStatus extends OFMessage {
     }
 
     /**
+     * @param reason the reason to set
+     */
+    public OFPortStatus setReason(OFPortReason reason) {
+        this.reason = (byte)reason.ordinal();
+        return this;
+    }
+
+    /**
      * @return the desc
      */
     public OFPhysicalPort getDesc() {
