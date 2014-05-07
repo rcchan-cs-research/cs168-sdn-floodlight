@@ -214,7 +214,7 @@ public class ImmutablePort {
              );
     }
 
-    public static ImmutablePort create(String name, Short portNumber) {
+    public static ImmutablePort create(String name, Integer portNumber) {
         return new ImmutablePort(portNumber,
                                          new byte[] { 0, 0, 0, 0, 0, 0 },
                                          name,
