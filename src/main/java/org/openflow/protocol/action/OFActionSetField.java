@@ -83,7 +83,7 @@ public class OFActionSetField extends OFAction {
         field.writeTo(data);
         int padLength = length - this.field.getLength() - 4;
         for (;padLength>0;padLength--)
-            data.get(); //pad
+            data.put((byte)0); //pad
     }
 
     @Override
