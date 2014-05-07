@@ -23,6 +23,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,14 +41,16 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMatchWithSwDpid;
 import org.openflow.protocol.OFMessage;
-import org.openflow.protocol.OFStatisticsRequest;
+import org.openflow.protocol.OFMultipartRequest;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
-import org.openflow.protocol.statistics.OFFlowStatisticsReply;
-import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
-import org.openflow.protocol.statistics.OFStatistics;
-import org.openflow.protocol.statistics.OFStatisticsType;
+import org.openflow.protocol.instruction.OFInstruction;
+import org.openflow.protocol.instruction.OFInstructionApplyActions;
+import org.openflow.protocol.multipart.OFFlowStatisticsReply;
+import org.openflow.protocol.multipart.OFFlowStatisticsRequest;
+import org.openflow.protocol.multipart.OFMultipartData;
+import org.openflow.protocol.multipart.OFMultipartDataType;
 import org.openflow.util.U16;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +101,7 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
     protected OFMatchReconcile ofmr;
     protected static Logger log;
     protected FloodlightContext cntx;
-    protected List<OFStatistics> statsReply;
+    protected List<OFMultipartData> statsReply;
 
     @Override
     @Before
@@ -115,7 +118,7 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
         flowReconcileMgr = new FlowReconcileManager();
         topology = createMock(ITopologyService.class);
         cntx = new FloodlightContext();
-        statsReply = new ArrayList<OFStatistics>();
+        statsReply = new ArrayList<OFMultipartData>();
 
         fmc.addService(IThreadPoolService.class, tps);
         fmc.addService(IFloodlightProviderService.class,
@@ -138,14 +141,14 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
         pdr.startUp(fmc);
 
         // The STATS_REQUEST object used when querying the switches for flows
-        OFStatisticsRequest req = new OFStatisticsRequest();
-        req.setStatisticType(OFStatisticsType.FLOW);
+        OFMultipartRequest req = new OFMultipartRequest();
+        req.setMultipartDataType(OFMultipartDataType.FLOW);
         int requestLength = req.getLengthU();
         OFFlowStatisticsRequest specificReq = new OFFlowStatisticsRequest();
-        specificReq.setMatch(new OFMatch().setWildcards(0xffffffff));
-        specificReq.setOutPort((short) 3);
+        specificReq.setMatch(new OFMatch());
+        specificReq.setOutPort(3);
         specificReq.setTableId((byte) 0xff);
-        req.setStatistics(Collections.singletonList((OFStatistics) specificReq));
+        req.setMultipartData(Collections.singletonList((OFMultipartData) specificReq));
         requestLength += specificReq.getLength();
         req.setLengthU(requestLength);
 
@@ -157,24 +160,24 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
         // Match for the STATS_REPLY object
         OFMatch m = new OFMatch();
         // Set the incoming port to 1 so that it will find the connected
-        m.setInputPort((short) 1);
+        m.setInPort((short) 1);
 
         // STATS_REPLY object
         OFFlowStatisticsReply reply = new OFFlowStatisticsReply();
-        reply.setActions(actions);
+        reply.setInstructions(Arrays.asList((OFInstruction)new OFInstructionApplyActions().setActions(actions)));
         reply.setMatch(m);
-        // Add the reply to the list of OFStatistics
+        // Add the reply to the list of OFMultipartData
         statsReply.add(reply);
 
         // Create the STATS_REPLY asynchronous reply object
-        Callable<List<OFStatistics>> replyFuture = new ReplyFuture();
+        Callable<List<OFMultipartData>> replyFuture = new ReplyFuture();
         // Assign the callable object to a Futuretask so that it will produce
         // future results
-        FutureTask<List<OFStatistics>> futureStats = new FutureTask<List<OFStatistics>>(
+        FutureTask<List<OFMultipartData>> futureStats = new FutureTask<List<OFMultipartData>>(
                                                                                         replyFuture);
 
         // Assign the results of calling the object (the asynchronous reply)
-        Future<List<OFStatistics>> results = getResults(futureStats);
+        Future<List<OFMultipartData>> results = getResults(futureStats);
 
         // SW1 -- Mock switch for base and multiple switch test case
         sw1 = EasyMock.createNiceMock(IOFSwitch.class);
@@ -231,7 +234,7 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
         // Create the only OFMatch Reconcile object that will be in the list
         ofmr = new OFMatchReconcile();
         long affectedSwitch = sw1.getId();
-        OFMatchWithSwDpid ofmatchsw = new OFMatchWithSwDpid(new OFMatch().setWildcards(OFMatch.OFPFW_ALL),
+        OFMatchWithSwDpid ofmatchsw = new OFMatchWithSwDpid(new OFMatch(),
                                                             affectedSwitch);
         ofmr.rcAction = OFMatchReconcile.ReconcileAction.UPDATE_PATH;
         ofmr.ofmWithSwDpid = ofmatchsw;
@@ -245,14 +248,14 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
         // Expected Flow Mod Deletes Messages
         // Flow Mod Delete for base switch
         fm = ((OFFlowMod) mockFloodlightProvider.getOFMessageFactory()
-                                                 .getMessage(OFType.FLOW_MOD)).setMatch(new OFMatch().setWildcards(OFMatch.OFPFW_ALL))
+                                                 .getMessage(OFType.FLOW_MOD)).setMatch(new OFMatch())
                                                                               .setCommand(OFFlowMod.OFPFC_DELETE)
                                                                               // Notice
                                                                               // we
                                                                               // specify
                                                                               // an
                                                                               // outPort
-                                                                              .setOutPort((short) 3)
+                                                                              .setOutPort(3)
                                                                               .setLength(U16.t(OFFlowMod.MINIMUM_LENGTH));
 
         // Flow Mod Delete for the neighborswitches
@@ -266,14 +269,14 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
                                                                                // specific
                                                                                // an
                                                                                // outPort
-                                                                               .setOutPort((short) 3)
+                                                                               .setOutPort(3)
                                                                                .setLength(U16.t(OFFlowMod.MINIMUM_LENGTH));
 
     }
 
     // This generates the asynchronous reply to sw.getStatistics()
-    public Future<List<OFStatistics>>
-            getResults(FutureTask<List<OFStatistics>> futureStats) {
+    public Future<List<OFMultipartData>>
+            getResults(FutureTask<List<OFMultipartData>> futureStats) {
         Thread t = new Thread(futureStats);
         t.start();
         return futureStats;
@@ -281,9 +284,9 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
     }
 
     // Class for the asynchronous reply
-    public class ReplyFuture implements Callable<List<OFStatistics>> {
+    public class ReplyFuture implements Callable<List<OFMultipartData>> {
         @Override
-        public List<OFStatistics> call() throws Exception {
+        public List<OFMultipartData> call() throws Exception {
             // return stats reply defined above
             return statsReply;
         }

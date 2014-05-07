@@ -176,7 +176,7 @@ public class VirtualNetworkFilterTest extends FloodlightTestCase {
                 ((OFPacketIn) mockFloodlightProvider.getOFMessageFactory().
                         getMessage(OFType.PACKET_IN))
                         .setBufferId(-1)
-                        .setInPort((short) 1)
+                        .setMatch(new OFMatch().setInPort(1))
                         .setPacketData(mac1ToMac2PacketIntestPacketSerialized)
                         .setReason(OFPacketInReason.NO_MATCH)
                         .setTotalLength((short) mac1ToMac2PacketIntestPacketSerialized.length);
@@ -200,7 +200,7 @@ public class VirtualNetworkFilterTest extends FloodlightTestCase {
             ((OFPacketIn) mockFloodlightProvider.getOFMessageFactory().
                     getMessage(OFType.PACKET_IN))
                     .setBufferId(-1)
-                    .setInPort((short) 1)
+                    .setMatch(new OFMatch().setInPort(1))
                     .setPacketData(mac1ToMac4PacketIntestPacketSerialized)
                     .setReason(OFPacketInReason.NO_MATCH)
                     .setTotalLength((short) mac1ToMac4PacketIntestPacketSerialized.length);
@@ -224,7 +224,7 @@ public class VirtualNetworkFilterTest extends FloodlightTestCase {
             ((OFPacketIn) mockFloodlightProvider.getOFMessageFactory().
                     getMessage(OFType.PACKET_IN))
                     .setBufferId(-1)
-                    .setInPort((short) 1)
+                    .setMatch(new OFMatch().setInPort(1))
                     .setPacketData(mac1ToGwPacketIntestPacketSerialized)
                     .setReason(OFPacketInReason.NO_MATCH)
                     .setTotalLength((short) mac1ToGwPacketIntestPacketSerialized.length);

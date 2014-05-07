@@ -25,10 +25,10 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.openflow.protocol.factory.BasicFactory;
 import org.openflow.protocol.factory.OFMessageFactory;
-import org.openflow.protocol.statistics.OFStatisticsType;
+import org.openflow.protocol.multipart.OFMultipartDataType;
 import org.openflow.util.OFTestCase;
 
-public class OFStatisticsReplyTest extends OFTestCase {
+public class OFMultipartReplyTest extends OFTestCase {
     public void testOFFlowStatisticsReply() throws Exception {
         byte[] packet = new byte[] { 0x01, 0x11, 0x01, 0x2c, 0x00, 0x00, 0x00,
                 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00,
@@ -69,9 +69,9 @@ public class OFStatisticsReplyTest extends OFTestCase {
         List<OFMessage> msg = factory.parseMessage(packetBuf);
         TestCase.assertNotNull(msg);
         TestCase.assertEquals(msg.size(), 1);
-        TestCase.assertTrue(msg.get(0) instanceof OFStatisticsReply);
-        OFStatisticsReply sr = (OFStatisticsReply) msg.get(0);
-        TestCase.assertEquals(OFStatisticsType.FLOW, sr.getStatisticType());
+        TestCase.assertTrue(msg.get(0) instanceof OFMultipartReply);
+        OFMultipartReply sr = (OFMultipartReply) msg.get(0);
+        TestCase.assertEquals(OFMultipartDataType.FLOW, sr.getStatisticType());
         TestCase.assertEquals(3, sr.getStatistics().size());
     }
 }

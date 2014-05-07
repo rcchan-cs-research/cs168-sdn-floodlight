@@ -11,14 +11,14 @@ import net.floodlightcontroller.core.test.MockThreadPoolService;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.openflow.protocol.OFStatisticsReply;
-import org.openflow.protocol.statistics.OFFlowStatisticsReply;
-import org.openflow.protocol.statistics.OFStatistics;
-import org.openflow.protocol.statistics.OFStatisticsType;
+import org.openflow.protocol.OFMultipartReply;
+import org.openflow.protocol.multipart.OFFlowStatisticsReply;
+import org.openflow.protocol.multipart.OFMultipartData;
+import org.openflow.protocol.multipart.OFMultipartDataType;
 
 import static org.easymock.EasyMock.*;
 
-public class OFStatisticsFutureTest {
+public class OFMultipartDataFutureTest {
     private MockThreadPoolService tp;
 
     @Before
@@ -26,16 +26,16 @@ public class OFStatisticsFutureTest {
         tp = new MockThreadPoolService();
     }
 
-    private OFStatisticsReply getStatisticsReply(int transactionId,
+    private OFMultipartReply getStatisticsReply(int transactionId,
                                                    int count, boolean moreReplies) {
-        OFStatisticsReply sr = new OFStatisticsReply();
+        OFMultipartReply sr = new OFMultipartReply();
         sr.setXid(transactionId);
-        sr.setStatisticType(OFStatisticsType.FLOW);
-        List<OFStatistics> statistics = new ArrayList<OFStatistics>();
+        sr.setMultipartDataType(OFMultipartDataType.FLOW);
+        List<OFMultipartData> statistics = new ArrayList<OFMultipartData>();
         for (int i = 0; i < count; ++i) {
             statistics.add(new OFFlowStatisticsReply());
         }
-        sr.setStatistics(statistics);
+        sr.setMultipartData(statistics);
         if (moreReplies)
             sr.setFlags((short) 1);
         return sr;
@@ -78,15 +78,15 @@ public class OFStatisticsFutureTest {
     * @throws Exception
     */
    @Test
-   public void testOFStatisticsFuture() throws Exception {
+   public void testOFMultipartDataFuture() throws Exception {
        // Test for a single stats reply
        IOFSwitch sw = createMock(IOFSwitch.class);
        sw.cancelStatisticsReply(1);
-       OFStatisticsFuture sf = new OFStatisticsFuture(tp, sw, 1);
+       OFMultipartDataFuture sf = new OFMultipartDataFuture(tp, sw, 1);
 
        replay(sw);
-       List<OFStatistics> stats;
-       FutureFetcher<List<OFStatistics>> ff = new FutureFetcher<List<OFStatistics>>(sf);
+       List<OFMultipartData> stats;
+       FutureFetcher<List<OFMultipartData>> ff = new FutureFetcher<List<OFMultipartData>>(sf);
        Thread t = new Thread(ff);
        t.start();
        sf.deliverFuture(sw, getStatisticsReply(1, 10, false));
@@ -100,10 +100,10 @@ public class OFStatisticsFutureTest {
        reset(sw);
        sw.cancelStatisticsReply(1);
 
-       sf = new OFStatisticsFuture(tp, sw, 1);
+       sf = new OFMultipartDataFuture(tp, sw, 1);
 
        replay(sw);
-       ff = new FutureFetcher<List<OFStatistics>>(sf);
+       ff = new FutureFetcher<List<OFMultipartData>>(sf);
        t = new Thread(ff);
        t.start();
        sf.deliverFuture(sw, getStatisticsReply(1, 10, true));
@@ -117,10 +117,10 @@ public class OFStatisticsFutureTest {
        // Test cancellation
        reset(sw);
        sw.cancelStatisticsReply(1);
-       sf = new OFStatisticsFuture(tp, sw, 1);
+       sf = new OFMultipartDataFuture(tp, sw, 1);
 
        replay(sw);
-       ff = new FutureFetcher<List<OFStatistics>>(sf);
+       ff = new FutureFetcher<List<OFMultipartData>>(sf);
        t = new Thread(ff);
        t.start();
        sf.cancel(true);
@@ -133,10 +133,10 @@ public class OFStatisticsFutureTest {
        // Test self timeout
        reset(sw);
        sw.cancelStatisticsReply(1);
-       sf = new OFStatisticsFuture(tp, sw, 1, 75, TimeUnit.MILLISECONDS);
+       sf = new OFMultipartDataFuture(tp, sw, 1, 75, TimeUnit.MILLISECONDS);
 
        replay(sw);
-       ff = new FutureFetcher<List<OFStatistics>>(sf);
+       ff = new FutureFetcher<List<OFMultipartData>>(sf);
        t = new Thread(ff);
        t.start();
        t.join(2000);

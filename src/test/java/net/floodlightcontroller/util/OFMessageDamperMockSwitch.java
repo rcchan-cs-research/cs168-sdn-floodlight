@@ -38,10 +38,10 @@ import org.jboss.netty.channel.Channel;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPortStatus;
-import org.openflow.protocol.OFStatisticsReply;
-import org.openflow.protocol.OFStatisticsRequest;
-import org.openflow.protocol.statistics.OFDescriptionStatistics;
-import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.OFMultipartReply;
+import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.multipart.OFMultipartData;
 
 
 /**
@@ -220,8 +220,8 @@ public class OFMessageDamperMockSwitch implements IOFSwitch {
     }
 
     @Override
-    public Future<List<OFStatistics>>
-            queryStatistics(OFStatisticsRequest request) throws IOException {
+    public Future<List<OFMultipartData>>
+            queryStatistics(OFMultipartRequest request) throws IOException {
         assertTrue("Unexpected method call", false);
         return null;
     }
@@ -244,7 +244,7 @@ public class OFMessageDamperMockSwitch implements IOFSwitch {
     }
 
     @Override
-    public void deliverStatisticsReply(OFStatisticsReply reply) {
+    public void deliverStatisticsReply(OFMultipartReply reply) {
         assertTrue("Unexpected method call", false);
     }
 
@@ -299,7 +299,7 @@ public class OFMessageDamperMockSwitch implements IOFSwitch {
     }
 
     @Override
-    public void sendStatsQuery(OFStatisticsRequest request, int xid,
+    public void sendStatsQuery(OFMultipartRequest request, int xid,
                                IOFMessageListener caller)
                                                          throws IOException {
         assertTrue("Unexpected method call", false);
