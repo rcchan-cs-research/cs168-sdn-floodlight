@@ -407,12 +407,12 @@ public class OFChannelHandlerTest {
 
         List<OFMessage> msgs = getMessagesFromCapture();
         assertEquals(1, msgs.size());
-        assertEquals(OFType.STATS_REQUEST, msgs.get(0).getType());
+        assertEquals(OFType.MULTIPART_REQUEST, msgs.get(0).getType());
         OFMultipartRequest sr = (OFMultipartRequest)msgs.get(0);
         assertEquals(OFMultipartDataType.DESC, sr.getStatisticType());
-        // no idea why an  OFMultipartRequest even /has/ a getStatistics()
+        // no idea why an  OFMultipartRequest even /has/ a getMultipartData()
         // methods. It really shouldn't
-        assertNull(sr.getStatistics());
+        assertNull(sr.getMultipartData());
         verifyUniqueXids(msgs);
         assertEquals(OFChannelHandler.ChannelState.WAIT_DESCRIPTION_STAT_REPLY,
                      handler.getStateForTesting());
@@ -464,7 +464,7 @@ public class OFChannelHandlerTest {
 
     private static OFMultipartReply createDescriptionStatsReply() {
         OFMultipartReply sr = (OFMultipartReply)FloodlightFactory.getInstance()
-                .getMessage(OFType.STATS_REPLY);
+                .getMessage(OFType.MULTIPART_REPLY);
         sr.setMultipartDataType(OFMultipartDataType.DESC);
         OFDescriptionStatistics desc = new OFDescriptionStatistics();
         desc.setDatapathDescription("Datapath Description");

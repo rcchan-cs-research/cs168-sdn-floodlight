@@ -28,10 +28,10 @@ public class OFMultipartDataTypeTest extends TestCase {
     @Test
     public void testMapping() throws Exception {
         TestCase.assertEquals(OFMultipartDataType.DESC,
-                OFMultipartDataType.valueOf((short) 0, OFType.STATS_REQUEST));
+                OFMultipartDataType.valueOf((short) 0, OFType.MULTIPART_REQUEST));
         TestCase.assertEquals(OFMultipartDataType.QUEUE,
-                OFMultipartDataType.valueOf((short) 5, OFType.STATS_REQUEST));
+                OFMultipartDataType.valueOf((short) 5, OFType.MULTIPART_REQUEST));
         TestCase.assertEquals(OFMultipartDataType.VENDOR,
-                OFMultipartDataType.valueOf((short) 0xffff, OFType.STATS_REQUEST));
+                OFMultipartDataType.valueOf((short) 0xffff, OFType.MULTIPART_REQUEST));
     }
 }

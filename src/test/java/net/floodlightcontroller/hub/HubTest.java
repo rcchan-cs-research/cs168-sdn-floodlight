@@ -39,6 +39,7 @@ import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.junit.Before;
 import org.junit.Test;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketIn.OFPacketInReason;
 import org.openflow.protocol.OFMessage;

@@ -140,7 +140,7 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
         getMockFloodlightProvider().startUp(fmc);
         pdr.startUp(fmc);
 
-        // The STATS_REQUEST object used when querying the switches for flows
+        // The MULTIPART_REQUEST object used when querying the switches for flows
         OFMultipartRequest req = new OFMultipartRequest();
         req.setMultipartDataType(OFMultipartDataType.FLOW);
         int requestLength = req.getLengthU();
@@ -152,24 +152,24 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
         requestLength += specificReq.getLength();
         req.setLengthU(requestLength);
 
-        // Actions for the STATS_REPLY object
+        // Actions for the MULTIPART_REPLY object
         OFActionOutput action = new OFActionOutput((short) 3, (short) 0xffff);
         List<OFAction> actions = new ArrayList<OFAction>();
         actions.add(action);
 
-        // Match for the STATS_REPLY object
+        // Match for the MULTIPART_REPLY object
         OFMatch m = new OFMatch();
         // Set the incoming port to 1 so that it will find the connected
         m.setInPort((short) 1);
 
-        // STATS_REPLY object
+        // MULTIPART_REPLY object
         OFFlowStatisticsReply reply = new OFFlowStatisticsReply();
         reply.setInstructions(Arrays.asList((OFInstruction)new OFInstructionApplyActions().setActions(actions)));
         reply.setMatch(m);
         // Add the reply to the list of OFMultipartData
         statsReply.add(reply);
 
-        // Create the STATS_REPLY asynchronous reply object
+        // Create the MULTIPART_REPLY asynchronous reply object
         Callable<List<OFMultipartData>> replyFuture = new ReplyFuture();
         // Assign the callable object to a Futuretask so that it will produce
         // future results
@@ -274,7 +274,7 @@ public class PortDownReconciliationTest extends FloodlightTestCase {
 
     }
 
-    // This generates the asynchronous reply to sw.getStatistics()
+    // This generates the asynchronous reply to sw.getMultipartData()
     public Future<List<OFMultipartData>>
             getResults(FutureTask<List<OFMultipartData>> futureStats) {
         Thread t = new Thread(futureStats);

@@ -535,7 +535,7 @@ public class OFSwitchBaseTest {
         assertCollectionEqualsNoOrder(ports, sw.getPorts());
         List<ImmutablePort> enabledPorts = new ArrayList<ImmutablePort>();
         enabledPorts.add(p1b);
-        List<int> enabledPortNumbers = new ArrayList<int>();
+        List<Integer> enabledPortNumbers = new ArrayList<Integer>();
         enabledPortNumbers.add((int)1);
         assertCollectionEqualsNoOrder(enabledPorts, sw.getEnabledPorts());
         assertCollectionEqualsNoOrder(enabledPortNumbers,
@@ -581,7 +581,7 @@ public class OFSwitchBaseTest {
         assertCollectionEqualsNoOrder(ports, sw.getPorts());
         enabledPorts = new ArrayList<ImmutablePort>();
         enabledPorts.add(p1b);
-        enabledPortNumbers = new ArrayList<int>();
+        enabledPortNumbers = new ArrayList<Integer>();
         enabledPortNumbers.add((int)1);
         assertCollectionEqualsNoOrder(enabledPorts, sw.getEnabledPorts());
         assertCollectionEqualsNoOrder(enabledPortNumbers,
@@ -760,7 +760,7 @@ public class OFSwitchBaseTest {
         assertCollectionEqualsNoOrder(ports, sw.getPorts());
         List<ImmutablePort> enabledPorts = new ArrayList<ImmutablePort>();
         enabledPorts.add(p1b);
-        List<int> enabledPortNumbers = new ArrayList<int>();
+        List<Integer> enabledPortNumbers = new ArrayList<Integer>();
         enabledPortNumbers.add((int)1);
         assertCollectionEqualsNoOrder(enabledPorts, sw.getEnabledPorts());
         assertCollectionEqualsNoOrder(enabledPortNumbers,
@@ -792,7 +792,7 @@ public class OFSwitchBaseTest {
         assertCollectionEqualsNoOrder(ports, sw.getPorts());
         enabledPorts = new ArrayList<ImmutablePort>();
         enabledPorts.add(p1b);
-        enabledPortNumbers = new ArrayList<int>();
+        enabledPortNumbers = new ArrayList<Integer>();
         enabledPortNumbers.add((int)1);
         assertCollectionEqualsNoOrder(enabledPorts, sw.getEnabledPorts());
         assertCollectionEqualsNoOrder(enabledPortNumbers,

@@ -72,6 +72,6 @@ public class OFMultipartReplyTest extends OFTestCase {
         TestCase.assertTrue(msg.get(0) instanceof OFMultipartReply);
         OFMultipartReply sr = (OFMultipartReply) msg.get(0);
         TestCase.assertEquals(OFMultipartDataType.FLOW, sr.getStatisticType());
-        TestCase.assertEquals(3, sr.getStatistics().size());
+        TestCase.assertEquals(3, sr.getMultipartData().size());
     }
 }

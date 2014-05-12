@@ -26,7 +26,7 @@ public class OFMultipartDataFutureTest {
         tp = new MockThreadPoolService();
     }
 
-    private OFMultipartReply getStatisticsReply(int transactionId,
+    private OFMultipartReply getMultipartDataReply(int transactionId,
                                                    int count, boolean moreReplies) {
         OFMultipartReply sr = new OFMultipartReply();
         sr.setXid(transactionId);
@@ -89,7 +89,7 @@ public class OFMultipartDataFutureTest {
        FutureFetcher<List<OFMultipartData>> ff = new FutureFetcher<List<OFMultipartData>>(sf);
        Thread t = new Thread(ff);
        t.start();
-       sf.deliverFuture(sw, getStatisticsReply(1, 10, false));
+       sf.deliverFuture(sw, getMultipartDataReply(1, 10, false));
 
        t.join();
        stats = ff.getValue();
@@ -106,8 +106,8 @@ public class OFMultipartDataFutureTest {
        ff = new FutureFetcher<List<OFMultipartData>>(sf);
        t = new Thread(ff);
        t.start();
-       sf.deliverFuture(sw, getStatisticsReply(1, 10, true));
-       sf.deliverFuture(sw, getStatisticsReply(1, 5, false));
+       sf.deliverFuture(sw, getMultipartDataReply(1, 10, true));
+       sf.deliverFuture(sw, getMultipartDataReply(1, 5, false));
        t.join();
 
        stats = sf.get();

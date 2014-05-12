@@ -48,8 +48,8 @@ public class OFMultipartRequestTest extends OFTestCase {
         TestCase.assertTrue(msg.get(0) instanceof OFMultipartRequest);
         OFMultipartRequest sr = (OFMultipartRequest) msg.get(0);
         TestCase.assertEquals(OFMultipartDataType.FLOW, sr.getStatisticType());
-        TestCase.assertEquals(1, sr.getStatistics().size());
-        TestCase.assertTrue(sr.getStatistics().get(0) instanceof OFFlowStatisticsRequest);
+        TestCase.assertEquals(1, sr.getMultipartData().size());
+        TestCase.assertTrue(sr.getMultipartData().get(0) instanceof OFFlowStatisticsRequest);
     }
 
     public void testOFMultipartRequestVendor() throws Exception {
@@ -72,8 +72,8 @@ public class OFMultipartRequestTest extends OFTestCase {
         TestCase.assertTrue(msg.get(0) instanceof OFMultipartRequest);
         OFMultipartRequest sr = (OFMultipartRequest) msg.get(0);
         TestCase.assertEquals(OFMultipartDataType.VENDOR, sr.getStatisticType());
-        TestCase.assertEquals(1, sr.getStatistics().size());
-        TestCase.assertTrue(sr.getStatistics().get(0) instanceof OFVendorStatistics);
-        TestCase.assertEquals(68, ((OFVendorStatistics)sr.getStatistics().get(0)).getLength());
+        TestCase.assertEquals(1, sr.getMultipartData().size());
+        TestCase.assertTrue(sr.getMultipartData().get(0) instanceof OFVendorStatistics);
+        TestCase.assertEquals(68, ((OFVendorStatistics)sr.getMultipartData().get(0)).getLength());
     }
 }

@@ -186,7 +186,7 @@ public class LearningSwitchTest extends FloodlightTestCase {
                 .loadFromPacket(testPacketSerialized, (short) 1)
                 .setWildcards(OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_TP_SRC | OFMatch.OFPFW_TP_DST
                         | OFMatch.OFPFW_NW_TOS))
-            .setOutPort(OFPort.OFPP_NONE.getValue())
+            .setOutPort(OFPort.OFPP_ANY.getValue())
             .setCookie(1L << 52)
             .setPriority((short) 100)
             .setFlags((short)(1 << 0))
@@ -201,7 +201,7 @@ public class LearningSwitchTest extends FloodlightTestCase {
                 .loadFromPacket(testPacketReplySerialized, (short) 2)
                 .setWildcards(OFMatch.OFPFW_NW_PROTO | OFMatch.OFPFW_TP_SRC | OFMatch.OFPFW_TP_DST
                         | OFMatch.OFPFW_NW_TOS))
-            .setOutPort(OFPort.OFPP_NONE.getValue())
+            .setOutPort(OFPort.OFPP_ANY.getValue())
             .setCookie(1L << 52)
             .setPriority((short) 100)
             .setFlags((short)(1 << 0))
