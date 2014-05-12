@@ -11,17 +11,17 @@ pushers, firewall, and loadbalancer.
 
 # Release notes
 
-**Dependency on JOpenFlow**: This code depends on the
+* **Dependency on JOpenFlow**: This code depends on the
 [JOpenFlow](http://bitbucket.org/sdnhub/jopenflow) repository also
 maintained by SDN Hub. However, there are slight differences with
 OFError and OFExperimenter. All "Experimenter" keyword is replaced with
 "Vendor" in this repository.
 
-**Support for some features still under works**: Although JOpenFlow
+* **Support for some features still under works**: Although JOpenFlow
 suppotrs multiple tables, meters, groups and IPv6, the Floodlight
 implementation does not use them to its advantage. 
 
-**Unit tests still under development**: The unit tests in the src/tests
+* **Unit tests still under development**: The unit tests in the src/tests
 directory are still under development and will be updated soon.
 
 # Maintainers
@@ -31,3 +31,4 @@ is Srini Seetharaman (srini.seetharaman@gmail.com)
 # Support/discussion forum
 
 (http://sdnhub.org/forums/forum/controller-platforms/floodlight-plus/)
+
