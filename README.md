@@ -17,6 +17,10 @@ maintained by SDN Hub. However, there are slight differences with
 OFError and OFExperimenter. All "Experimenter" keyword is replaced with
 "Vendor" in this repository.
 
+* **Only works with OpenFlow 1.3 switches**: As of now, the
+Floodlight-plus controller does not work with OF1.0 and OF1.3 switches
+at the same time.
+
 * **Support for some features still under works**: Although JOpenFlow
 suppotrs multiple tables, meters, groups and IPv6, the Floodlight
 implementation does not use them to its advantage. 
