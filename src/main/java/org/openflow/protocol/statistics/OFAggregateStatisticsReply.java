@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 
@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
  * Represents an ofp_aggregate_stats_reply structure
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class OFAggregateStatisticsReply implements OFMultipartData {
+public class OFAggregateStatisticsReply implements OFStatistics {
     protected static int MINIMUM_LENGTH = 24;
 
     protected long packetCount;

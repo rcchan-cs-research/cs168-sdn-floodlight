@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.openflow.protocol.OFPhysicalPort;
  * Represents an ofp_port_desc structure
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
-public class OFPortDescription implements OFMultipartData {
+public class OFPortDescription implements OFStatistics {
     protected OFPhysicalPort port;
 
     /**

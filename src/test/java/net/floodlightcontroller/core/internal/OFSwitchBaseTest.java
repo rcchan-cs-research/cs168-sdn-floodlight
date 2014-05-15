@@ -57,7 +57,7 @@ import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
 import org.openflow.protocol.OFPhysicalPort.OFPortFeatures;
 import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.factory.FloodlightFactory;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 import org.openflow.util.HexString;
 
 public class OFSwitchBaseTest {

@@ -11,14 +11,14 @@ import net.floodlightcontroller.core.test.MockThreadPoolService;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.openflow.protocol.OFMultipartReply;
-import org.openflow.protocol.multipart.OFFlowStatisticsReply;
-import org.openflow.protocol.multipart.OFMultipartData;
-import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.OFStatisticsReply;
+import org.openflow.protocol.statistics.OFFlowStatisticsReply;
+import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
 
 import static org.easymock.EasyMock.*;
 
-public class OFMultipartDataFutureTest {
+public class OFStatisticsFutureTest {
     private MockThreadPoolService tp;
 
     @Before
@@ -26,16 +26,16 @@ public class OFMultipartDataFutureTest {
         tp = new MockThreadPoolService();
     }
 
-    private OFMultipartReply getMultipartDataReply(int transactionId,
+    private OFStatisticsReply getStatisticsReply(int transactionId,
                                                    int count, boolean moreReplies) {
-        OFMultipartReply sr = new OFMultipartReply();
+        OFStatisticsReply sr = new OFStatisticsReply();
         sr.setXid(transactionId);
-        sr.setMultipartDataType(OFMultipartDataType.FLOW);
-        List<OFMultipartData> statistics = new ArrayList<OFMultipartData>();
+        sr.setStatisticsType(OFStatisticsType.FLOW);
+        List<OFStatistics> statistics = new ArrayList<OFStatistics>();
         for (int i = 0; i < count; ++i) {
             statistics.add(new OFFlowStatisticsReply());
         }
-        sr.setMultipartData(statistics);
+        sr.setStatistics(statistics);
         if (moreReplies)
             sr.setFlags((short) 1);
         return sr;
@@ -78,18 +78,18 @@ public class OFMultipartDataFutureTest {
     * @throws Exception
     */
    @Test
-   public void testOFMultipartDataFuture() throws Exception {
+   public void testOFStatisticsFuture() throws Exception {
        // Test for a single stats reply
        IOFSwitch sw = createMock(IOFSwitch.class);
        sw.cancelStatisticsReply(1);
-       OFMultipartDataFuture sf = new OFMultipartDataFuture(tp, sw, 1);
+       OFStatisticsFuture sf = new OFStatisticsFuture(tp, sw, 1);
 
        replay(sw);
-       List<OFMultipartData> stats;
-       FutureFetcher<List<OFMultipartData>> ff = new FutureFetcher<List<OFMultipartData>>(sf);
+       List<OFStatistics> stats;
+       FutureFetcher<List<OFStatistics>> ff = new FutureFetcher<List<OFStatistics>>(sf);
        Thread t = new Thread(ff);
        t.start();
-       sf.deliverFuture(sw, getMultipartDataReply(1, 10, false));
+       sf.deliverFuture(sw, getStatisticsReply(1, 10, false));
 
        t.join();
        stats = ff.getValue();
@@ -100,14 +100,14 @@ public class OFMultipartDataFutureTest {
        reset(sw);
        sw.cancelStatisticsReply(1);
 
-       sf = new OFMultipartDataFuture(tp, sw, 1);
+       sf = new OFStatisticsFuture(tp, sw, 1);
 
        replay(sw);
-       ff = new FutureFetcher<List<OFMultipartData>>(sf);
+       ff = new FutureFetcher<List<OFStatistics>>(sf);
        t = new Thread(ff);
        t.start();
-       sf.deliverFuture(sw, getMultipartDataReply(1, 10, true));
-       sf.deliverFuture(sw, getMultipartDataReply(1, 5, false));
+       sf.deliverFuture(sw, getStatisticsReply(1, 10, true));
+       sf.deliverFuture(sw, getStatisticsReply(1, 5, false));
        t.join();
 
        stats = sf.get();
@@ -117,10 +117,10 @@ public class OFMultipartDataFutureTest {
        // Test cancellation
        reset(sw);
        sw.cancelStatisticsReply(1);
-       sf = new OFMultipartDataFuture(tp, sw, 1);
+       sf = new OFStatisticsFuture(tp, sw, 1);
 
        replay(sw);
-       ff = new FutureFetcher<List<OFMultipartData>>(sf);
+       ff = new FutureFetcher<List<OFStatistics>>(sf);
        t = new Thread(ff);
        t.start();
        sf.cancel(true);
@@ -133,10 +133,10 @@ public class OFMultipartDataFutureTest {
        // Test self timeout
        reset(sw);
        sw.cancelStatisticsReply(1);
-       sf = new OFMultipartDataFuture(tp, sw, 1, 75, TimeUnit.MILLISECONDS);
+       sf = new OFStatisticsFuture(tp, sw, 1, 75, TimeUnit.MILLISECONDS);
 
        replay(sw);
-       ff = new FutureFetcher<List<OFMultipartData>>(sf);
+       ff = new FutureFetcher<List<OFStatistics>>(sf);
        t = new Thread(ff);
        t.start();
        t.join(2000);

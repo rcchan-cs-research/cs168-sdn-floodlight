@@ -3,8 +3,8 @@ package org.openflow.protocol.factory;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesProperty;
-import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesPropertyType;
+import org.openflow.protocol.statistics.tableFeatures.OFTableFeaturesProperty;
+import org.openflow.protocol.statistics.tableFeatures.OFTableFeaturesPropertyType;
 
 
 /**

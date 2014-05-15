@@ -12,8 +12,8 @@ import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPhysicalPort.OFPortState;
 import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
 import org.openflow.protocol.OFPhysicalPort.OFPortFeatures;
-import org.openflow.protocol.multipart.OFPortDescription;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFPortDescription;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 import org.openflow.util.HexString;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

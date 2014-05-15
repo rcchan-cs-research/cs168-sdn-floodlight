@@ -12,15 +12,15 @@ import org.openflow.protocol.instruction.OFInstruction;
 import org.openflow.protocol.instruction.OFInstructionType;
 import org.openflow.protocol.queue.OFQueueProperty;
 import org.openflow.protocol.queue.OFQueuePropertyType;
-import org.openflow.protocol.multipart.OFMultipartData;
-import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.protocol.hello.OFHelloElement;
 import org.openflow.protocol.hello.OFHelloElementType;
-import org.openflow.protocol.multipart.OFVendorStatistics;
+import org.openflow.protocol.statistics.OFVendorStatistics;
 import org.openflow.protocol.meter.OFMeterBand;
 import org.openflow.protocol.meter.OFMeterBandType;
-import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesProperty;
-import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesPropertyType;
+import org.openflow.protocol.statistics.tableFeatures.OFTableFeaturesProperty;
+import org.openflow.protocol.statistics.tableFeatures.OFTableFeaturesPropertyType;
 
 
 /**
@@ -33,7 +33,7 @@ import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesPropertyType
  *
  */
 public class BasicFactory implements OFMessageFactory, OFActionFactory,
-        OFQueuePropertyFactory, OFMultipartFactory,
+        OFQueuePropertyFactory, OFStatisticsFactory,
         OFInstructionFactory, OFHelloElementFactory,
         OFMeterBandFactory, OFTableFeaturesPropertyFactory {
 
@@ -109,8 +109,8 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
         if (ofm instanceof OFQueuePropertyFactoryAware) {
             ((OFQueuePropertyFactoryAware)ofm).setQueuePropertyFactory(this);
         }
-        if (ofm instanceof OFMultipartFactoryAware) {
-            ((OFMultipartFactoryAware)ofm).setMultipartFactory(this);
+        if (ofm instanceof OFStatisticsFactoryAware) {
+            ((OFStatisticsFactoryAware)ofm).setStatisticsFactory(this);
         }
         if (ofm instanceof OFHelloElementFactoryAware) {
             ((OFHelloElementFactoryAware)ofm).setHelloElementFactory(this);
@@ -220,21 +220,21 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
     }
 
     @Override
-    public OFMultipartData getMultipartData(OFType t, OFMultipartDataType st) {
+    public OFStatistics getStatistics(OFType t, OFStatisticsType st) {
         return st.newInstance(t);
     }
 
     @Override
-    public List<OFMultipartData> parseMultipartData(OFType t, OFMultipartDataType st,
+    public List<OFStatistics> parseStatistics(OFType t, OFStatisticsType st,
             ByteBuffer data, int length) {
-        return parseMultipartData(t, st, data, length, 0);
+        return parseStatistics(t, st, data, length, 0);
     }
 
     /**
      * @param t
      *            OFMessage type: should be one of stats_request or stats_reply
      * @param st
-     *            type of this multipart message, e.g., DESC, TABLE
+     *            type of this statistics message, e.g., DESC, TABLE
      * @param data
      *            buffer to read from
      * @param length
@@ -242,40 +242,40 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
      * @param limit
      *            number of records to grab; 0 == all
      * 
-     * @return list of multipart records
+     * @return list of statistics records
      */
 
     @Override
-    public List<OFMultipartData> parseMultipartData(OFType t, OFMultipartDataType st,
+    public List<OFStatistics> parseStatistics(OFType t, OFStatisticsType st,
             ByteBuffer data, int length, int limit) {
-        List<OFMultipartData> results = new ArrayList<OFMultipartData>();
-        OFMultipartData multipartData = getMultipartData(t, st);
+        List<OFStatistics> results = new ArrayList<OFStatistics>();
+        OFStatistics statistics = getStatistics(t, st);
 
         int start = data.position();
         int count = 0;
 
         while (limit == 0 || results.size() <= limit) {
             // Create a separate MUX/DEMUX path for vendor stats
-            if (multipartData instanceof OFVendorStatistics)
-                ((OFVendorStatistics)multipartData).setLength(length);
+            if (statistics instanceof OFVendorStatistics)
+                ((OFVendorStatistics)statistics).setLength(length);
 
             /**
              * can't use data.remaining() here, b/c there could be other data
              * buffered past this message
              */
-            if ((length - count) >= multipartData.getLength()) {
-                if (multipartData instanceof OFActionFactoryAware)
-                    ((OFActionFactoryAware)multipartData).setActionFactory(this);
-                multipartData.readFrom(data);
-                results.add(multipartData);
-                count += multipartData.getLength();
-                multipartData = getMultipartData(t, st);
+            if ((length - count) >= statistics.getLength()) {
+                if (statistics instanceof OFActionFactoryAware)
+                    ((OFActionFactoryAware)statistics).setActionFactory(this);
+                statistics.readFrom(data);
+                results.add(statistics);
+                count += statistics.getLength();
+                statistics = getStatistics(t, st);
             } else {
                 if (count < length) {
                     /**
                      * Nasty case: partial/incomplete statistic found even
                      * though we have a full message. Found when NOX sent
-                     * agg_stats request with wrong agg multipartData length (52
+                     * agg_stats request with wrong agg statistics length (52
                      * instead of 56)
                      * 
                      * just throw the rest away, or we will break framing
@@ -285,7 +285,7 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
                 return results;
             }
         }
-        return results; // empty; no multipartData at all
+        return results; // empty; no statistics at all
     }
 
     @Override

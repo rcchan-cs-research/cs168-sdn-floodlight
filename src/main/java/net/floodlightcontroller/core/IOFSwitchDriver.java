@@ -16,7 +16,7 @@
 
 package net.floodlightcontroller.core;
 
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 
 public interface IOFSwitchDriver {
     /**

@@ -13,7 +13,7 @@ import org.openflow.protocol.OFPhysicalPort.OFPortConfig;
 import org.openflow.protocol.OFPhysicalPort.OFPortFeatures;
 import org.openflow.protocol.OFPhysicalPort.OFPortState;
 import org.openflow.protocol.OFPhysicalPort.OFPortSpeed;
-import org.openflow.protocol.multipart.OFPortDescription;
+import org.openflow.protocol.statistics.OFPortDescription;
 import org.openflow.util.HexString;
 
 

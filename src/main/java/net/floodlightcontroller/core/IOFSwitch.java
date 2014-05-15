@@ -35,11 +35,11 @@ import org.jboss.netty.channel.Channel;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPortStatus;
-import org.openflow.protocol.OFMultipartReply;
-import org.openflow.protocol.OFMultipartRequest;
-import org.openflow.protocol.multipart.OFPortDescription;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
-import org.openflow.protocol.multipart.OFMultipartData;
+import org.openflow.protocol.OFStatisticsReply;
+import org.openflow.protocol.OFStatisticsRequest;
+import org.openflow.protocol.statistics.OFPortDescription;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFStatistics;
 
 /**
  *
@@ -416,22 +416,22 @@ public interface IOFSwitch {
 
     /**
      * Returns a Future object that can be used to retrieve the asynchronous
-     * OFMultipartReply when it is available.
+     * OFStatisticsReply when it is available.
      *
      * @param request statistics request
-     * @return Future object wrapping OFMultipartReply
+     * @return Future object wrapping OFStatisticsReply
      * @throws IOException
      */
-    public Future<List<OFMultipartData>> queryStatistics(OFMultipartRequest request)
+    public Future<List<OFStatistics>> queryStatistics(OFStatisticsRequest request)
 
             throws IOException;
 
     /**
      * Returns a Future object that can be used to retrieve the asynchronous
-     * OFMultipartReply when it is available.
+     * OFStatisticsReply when it is available.
      *
      * @param request statistics request
-     * @return Future object wrapping OFMultipartReply
+     * @return Future object wrapping OFStatisticsReply
      * @throws IOException
      */
     public Future<OFFeaturesReply> querySwitchFeaturesReply()
@@ -490,7 +490,7 @@ public interface IOFSwitch {
      * Deliver the statistics future reply
      * @param reply the reply to deliver
      */
-    public void deliverStatisticsReply(OFMultipartReply reply);
+    public void deliverStatisticsReply(OFStatisticsReply reply);
 
     /**
      * Cancel the statistics reply with the given transaction ID
@@ -572,7 +572,7 @@ public interface IOFSwitch {
      * that the transaction id is unique only within the scope of this switch.
      * @throws IOException
      */
-    public void sendStatsQuery(OFMultipartRequest request, int xid,
+    public void sendStatsQuery(OFStatisticsRequest request, int xid,
                             IOFMessageListener caller) throws IOException;
 
     /**

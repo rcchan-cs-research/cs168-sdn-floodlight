@@ -1,13 +1,13 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 
 /**
- * The base class for all OpenFlow multipart messages (including statistics).
+ * The base class for all OpenFlow statistics messages (including statistics).
  *
  * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 11, 2010
  */
-public interface OFMultipartData {
+public interface OFStatistics {
     /**
      * Returns the wire length of this message in bytes
      * @return the length
@@ -27,7 +27,7 @@ public interface OFMultipartData {
     public void writeTo(ByteBuffer data);
 
     /**
-     * Computes, sets and returns the length of this OFMultipartData message. The
+     * Computes, sets and returns the length of this OFStatistics message. The
      * value will be able to be retrieved from {@link #getLength()} without
      * recomputing after this method is called.
      * @return

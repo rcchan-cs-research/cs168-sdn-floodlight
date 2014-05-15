@@ -29,14 +29,14 @@ import net.floodlightcontroller.core.annotations.LogMessageDoc;
 import org.openflow.protocol.OFFeaturesReply;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPort;
-import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFTable;
-import org.openflow.protocol.multipart.OFAggregateStatisticsRequest;
-import org.openflow.protocol.multipart.OFFlowStatisticsRequest;
-import org.openflow.protocol.multipart.OFPortStatisticsRequest;
-import org.openflow.protocol.multipart.OFQueueStatisticsRequest;
-import org.openflow.protocol.multipart.OFMultipartData;
-import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.statistics.OFAggregateStatisticsRequest;
+import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
+import org.openflow.protocol.statistics.OFPortStatisticsRequest;
+import org.openflow.protocol.statistics.OFQueueStatisticsRequest;
+import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.util.HexString;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
@@ -68,50 +68,50 @@ public class SwitchResourceBase extends ServerResource {
                    		"from the switch",
                    recommendation=LogMessageDoc.CHECK_SWITCH + " " +
                    		LogMessageDoc.GENERIC_ACTION)
-    protected List<OFMultipartData> getSwitchStatistics(long switchId,
-                                                     OFMultipartDataType statType) {
+    protected List<OFStatistics> getSwitchStatistics(long switchId,
+                                                     OFStatisticsType statType) {
         IFloodlightProviderService floodlightProvider =
                 (IFloodlightProviderService)getContext().getAttributes().
                     get(IFloodlightProviderService.class.getCanonicalName());
 
         IOFSwitch sw = floodlightProvider.getSwitch(switchId);
-        Future<List<OFMultipartData>> future;
-        List<OFMultipartData> values = null;
+        Future<List<OFStatistics>> future;
+        List<OFStatistics> values = null;
         if (sw != null) {
-            OFMultipartRequest req = new OFMultipartRequest();
-            req.setMultipartDataType(statType);
+            OFStatisticsRequest req = new OFStatisticsRequest();
+            req.setStatisticsType(statType);
             int requestLength = req.getLengthU();
-            if (statType == OFMultipartDataType.FLOW) {
+            if (statType == OFStatisticsType.FLOW) {
                 OFFlowStatisticsRequest specificReq = new OFFlowStatisticsRequest();
                 OFMatch match = new OFMatch();
                 specificReq.setMatch(match);
                 specificReq.setOutPort(OFPort.OFPP_ANY.getValue());
                 specificReq.setTableId(OFTable.OFPTT_ALL);
-                req.setMultipartData(specificReq);
+                req.setStatistics(specificReq);
                 requestLength += specificReq.getLength();
-            } else if (statType == OFMultipartDataType.AGGREGATE) {
+            } else if (statType == OFStatisticsType.AGGREGATE) {
                 OFAggregateStatisticsRequest specificReq = new OFAggregateStatisticsRequest();
                 OFMatch match = new OFMatch();
                 specificReq.setMatch(match);
                 specificReq.setOutPort(OFPort.OFPP_ANY.getValue());
                 specificReq.setTableId((byte) 0xff);
-                req.setMultipartData(specificReq);
+                req.setStatistics(specificReq);
                 requestLength += specificReq.getLength();
-            } else if (statType == OFMultipartDataType.PORT) {
+            } else if (statType == OFStatisticsType.PORT) {
                 OFPortStatisticsRequest specificReq = new OFPortStatisticsRequest();
                 specificReq.setPortNumber(OFPort.OFPP_ANY.getValue());
-                req.setMultipartData(specificReq);
+                req.setStatistics(specificReq);
                 requestLength += specificReq.getLength();
-            } else if (statType == OFMultipartDataType.QUEUE) {
+            } else if (statType == OFStatisticsType.QUEUE) {
                 OFQueueStatisticsRequest specificReq = new OFQueueStatisticsRequest();
                 specificReq.setPortNumber(OFPort.OFPP_ALL.getValue());
                 // LOOK! openflowj does not define OFPQ_ALL! pulled this from openflow.h
                 // note that I haven't seen this work yet though...
                 specificReq.setQueueId(0xffffffff);
-                req.setMultipartData(specificReq);
+                req.setStatistics(specificReq);
                 requestLength += specificReq.getLength();
-            } else if (statType == OFMultipartDataType.DESC ||
-                       statType == OFMultipartDataType.TABLE) {
+            } else if (statType == OFStatisticsType.DESC ||
+                       statType == OFStatisticsType.TABLE) {
                 // pass - nothing todo besides set the type above
             }
             req.setLengthU(requestLength);
@@ -125,7 +125,7 @@ public class SwitchResourceBase extends ServerResource {
         return values;
     }
 
-    protected List<OFMultipartData> getSwitchStatistics(String switchId, OFMultipartDataType statType) {
+    protected List<OFStatistics> getSwitchStatistics(String switchId, OFStatisticsType statType) {
         return getSwitchStatistics(HexString.toLong(switchId), statType);
     }
 

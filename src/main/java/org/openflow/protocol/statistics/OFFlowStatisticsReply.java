@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.openflow.util.U16;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
-public class OFFlowStatisticsReply implements OFMultipartData, OFInstructionFactoryAware {
+public class OFFlowStatisticsReply implements OFStatistics, OFInstructionFactoryAware {
     public static int MINIMUM_LENGTH = 56;
 
     protected OFInstructionFactory instructionFactory;

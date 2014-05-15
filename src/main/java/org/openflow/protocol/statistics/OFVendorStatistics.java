@@ -1,13 +1,13 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 
 /**
- * The base class for vendor implemented multipart message
+ * The base class for vendor implemented statistics message
  * @author David Erickson (daviderickson@cs.stanford.edu)
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
-public class OFVendorStatistics implements OFMultipartData {
+public class OFVendorStatistics implements OFStatistics {
     protected static int MINIMUM_LENGTH = 8;
 
     protected int vendor;

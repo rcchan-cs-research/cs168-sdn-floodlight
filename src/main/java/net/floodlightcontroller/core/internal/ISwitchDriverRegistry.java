@@ -3,7 +3,7 @@ package net.floodlightcontroller.core.internal;
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.IOFSwitchDriver;
 
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 
 /**
  * Maintain a registry for SwitchDrivers. Drivers can register with the

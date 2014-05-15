@@ -25,12 +25,12 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.openflow.protocol.factory.BasicFactory;
 import org.openflow.protocol.factory.OFMessageFactory;
-import org.openflow.protocol.multipart.OFFlowStatisticsRequest;
-import org.openflow.protocol.multipart.OFMultipartDataType;
-import org.openflow.protocol.multipart.OFVendorStatistics;
+import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
+import org.openflow.protocol.statistics.OFStatisticsType;
+import org.openflow.protocol.statistics.OFVendorStatistics;
 import org.openflow.util.OFTestCase;
 
-public class OFMultipartRequestTest extends OFTestCase {
+public class OFStatisticsRequestTest extends OFTestCase {
     public void testOFFlowStatisticsRequest() throws Exception {
         byte[] packet = new byte[] { 0x01, 0x10, 0x00, 0x38, 0x00, 0x00, 0x00,
                 0x16, 0x00, 0x01, 0x00, 0x00, (byte) 0xff, (byte) 0xff,
@@ -45,14 +45,14 @@ public class OFMultipartRequestTest extends OFTestCase {
         List<OFMessage> msg = factory.parseMessage(packetBuf);
         TestCase.assertNotNull(msg);
         TestCase.assertEquals(msg.size(), 1);
-        TestCase.assertTrue(msg.get(0) instanceof OFMultipartRequest);
-        OFMultipartRequest sr = (OFMultipartRequest) msg.get(0);
-        TestCase.assertEquals(OFMultipartDataType.FLOW, sr.getStatisticType());
-        TestCase.assertEquals(1, sr.getMultipartData().size());
-        TestCase.assertTrue(sr.getMultipartData().get(0) instanceof OFFlowStatisticsRequest);
+        TestCase.assertTrue(msg.get(0) instanceof OFStatisticsRequest);
+        OFStatisticsRequest sr = (OFStatisticsRequest) msg.get(0);
+        TestCase.assertEquals(OFStatisticsType.FLOW, sr.getStatisticType());
+        TestCase.assertEquals(1, sr.getStatistics().size());
+        TestCase.assertTrue(sr.getStatistics().get(0) instanceof OFFlowStatisticsRequest);
     }
 
-    public void testOFMultipartRequestVendor() throws Exception {
+    public void testOFStatisticsRequestVendor() throws Exception {
         byte[] packet = new byte[] { 0x01, 0x10, 0x00, 0x50, 0x00, 0x00, 0x00,
                 0x63, (byte) 0xff, (byte) 0xff, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x4c, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -69,11 +69,11 @@ public class OFMultipartRequestTest extends OFTestCase {
         List<OFMessage> msg = factory.parseMessage(packetBuf);
         TestCase.assertNotNull(msg);
         TestCase.assertEquals(msg.size(), 1);
-        TestCase.assertTrue(msg.get(0) instanceof OFMultipartRequest);
-        OFMultipartRequest sr = (OFMultipartRequest) msg.get(0);
-        TestCase.assertEquals(OFMultipartDataType.VENDOR, sr.getStatisticType());
-        TestCase.assertEquals(1, sr.getMultipartData().size());
-        TestCase.assertTrue(sr.getMultipartData().get(0) instanceof OFVendorStatistics);
-        TestCase.assertEquals(68, ((OFVendorStatistics)sr.getMultipartData().get(0)).getLength());
+        TestCase.assertTrue(msg.get(0) instanceof OFStatisticsRequest);
+        OFStatisticsRequest sr = (OFStatisticsRequest) msg.get(0);
+        TestCase.assertEquals(OFStatisticsType.VENDOR, sr.getStatisticType());
+        TestCase.assertEquals(1, sr.getStatistics().size());
+        TestCase.assertTrue(sr.getStatistics().get(0) instanceof OFVendorStatistics);
+        TestCase.assertEquals(68, ((OFVendorStatistics)sr.getStatistics().get(0)).getLength());
     }
 }

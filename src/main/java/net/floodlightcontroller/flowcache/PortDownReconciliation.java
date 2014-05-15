@@ -28,12 +28,12 @@ import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFMatchWithSwDpid;
 import org.openflow.protocol.OFMessage;
-import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
-import org.openflow.protocol.multipart.OFFlowStatisticsReply;
-import org.openflow.protocol.multipart.OFFlowStatisticsRequest;
-import org.openflow.protocol.multipart.OFMultipartData;
-import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.statistics.OFFlowStatisticsReply;
+import org.openflow.protocol.statistics.OFFlowStatisticsRequest;
+import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.util.HexString;
 import org.openflow.util.U16;
 import org.slf4j.Logger;
@@ -295,18 +295,18 @@ public class PortDownReconciliation implements IFloodlightModule,
     public List<OFFlowStatisticsReply> getFlows(IOFSwitch sw, Integer outPort) {
 
         statsReply = new ArrayList<OFFlowStatisticsReply>();
-        List<OFMultipartData> values = null;
-        Future<List<OFMultipartData>> future;
+        List<OFStatistics> values = null;
+        Future<List<OFStatistics>> future;
 
         // Statistics request object for getting flows
-        OFMultipartRequest req = new OFMultipartRequest();
-        req.setMultipartDataType(OFMultipartDataType.FLOW);
+        OFStatisticsRequest req = new OFStatisticsRequest();
+        req.setStatisticsType(OFStatisticsType.FLOW);
         int requestLength = req.getLengthU();
         OFFlowStatisticsRequest specificReq = new OFFlowStatisticsRequest();
         specificReq.setMatch(new OFMatch());
         specificReq.setOutPort(outPort);
         specificReq.setTableId((byte) 0xff);
-        req.setMultipartData(specificReq);
+        req.setStatistics(specificReq);
         requestLength += specificReq.getLength();
         req.setLengthU(requestLength);
 
@@ -315,7 +315,7 @@ public class PortDownReconciliation implements IFloodlightModule,
             future = sw.queryStatistics(req);
             values = future.get(10, TimeUnit.SECONDS);
             if (values != null) {
-                for (OFMultipartData stat : values) {
+                for (OFStatistics stat : values) {
                     statsReply.add((OFFlowStatisticsReply) stat);
                 }
             }

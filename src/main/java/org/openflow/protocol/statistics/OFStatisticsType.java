@@ -1,226 +1,226 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.lang.reflect.Constructor;
 
 import org.openflow.protocol.Instantiable;
 import org.openflow.protocol.OFType;
 
-public enum OFMultipartDataType {
+public enum OFStatisticsType {
     DESC        (0, null, OFDescriptionStatistics.class,
                     null,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFDescriptionStatistics();
                         }
                     }),
     FLOW       (1, OFFlowStatisticsRequest.class, OFFlowStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFFlowStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFFlowStatisticsReply();
                         }
                     }),
     AGGREGATE  (2, OFAggregateStatisticsRequest.class, OFAggregateStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFAggregateStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFAggregateStatisticsReply();
                         }
                     }),
     TABLE      (3, OFTableStatistics.class, OFTableStatistics.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFTableStatistics();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFTableStatistics();
                         }
                     }),
     PORT       (4, OFPortStatisticsRequest.class, OFPortStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFPortStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFPortStatisticsReply();
                         }
                     }),
     QUEUE      (5, OFQueueStatisticsRequest.class, OFQueueStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFQueueStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFQueueStatisticsReply();
                         }
                     }),
 /* TODO
     GROUP       (6, OFGroupStatisticsRequest.class, OFGroupStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFGroupStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFGroupStatisticsReply();
                         }
                     }),
 
     GROUP_DESC   (7, OFGroupDescriptionStatisticsRequest.class, OFGroupDescriptionStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFGroupDescriptionStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFGroupDescriptionStatisticsReply();
                         }
                     }),
     GROUP_FEATURES (8, OFGroupFeaturesStatisticsRequest.class, OFGroupFeaturesStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFGroupFeaturesStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFGroupFeaturesStatisticsReply();
                         }
                     }),
     METER         (9, OFMeterStatisticsRequest.class, OFMeterStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFMeterStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFMeterStatisticsReply();
                         }
                     }),
 
     METER_CONFIG   (10, OFMeterConfigStatisticsRequest.class, OFMeterConfigStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFMeterConfigStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFMeterConfigStatisticsReply();
                         }
                     }),
     METER_FEATURES (11, OFMeterFeaturesStatisticsRequest.class, OFMeterFeaturesStatisticsReply.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFMeterFeaturesStatisticsRequest();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFMeterFeaturesStatisticsReply();
                         }
                     }),
  */
     TABLE_FEATURES (12, OFTableFeatures.class, OFTableFeatures.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFTableFeatures();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFTableFeatures();
                         }
                     }),
     PORT_DESC (13, null, OFPortDescription.class,
                     null,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFPortDescription();
                         }
                     }),
     VENDOR     (0xffff, OFVendorStatistics.class, OFVendorStatistics.class,
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFVendorStatistics();
                         }
                     },
-                    new Instantiable<OFMultipartData>() {
+                    new Instantiable<OFStatistics>() {
                         @Override
-                        public OFMultipartData instantiate() {
+                        public OFStatistics instantiate() {
                             return new OFVendorStatistics();
                         }
                     });
 
-    static OFMultipartDataType[] requestMapping;
-    static OFMultipartDataType[] replyMapping;
+    static OFStatisticsType[] requestMapping;
+    static OFStatisticsType[] replyMapping;
 
-    protected Class<? extends OFMultipartData> requestClass;
-    protected Constructor<? extends OFMultipartData> requestConstructor;
-    protected Instantiable<OFMultipartData> requestInstantiable;
-    protected Class<? extends OFMultipartData> replyClass;
-    protected Constructor<? extends OFMultipartData> replyConstructor;
-    protected Instantiable<OFMultipartData> replyInstantiable;
+    protected Class<? extends OFStatistics> requestClass;
+    protected Constructor<? extends OFStatistics> requestConstructor;
+    protected Instantiable<OFStatistics> requestInstantiable;
+    protected Class<? extends OFStatistics> replyClass;
+    protected Constructor<? extends OFStatistics> replyConstructor;
+    protected Instantiable<OFStatistics> replyInstantiable;
     protected short type;
 
     /**
      * Store some information about the OpenFlow Statistic type, including wire
      * protocol type number, and derived class
      *
-     * @param type Wire protocol number associated with this OFMultipartDataType
+     * @param type Wire protocol number associated with this OFStatisticsType
      * @param requestClass The Statistics Java class to return when the
-     *                     containing OFType is MULTIPART_REQUEST
+     *                     containing OFType is STATS_REQUEST
      * @param replyClass   The Statistics Java class to return when the
-     *                     containing OFType is MULTIPART_REPLY
+     *                     containing OFType is STATS_REPLY
      */
-    OFMultipartDataType(int type, Class<? extends OFMultipartData> requestClass,
-            Class<? extends OFMultipartData> replyClass,
-            Instantiable<OFMultipartData> requestInstantiable,
-            Instantiable<OFMultipartData> replyInstantiable) {
+    OFStatisticsType(int type, Class<? extends OFStatistics> requestClass,
+            Class<? extends OFStatistics> replyClass,
+            Instantiable<OFStatistics> requestInstantiable,
+            Instantiable<OFStatistics> replyInstantiable) {
         this.type = (short) type;
         this.requestClass = requestClass;
         if (requestClass != null) {
@@ -242,50 +242,50 @@ public enum OFMultipartDataType {
         
         if (requestClass !=null) {
             this.requestInstantiable = requestInstantiable;
-            OFMultipartDataType.addMapping(this.type, OFType.MULTIPART_REQUEST, this);
+            OFStatisticsType.addMapping(this.type, OFType.STATS_REQUEST, this);
         }
         
         this.replyInstantiable = replyInstantiable;
-        OFMultipartDataType.addMapping(this.type, OFType.MULTIPART_REPLY, this);
+        OFStatisticsType.addMapping(this.type, OFType.STATS_REPLY, this);
     }
 
     /**
-     * Adds a mapping from type value to OFMultipartDataType enum
+     * Adds a mapping from type value to OFStatisticsType enum
      *
      * @param i OpenFlow wire protocol type
-     * @param t type of containing OFMessage, only accepts MULTIPART_REQUEST or
-     *          MULTIPART_REPLY
+     * @param t type of containing OFMessage, only accepts STATS_REQUEST or
+     *          STATS_REPLY
      * @param st type
      */
-    static public void addMapping(short i, OFType t, OFMultipartDataType st) {
+    static public void addMapping(short i, OFType t, OFStatisticsType st) {
         if (i < 0)
             i = (short) (16+i);
-        if (t == OFType.MULTIPART_REQUEST) {
+        if (t == OFType.STATS_REQUEST) {
             if (requestMapping == null)
-                requestMapping = new OFMultipartDataType[16];
-            OFMultipartDataType.requestMapping[i] = st;
-        } else if (t == OFType.MULTIPART_REPLY){
+                requestMapping = new OFStatisticsType[16];
+            OFStatisticsType.requestMapping[i] = st;
+        } else if (t == OFType.STATS_REPLY){
             if (replyMapping == null)
-                replyMapping = new OFMultipartDataType[16];
-            OFMultipartDataType.replyMapping[i] = st;
+                replyMapping = new OFStatisticsType[16];
+            OFStatisticsType.replyMapping[i] = st;
         } else {
             throw new RuntimeException(t.toString() + " is an invalid OFType");
         }
     }
 
     /**
-     * Remove a mapping from type value to OFMultipartDataType enum
+     * Remove a mapping from type value to OFStatisticsType enum
      *
      * @param i OpenFlow wire protocol type
-     * @param t type of containing OFMessage, only accepts MULTIPART_REQUEST or
-     *          MULTIPART_REPLY
+     * @param t type of containing OFMessage, only accepts STATS_REQUEST or
+     *          STATS_REPLY
      */
     static public void removeMapping(short i, OFType t) {
         if (i < 0)
             i = (short) (16+i);
-        if (t == OFType.MULTIPART_REQUEST) {
+        if (t == OFType.STATS_REQUEST) {
             requestMapping[i] = null;
-        } else if (t == OFType.MULTIPART_REPLY){
+        } else if (t == OFType.STATS_REPLY){
             replyMapping[i] = null;
         } else {
             throw new RuntimeException(t.toString() + " is an invalid OFType");
@@ -293,20 +293,20 @@ public enum OFMultipartDataType {
     }
 
     /**
-     * Given a wire protocol OpenFlow type number, return the OFMultipartDataType
+     * Given a wire protocol OpenFlow type number, return the OFStatisticsType
      * associated with it
      *
      * @param i wire protocol number
-     * @param t type of containing OFMessage, only accepts MULTIPART_REQUEST or
-     *          MULTIPART_REPLY
-     * @return OFMultipartDataType enum type
+     * @param t type of containing OFMessage, only accepts STATS_REQUEST or
+     *          STATS_REPLY
+     * @return OFStatisticsType enum type
      */
-    static public OFMultipartDataType valueOf(short i, OFType t) {
+    static public OFStatisticsType valueOf(short i, OFType t) {
         if (i < 0)
             i = (short) (16+i);
-        if (t == OFType.MULTIPART_REQUEST) {
+        if (t == OFType.STATS_REQUEST) {
             return requestMapping[i];
-        } else if (t == OFType.MULTIPART_REPLY){
+        } else if (t == OFType.STATS_REPLY){
             return replyMapping[i];
         } else {
             throw new RuntimeException(t.toString() + " is an invalid OFType");
@@ -315,22 +315,22 @@ public enum OFMultipartDataType {
 
     /**
      * @return Returns the wire protocol value corresponding to this
-     * OFMultipartDataType
+     * OFStatisticsType
      */
     public short getTypeValue() {
         return this.type;
     }
 
     /**
-     * @param t type of containing OFMessage, only accepts MULTIPART_REQUEST or
-     *          MULTIPART_REPLY
+     * @param t type of containing OFMessage, only accepts STATS_REQUEST or
+     *          STATS_REPLY
      * @return return the OFMessage subclass corresponding to this
-     *                OFMultipartDataType
+     *                OFStatisticsType
      */
-    public Class<? extends OFMultipartData> toClass(OFType t) {
-        if (t == OFType.MULTIPART_REQUEST) {
+    public Class<? extends OFStatistics> toClass(OFType t) {
+        if (t == OFType.STATS_REQUEST) {
             return requestClass;
-        } else if (t == OFType.MULTIPART_REPLY){
+        } else if (t == OFType.STATS_REPLY){
             return replyClass;
         } else {
             throw new RuntimeException(t.toString() + " is an invalid OFType");
@@ -339,16 +339,16 @@ public enum OFMultipartDataType {
 
     /**
      * Returns the no-argument Constructor of the implementation class for
-     * this OFMultipartDataType, either request or reply based on the supplied
+     * this OFStatisticsType, either request or reply based on the supplied
      * OFType
      *
      * @param t
      * @return
      */
-    public Constructor<? extends OFMultipartData> getConstructor(OFType t) {
-        if (t == OFType.MULTIPART_REQUEST) {
+    public Constructor<? extends OFStatistics> getConstructor(OFType t) {
+        if (t == OFType.STATS_REQUEST) {
             return requestConstructor;
-        } else if (t == OFType.MULTIPART_REPLY) {
+        } else if (t == OFType.STATS_REPLY) {
             return replyConstructor;
         } else {
             throw new RuntimeException(t.toString() + " is an invalid OFType");
@@ -358,7 +358,7 @@ public enum OFMultipartDataType {
     /**
      * @return the requestInstantiable
      */
-    public Instantiable<OFMultipartData> getRequestInstantiable() {
+    public Instantiable<OFStatistics> getRequestInstantiable() {
         return requestInstantiable;
     }
 
@@ -366,36 +366,36 @@ public enum OFMultipartDataType {
      * @param requestInstantiable the requestInstantiable to set
      */
     public void setRequestInstantiable(
-            Instantiable<OFMultipartData> requestInstantiable) {
+            Instantiable<OFStatistics> requestInstantiable) {
         this.requestInstantiable = requestInstantiable;
     }
 
     /**
      * @return the replyInstantiable
      */
-    public Instantiable<OFMultipartData> getReplyInstantiable() {
+    public Instantiable<OFStatistics> getReplyInstantiable() {
         return replyInstantiable;
     }
 
     /**
      * @param replyInstantiable the replyInstantiable to set
      */
-    public void setReplyInstantiable(Instantiable<OFMultipartData> replyInstantiable) {
+    public void setReplyInstantiable(Instantiable<OFStatistics> replyInstantiable) {
         this.replyInstantiable = replyInstantiable;
     }
 
     /**
      * Returns a new instance of the implementation class for
-     * this OFMultipartDataType, either request or reply based on the supplied
+     * this OFStatisticsType, either request or reply based on the supplied
      * OFType
      *
      * @param t
      * @return
      */
-    public OFMultipartData newInstance(OFType t) {
-        if (t == OFType.MULTIPART_REQUEST) {
+    public OFStatistics newInstance(OFType t) {
+        if (t == OFType.STATS_REQUEST) {
             return requestInstantiable.instantiate();
-        } else if (t == OFType.MULTIPART_REPLY) {
+        } else if (t == OFType.STATS_REPLY) {
             return replyInstantiable.instantiate();
         } else {
             throw new RuntimeException(t.toString() + " is an invalid OFType");

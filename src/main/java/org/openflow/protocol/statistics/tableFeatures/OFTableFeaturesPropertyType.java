@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart.tableFeatures;
+package org.openflow.protocol.statistics.tableFeatures;
 
 import java.lang.reflect.Constructor;
 

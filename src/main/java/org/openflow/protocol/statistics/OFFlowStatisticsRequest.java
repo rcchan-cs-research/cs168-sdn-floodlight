@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 
@@ -12,7 +12,7 @@ import org.openflow.protocol.OFTable;
  * @author David Erickson (daviderickson@cs.stanford.edu)
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
-public class OFFlowStatisticsRequest implements OFMultipartData {
+public class OFFlowStatisticsRequest implements OFStatistics {
     public final static int MINIMUM_LENGTH = 40;
 
     protected OFMatch match;

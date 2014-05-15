@@ -26,10 +26,10 @@ import org.openflow.protocol.hello.OFHelloElement;
 import org.openflow.protocol.hello.OFHelloElementVersionBitmap;
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
-import org.openflow.protocol.OFMultipartRequest;
-import org.openflow.protocol.OFMultipartReply;
+import org.openflow.protocol.OFStatisticsRequest;
+import org.openflow.protocol.OFStatisticsReply;
 import org.openflow.protocol.OFFeaturesReply;
-import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.protocol.OFError;
 import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFOXMFieldType;
@@ -218,16 +218,16 @@ public class SimpleController implements SelectListener {
         stream.write(l);
 
         l = new ArrayList<OFMessage>();
-        OFMultipartRequest omr = (OFMultipartRequest) factory.getMessage(OFType.MULTIPART_REQUEST);
-        omr.setMultipartDataType(OFMultipartDataType.DESC);
+        OFStatisticsRequest omr = (OFStatisticsRequest) factory.getMessage(OFType.STATS_REQUEST);
+        omr.setStatisticsType(OFStatisticsType.DESC);
         l.add(omr);
 
-        omr = (OFMultipartRequest) factory.getMessage(OFType.MULTIPART_REQUEST);
-        omr.setMultipartDataType(OFMultipartDataType.PORT_DESC);
+        omr = (OFStatisticsRequest) factory.getMessage(OFType.STATS_REQUEST);
+        omr.setStatisticsType(OFStatisticsType.PORT_DESC);
         l.add(omr);
 
-        omr = (OFMultipartRequest) factory.getMessage(OFType.MULTIPART_REQUEST);
-        omr.setMultipartDataType(OFMultipartDataType.TABLE_FEATURES);
+        omr = (OFStatisticsRequest) factory.getMessage(OFType.STATS_REQUEST);
+        omr.setStatisticsType(OFStatisticsType.TABLE_FEATURES);
         l.add(omr);
         stream.write(l);
 
@@ -264,9 +264,9 @@ public class SimpleController implements SelectListener {
                             System.err.println("GOT FEATURE_REPLY from " + sw);
                             System.err.println("--> Data:" + ((OFFeaturesReply) m).toString());
                             break;
-                        case MULTIPART_REPLY:
-                            System.err.println("GOT MULTIPART_REPLY from " + sw);
-                            System.err.println("--> Data:" + ((OFMultipartReply) m).toString());
+                        case STATS_REPLY:
+                            System.err.println("GOT STATS_REPLY from " + sw);
+                            System.err.println("--> Data:" + ((OFStatisticsReply) m).toString());
                             break;
                         case HELLO:
                             System.err.println("GOT HELLO from " + sw);

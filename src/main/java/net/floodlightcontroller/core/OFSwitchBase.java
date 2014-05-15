@@ -70,14 +70,14 @@ import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.OFPort;
-import org.openflow.protocol.OFMultipartReply;
-import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.OFStatisticsReply;
+import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
-import org.openflow.protocol.multipart.OFPortDescription;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
-import org.openflow.protocol.multipart.OFMultipartData;
-import org.openflow.protocol.multipart.OFMultipartDataType;
-import org.openflow.protocol.multipart.OFTableStatistics;
+import org.openflow.protocol.statistics.OFPortDescription;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
+import org.openflow.protocol.statistics.OFTableStatistics;
 import org.openflow.util.HexString;
 import org.openflow.util.U16;
 import org.slf4j.Logger;
@@ -962,7 +962,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public void sendStatsQuery(OFMultipartRequest request, int xid,
+    public void sendStatsQuery(OFStatisticsRequest request, int xid,
                                 IOFMessageListener caller) throws IOException {
         request.setXid(xid);
         this.iofMsgListenersMap.put(xid, caller);
@@ -973,7 +973,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public Future<List<OFMultipartData>> queryStatistics(OFMultipartRequest request) throws IOException {
+    public Future<List<OFStatistics>> queryStatistics(OFStatisticsRequest request) throws IOException {
         request.setXid(getNextTransactionId());
         OFStatisticsFuture future = new OFStatisticsFuture(threadPool, this, request.getXid());
         this.statsFutureMap.put(request.getXid(), future);
@@ -984,7 +984,7 @@ public abstract class OFSwitchBase implements IOFSwitch {
     }
 
     @Override
-    public void deliverStatisticsReply(OFMultipartReply reply) {
+    public void deliverStatisticsReply(OFStatisticsReply reply) {
         checkForTableStats(reply);
         OFStatisticsFuture future = this.statsFutureMap.get(reply.getXid());
         if (future != null) {
@@ -1010,14 +1010,14 @@ public abstract class OFSwitchBase implements IOFSwitch {
             explanation="The switch flow table is less than 90% full")
     })
     
-    private void checkForTableStats(OFMultipartReply statReply) {
-        if (statReply.getMultipartDataType() != OFMultipartDataType.TABLE) {
+    private void checkForTableStats(OFStatisticsReply statReply) {
+        if (statReply.getStatisticsType() != OFStatisticsType.TABLE) {
             return;
         }
-        List<? extends OFMultipartData> stats = statReply.getMultipartData();
+        List<? extends OFStatistics> stats = statReply.getStatistics();
         // TODO: Support multiple tables
         // Assume a single table only
-        OFMultipartData stat = stats.get(0);
+        OFStatistics stat = stats.get(0);
         if (stat instanceof OFTableStatistics) {
             OFTableStatistics tableStat = (OFTableStatistics) stat;
             int activeCount = tableStat.getActiveCount();

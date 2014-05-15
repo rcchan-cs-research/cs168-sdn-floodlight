@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -11,7 +11,7 @@ import org.openflow.protocol.OFTable;
 import org.openflow.protocol.OFTable.OFTableConfig;
 import org.openflow.protocol.factory.OFTableFeaturesPropertyFactory;
 import org.openflow.protocol.factory.OFTableFeaturesPropertyFactoryAware;
-import org.openflow.protocol.multipart.tableFeatures.OFTableFeaturesProperty;
+import org.openflow.protocol.statistics.tableFeatures.OFTableFeaturesProperty;
 import org.openflow.util.U16;
 
 /**
@@ -19,7 +19,7 @@ import org.openflow.util.U16;
  *
  * @author Srini Seetharamana (srini.seetharaman@gmail.com)
  */
-public class OFTableFeatures implements OFMultipartData, Cloneable, 
+public class OFTableFeatures implements OFStatistics, Cloneable, 
     OFTableFeaturesPropertyFactoryAware {
 
     public static short MINIMUM_LENGTH = 64;

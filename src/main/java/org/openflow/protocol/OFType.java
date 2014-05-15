@@ -105,15 +105,15 @@ public enum OFType {
                             public OFMessage instantiate() {
                                 return new OFTableMod();
                             }}),
-    MULTIPART_REQUEST       (18, OFMultipartRequest.class, new Instantiable<OFMessage>() {
+    STATS_REQUEST       (18, OFStatisticsRequest.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
-                                return new OFMultipartRequest();
+                                return new OFStatisticsRequest();
                             }}),
-    MULTIPART_REPLY         (19, OFMultipartReply.class, new Instantiable<OFMessage>() {
+    STATS_REPLY         (19, OFStatisticsReply.class, new Instantiable<OFMessage>() {
                             @Override
                             public OFMessage instantiate() {
-                                return new OFMultipartReply();
+                                return new OFStatisticsReply();
                             }}),
     BARRIER_REQUEST     (20, OFBarrierRequest.class, new Instantiable<OFMessage>() {
                             @Override

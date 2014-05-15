@@ -46,13 +46,13 @@ import org.openflow.protocol.OFPhysicalPort;
 import org.openflow.protocol.OFPortStatus;
 import org.openflow.protocol.OFPortStatus.OFPortReason;
 import org.openflow.protocol.OFSetConfig;
-import org.openflow.protocol.OFMultipartReply;
-import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.OFStatisticsReply;
+import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.OFVendor;
 import org.openflow.protocol.factory.FloodlightFactory;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
-import org.openflow.protocol.multipart.OFMultipartDataType;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFStatisticsType;
 import org.openflow.util.HexString;
 import org.openflow.vendor.nicira.OFNiciraVendorData;
 import org.openflow.vendor.nicira.OFRoleReplyVendorData;
@@ -407,12 +407,12 @@ public class OFChannelHandlerTest {
 
         List<OFMessage> msgs = getMessagesFromCapture();
         assertEquals(1, msgs.size());
-        assertEquals(OFType.MULTIPART_REQUEST, msgs.get(0).getType());
-        OFMultipartRequest sr = (OFMultipartRequest)msgs.get(0);
-        assertEquals(OFMultipartDataType.DESC, sr.getStatisticType());
-        // no idea why an  OFMultipartRequest even /has/ a getMultipartData()
+        assertEquals(OFType.STATS_REQUEST, msgs.get(0).getType());
+        OFStatisticsRequest sr = (OFStatisticsRequest)msgs.get(0);
+        assertEquals(OFStatisticsType.DESC, sr.getStatisticType());
+        // no idea why an  OFStatisticsRequest even /has/ a getStatistics()
         // methods. It really shouldn't
-        assertNull(sr.getMultipartData());
+        assertNull(sr.getStatistics());
         verifyUniqueXids(msgs);
         assertEquals(OFChannelHandler.ChannelState.WAIT_DESCRIPTION_STAT_REPLY,
                      handler.getStateForTesting());
@@ -462,17 +462,17 @@ public class OFChannelHandlerTest {
         verify(storageResultSet);
     }
 
-    private static OFMultipartReply createDescriptionStatsReply() {
-        OFMultipartReply sr = (OFMultipartReply)FloodlightFactory.getInstance()
-                .getMessage(OFType.MULTIPART_REPLY);
-        sr.setMultipartDataType(OFMultipartDataType.DESC);
+    private static OFStatisticsReply createDescriptionStatsReply() {
+        OFStatisticsReply sr = (OFStatisticsReply)FloodlightFactory.getInstance()
+                .getMessage(OFType.STATS_REPLY);
+        sr.setStatisticsType(OFStatisticsType.DESC);
         OFDescriptionStatistics desc = new OFDescriptionStatistics();
         desc.setDatapathDescription("Datapath Description");
         desc.setHardwareDescription("Hardware Description");
         desc.setManufacturerDescription("Manufacturer Description");
         desc.setSerialNumber("Serial Number");
         desc.setSoftwareDescription("Software Description");
-        sr.setMultipartData(Collections.singletonList(desc));
+        sr.setStatistics(Collections.singletonList(desc));
         return sr;
     }
 
@@ -527,7 +527,7 @@ public class OFChannelHandlerTest {
         replay(channel);
 
         // build the stats reply
-        OFMultipartReply sr = createDescriptionStatsReply();
+        OFStatisticsReply sr = createDescriptionStatsReply();
         OFDescriptionStatistics desc =
                 (OFDescriptionStatistics) sr.getFirstStatistics();
 
@@ -593,7 +593,7 @@ public class OFChannelHandlerTest {
         replay(channel);
 
         // build the stats reply
-        OFMultipartReply sr = createDescriptionStatsReply();
+        OFStatisticsReply sr = createDescriptionStatsReply();
         OFDescriptionStatistics desc =
                 (OFDescriptionStatistics) sr.getFirstStatistics();
 

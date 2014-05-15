@@ -102,7 +102,7 @@ import org.openflow.protocol.OFMessage;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.FloodlightFactory;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 import org.openflow.util.HexString;
 import org.openflow.vendor.nicira.OFNiciraVendorExtensions;
 import org.sdnplatform.sync.IClosableIterator;

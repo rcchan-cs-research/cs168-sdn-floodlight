@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 
@@ -8,7 +8,7 @@ import org.openflow.util.StringByteSerializer;
  * Represents an ofp_desc_stats structure
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class OFDescriptionStatistics implements OFMultipartData {
+public class OFDescriptionStatistics implements OFStatistics {
     public static int DESCRIPTION_STRING_LENGTH = 256;
     public static int SERIAL_NUMBER_LENGTH = 32;
     public static int MINIMUM_LENGTH = 1056;

@@ -18,7 +18,7 @@
 package net.floodlightcontroller.core.internal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 
 import net.floodlightcontroller.core.OFSwitchBase;
 

@@ -1,4 +1,4 @@
-package org.openflow.protocol.multipart;
+package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
 
@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
  * Represents an ofp_port_stats_request structure
  * @author David Erickson (daviderickson@cs.stanford.edu)
  */
-public class OFPortStatisticsRequest implements OFMultipartData {
+public class OFPortStatisticsRequest implements OFStatistics {
     public static int MINIMUM_LENGTH = 8;
 
     protected int portNumber;

@@ -37,7 +37,7 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
-import org.openflow.protocol.OFMultipartRequest;
+import org.openflow.protocol.OFStatisticsRequest;
 import org.openflow.protocol.OFType;
 
 public class FlowReconcileMgrTest extends FloodlightTestCase {
@@ -47,7 +47,7 @@ public class FlowReconcileMgrTest extends FloodlightTestCase {
     protected ICounterStoreService counterStore;
     protected FloodlightModuleContext fmc;
     
-    OFMultipartRequest ofStatsRequest;
+    OFStatisticsRequest ofStatsRequest;
 
     protected int NUM_FLOWS_PER_THREAD = 100;
     protected int NUM_THREADS = 20;

@@ -85,7 +85,7 @@ import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.protocol.factory.FloodlightFactory;
-import org.openflow.protocol.multipart.OFDescriptionStatistics;
+import org.openflow.protocol.statistics.OFDescriptionStatistics;
 import org.openflow.util.HexString;
 import org.sdnplatform.sync.IStoreClient;
 import org.sdnplatform.sync.ISyncService;
