@@ -3,7 +3,7 @@ package org.openflow.protocol.statistics;
 import java.nio.ByteBuffer;
 
 /**
- * The base class for all OpenFlow statistics messages (including statistics).
+ * The base class for all OpenFlow multipart messages (primarily statistics).
  *
  * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 11, 2010
  */

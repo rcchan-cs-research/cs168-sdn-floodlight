@@ -11,7 +11,7 @@ import org.openflow.util.U16;
 
 
 /**
- * Base class for statistics messages (including statistics requests/replies)
+ * Base class for multipart messages (primarily statistics requests/replies)
  *
  * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 27, 2010
  */
