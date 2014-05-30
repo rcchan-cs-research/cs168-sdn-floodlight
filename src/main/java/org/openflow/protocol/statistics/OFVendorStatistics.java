@@ -1,6 +1,7 @@
 package org.openflow.protocol.statistics;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * The base class for vendor implemented statistics message
@@ -12,10 +13,10 @@ public class OFVendorStatistics implements OFStatistics {
 
     protected int vendor;
     protected int vendorType;
-    protected byte[] body;
+    protected byte[] vendorData;
 
     // non-message fields
-    protected int length = 0;
+    protected int length = MINIMUM_LENGTH;
 
     /**
      * @return the vendor
@@ -47,27 +48,45 @@ public class OFVendorStatistics implements OFStatistics {
         return this;
     }
 
+    /**
+     * @return the vendorData
+     */
+    public byte[] getVendorData() {
+        return vendorData;
+    }
+
+    /**
+     * @param vendorData the vendorData to set
+     */
+    public OFVendorStatistics setVendorData(byte[] vendorData) {
+        this.vendorData = vendorData;
+        if (vendorData != null)
+            this.length = MINIMUM_LENGTH + vendorData.length;
+        return this;
+    }
+
     @Override
     public void readFrom(ByteBuffer data) {
         this.vendor = data.getInt();
         this.vendorType = data.getInt();
-        if (body == null)
-            body = new byte[length - MINIMUM_LENGTH];
-        data.get(body);
+        if (vendorData == null)
+            vendorData = new byte[length - MINIMUM_LENGTH];
+        data.get(vendorData);
     }
 
     @Override
     public void writeTo(ByteBuffer data) {
         data.putInt(this.vendor);
         data.putInt(this.vendorType);
-        if (body != null)
-            data.put(body);
+        if (vendorData != null)
+            data.put(vendorData);
     }
 
     @Override
     public int hashCode() {
         final int prime = 457;
         int result = 1;
+        result = prime * result + Arrays.hashCode(vendorData);
         result = prime * result + vendor;
         result = prime * result + vendorType;
         return result;
@@ -85,6 +104,9 @@ public class OFVendorStatistics implements OFStatistics {
             return false;
         }
         OFVendorStatistics other = (OFVendorStatistics) obj;
+        if (!Arrays.equals(vendorData, other.vendorData)) {
+            return false;
+        }
         if (vendor != other.vendor) {
             return false;
         }
