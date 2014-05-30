@@ -11,16 +11,46 @@ public class OFVendorStatistics implements OFStatistics {
     protected static int MINIMUM_LENGTH = 8;
 
     protected int vendor;
-    protected int expType;
+    protected int vendorType;
     protected byte[] body;
 
     // non-message fields
     protected int length = 0;
 
+    /**
+     * @return the vendor
+     */
+    public int getVendor() {
+        return vendor;
+    }
+
+    /**
+     * @param vendor the vendor to set
+     */
+    public OFVendorStatistics setVendor(int vendor) {
+        this.vendor = vendor;
+        return this;
+    }
+
+    /**
+     * @return the experiment type
+     */
+    public int getVendorType() {
+        return vendorType;
+    }
+
+    /**
+     * @param vendorType the experiment type to set
+     */
+    public OFVendorStatistics setVendorType(int vendorType) {
+        this.vendorType = vendorType;
+        return this;
+    }
+
     @Override
     public void readFrom(ByteBuffer data) {
         this.vendor = data.getInt();
-        this.expType = data.getInt();
+        this.vendorType = data.getInt();
         if (body == null)
             body = new byte[length - MINIMUM_LENGTH];
         data.get(body);
@@ -29,7 +59,7 @@ public class OFVendorStatistics implements OFStatistics {
     @Override
     public void writeTo(ByteBuffer data) {
         data.putInt(this.vendor);
-        data.putInt(this.expType);
+        data.putInt(this.vendorType);
         if (body != null)
             data.put(body);
     }
@@ -39,7 +69,7 @@ public class OFVendorStatistics implements OFStatistics {
         final int prime = 457;
         int result = 1;
         result = prime * result + vendor;
-        result = prime * result + expType;
+        result = prime * result + vendorType;
         return result;
     }
 
@@ -58,7 +88,7 @@ public class OFVendorStatistics implements OFStatistics {
         if (vendor != other.vendor) {
             return false;
         }
-        if (expType != other.expType) {
+        if (vendorType != other.vendorType) {
             return false;
         }
         return true;
