@@ -34,11 +34,6 @@ public class OFStatisticsReply extends OFStatisticsMessageBase {
      * @return the statistics data
      */
     public List<? extends OFStatistics> getStatistics() {
-        if (this.statistics == null)
-            return null;
-        else if (this.statistics.size() == 0)
-            return null;
-        else 
-            return this.statistics;
+        return this.statistics;
     }
 }
