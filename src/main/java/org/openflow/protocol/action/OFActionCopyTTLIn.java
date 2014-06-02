@@ -1,14 +1,11 @@
-/**
- * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 11, 2010
- */
 package org.openflow.protocol.action;
 
 import java.nio.ByteBuffer;
 
 
 /**
- * Represents an ofp_action_pop_vlan
- * @author David Erickson (daviderickson@cs.stanford.edu) - Mar 11, 2010
+ * Represents an ofp_action_copy_ttl_in
+ * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
 public class OFActionCopyTTLIn extends OFAction {
     public static int MINIMUM_LENGTH = 8;
