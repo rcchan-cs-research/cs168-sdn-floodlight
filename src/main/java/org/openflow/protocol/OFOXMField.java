@@ -13,7 +13,7 @@ public class OFOXMField implements Cloneable {
     protected OFOXMFieldType type;
     protected Object value;
     protected byte hasMask;
-    protected int length;
+    protected int length; //Length including the OXM TLV header
 
     public OFOXMField() {
         this.length = 0;
@@ -31,7 +31,7 @@ public class OFOXMField implements Cloneable {
         byte typeVal = (byte)((header >> 9) & 0x7F);
         this.type = OFOXMFieldType.valueOf(typeVal);
         this.hasMask = (byte) ((header >> 8) & 0x1);
-        this.length = (header & 0xFF);
+        this.length = 4 + (header & 0xFF);
         this.value = value;
     }
 
@@ -111,7 +111,7 @@ public class OFOXMField implements Cloneable {
         //TODO: Sanity check the field payload length reported
 
         this.hasMask = (byte) ((header >> 8) & 1);
-        this.length = (header & 0xff);
+        this.length = 4 + (header & 0xff);
         this.type = OFOXMFieldType.valueOf(value);
         this.value = readObject(data, this.type.getPayloadLength());
     }
