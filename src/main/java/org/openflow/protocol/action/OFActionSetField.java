@@ -20,6 +20,7 @@ public class OFActionSetField extends OFAction {
     public OFActionSetField() {
         super.setType(OFActionType.SET_FIELD);
         super.setLength((short) MINIMUM_LENGTH);
+        this.field = new OFOXMField();
     }
 
     public OFActionSetField(OFOXMFieldType type, Object value) {
