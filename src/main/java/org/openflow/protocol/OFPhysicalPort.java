@@ -78,6 +78,7 @@ public class OFPhysicalPort {
         protected int value;
         protected String name;
         protected static Map<Integer, OFPortState> mapping;
+        private static final int MAX_ENTRIES = 10;
 
         private OFPortState(int value, String name) {
         	this.value = value;
@@ -97,7 +98,7 @@ public class OFPhysicalPort {
          */
         static public void addMapping(int i, OFPortState t) {
             if (mapping == null)
-                mapping = new LRULinkedHashMap<Integer, OFPortState>(10);
+                mapping = new LRULinkedHashMap<Integer, OFPortState>(MAX_ENTRIES);
 
             mapping.put(i, t);
         }

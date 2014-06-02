@@ -103,12 +103,13 @@ public enum OFActionType {
                             }});
 
     protected static Map<Short, OFActionType> mapping;
+    private static final int MAX_ENTRIES = 32;
 
     protected Class<? extends OFAction> clazz;
     protected Constructor<? extends OFAction> constructor;
     protected Instantiable<OFAction> instantiable;
     protected short type;
-
+    
     /**
      * Store some information about the OpenFlow Action type, including wire
      * protocol type number, length, and derrived class
@@ -137,7 +138,7 @@ public enum OFActionType {
      */
     static public void addMapping(short i, OFActionType t) {
         if (mapping == null)
-            mapping = new LRULinkedHashMap<Short, OFActionType>(10);
+            mapping = new LRULinkedHashMap<Short, OFActionType>(MAX_ENTRIES);
 
         mapping.put(i, t);
     }

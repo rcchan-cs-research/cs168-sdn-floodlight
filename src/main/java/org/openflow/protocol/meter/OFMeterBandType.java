@@ -45,6 +45,7 @@ public class OFMeterBandType {
     protected String name;
     protected short type;
     protected static Map<Short, OFMeterBandType> mapping;
+    private static final int MAX_ENTRIES = 10;
 
     /**
      * Store some information about the OpenFlow meter band type, including wire
@@ -77,7 +78,7 @@ public class OFMeterBandType {
      */
     static public void addMapping(short i, OFMeterBandType t) {
         if (mapping == null)
-            mapping = new LRULinkedHashMap<Short, OFMeterBandType>(10);
+            mapping = new LRULinkedHashMap<Short, OFMeterBandType>(MAX_ENTRIES);
         mapping.put(i, t);
     }
 

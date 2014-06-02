@@ -44,7 +44,9 @@ public class OFQueuePropertyType {
     protected Instantiable<OFQueueProperty> instantiable;
     protected String name;
     protected short type;
+
     protected static Map<Short, OFQueuePropertyType> mapping;
+    private static final int MAX_ENTRIES = 10;
 
     /**
      * Store some information about the OpenFlow Queue Property type, including wire
@@ -77,7 +79,7 @@ public class OFQueuePropertyType {
      */
     static public void addMapping(short i, OFQueuePropertyType t) {
         if (mapping == null)
-            mapping = new LRULinkedHashMap<Short, OFQueuePropertyType>(10);
+            mapping = new LRULinkedHashMap<Short, OFQueuePropertyType>(MAX_ENTRIES);
         mapping.put(i, t);
     }
 
