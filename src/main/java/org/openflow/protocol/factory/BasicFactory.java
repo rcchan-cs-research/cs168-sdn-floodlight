@@ -103,6 +103,9 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
         if (ofm instanceof OFActionFactoryAware) {
             ((OFActionFactoryAware)ofm).setActionFactory(this);
         }
+        if (ofm instanceof OFInstructionFactoryAware) {
+            ((OFInstructionFactoryAware)ofm).setInstructionFactory(this);
+        }
         if (ofm instanceof OFMessageFactoryAware) {
             ((OFMessageFactoryAware)ofm).setMessageFactory(this);
         }
@@ -202,6 +205,12 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
                 return results;
 
             ofi = getInstruction(demux.getType());
+
+            // If actions are embedded in the OFInstruction,
+            // then set factory
+            if (ofi instanceof OFActionFactoryAware) 
+                ((OFActionFactoryAware)ofi).setActionFactory(this);
+
             ofi.readFrom(data);
             if (OFInstruction.class.equals(ofi.getClass())) {
                 // advance the position for un-implemented messages
@@ -264,8 +273,10 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
              * buffered past this message
              */
             if ((length - count) >= statistics.getLength()) {
-                if (statistics instanceof OFActionFactoryAware)
-                    ((OFActionFactoryAware)statistics).setActionFactory(this);
+                if (statistics instanceof OFInstructionFactoryAware)
+                    ((OFInstructionFactoryAware)statistics).setInstructionFactory(this);
+                else if (statistics instanceof OFTableFeaturesPropertyFactoryAware)
+                    ((OFTableFeaturesPropertyFactoryAware)statistics).setTableFeaturesPropertyFactory(this);
                 statistics.readFrom(data);
                 results.add(statistics);
                 count += statistics.getLength();
@@ -420,7 +431,7 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
         }
 
         return results;
-    }
+   }
 
     @Override
     public OFTableFeaturesProperty getTableFeaturesProperty(OFTableFeaturesPropertyType t) {
@@ -455,6 +466,11 @@ public class BasicFactory implements OFMessageFactory, OFActionFactory,
                 return results;
 
             oftfp = getTableFeaturesProperty(demux.getType());
+            if (oftfp instanceof OFInstructionFactoryAware) 
+                ((OFInstructionFactoryAware)oftfp).setInstructionFactory(this);
+            else if (oftfp instanceof OFActionFactoryAware) 
+                ((OFActionFactoryAware)oftfp).setActionFactory(this);
+
             oftfp.readFrom(data);
             if (OFTableFeaturesProperty.class.equals(oftfp.getClass())) {
                 // advance the position for un-implemented messages
