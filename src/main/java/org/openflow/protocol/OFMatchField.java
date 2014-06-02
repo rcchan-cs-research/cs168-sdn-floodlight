@@ -47,6 +47,9 @@ public class OFMatchField extends OFOXMField implements Cloneable {
         if (value instanceof byte[]) {
             byte[] v = (byte[])this.value;
             byte[] m = (byte[])this.mask;
+            if (v.length != m.length)
+                throw new RuntimeException("Value" + v + " and mask " + m 
+                        + " are of different lengths in OFMatchField");
             for (int i = 0; i< v.length; i++)
                 v[i] = (byte) (v[i] & m[i]);
         }
