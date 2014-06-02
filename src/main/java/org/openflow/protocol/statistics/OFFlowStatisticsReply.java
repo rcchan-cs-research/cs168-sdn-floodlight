@@ -244,6 +244,7 @@ public class OFFlowStatisticsReply implements OFStatistics, OFInstructionFactory
         this.priority = data.getShort();
         this.idleTimeout = data.getShort();
         this.hardTimeout = data.getShort();
+        this.flags = data.getShort();
         data.getInt(); // pad
         this.cookie = data.getLong();
         this.packetCount = data.getLong();
