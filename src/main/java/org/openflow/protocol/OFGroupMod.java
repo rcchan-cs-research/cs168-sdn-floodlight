@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.openflow.protocol.factory.OFActionFactory;
+import org.openflow.protocol.factory.OFActionFactoryAware;
 import org.openflow.util.U16;
 import org.openflow.protocol.OFBucket;
 
@@ -11,7 +13,7 @@ import org.openflow.protocol.OFBucket;
  * Represents an ofp_group_mod message
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
-public class OFGroupMod extends OFMessage {
+public class OFGroupMod extends OFMessage implements OFActionFactoryAware {
     public static int MINIMUM_LENGTH = 16;
 
     // Group mod commands
@@ -25,6 +27,7 @@ public class OFGroupMod extends OFMessage {
     public static final byte OFPGT_INDIRECT = 2;
     public static final byte OFPGT_FF = 3;
 
+    protected OFActionFactory actionFactory;
     protected short command;
     protected byte groupType;
     protected int groupId;
@@ -106,6 +109,11 @@ public class OFGroupMod extends OFMessage {
     }
 
     @Override
+    public void setActionFactory(OFActionFactory actionFactory) {
+        this.actionFactory = actionFactory;
+    }
+
+    @Override
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
         this.command = data.getShort();
@@ -119,6 +127,7 @@ public class OFGroupMod extends OFMessage {
         this.buckets = new ArrayList<OFBucket>();
         while (remaining >= OFBucket.MINIMUM_LENGTH) {
             OFBucket bucket = new OFBucket();
+            bucket.setActionFactory(actionFactory);
             bucket.readFrom(data);
             this.buckets.add(bucket);
             remaining -= U16.f(bucket.getLength());
