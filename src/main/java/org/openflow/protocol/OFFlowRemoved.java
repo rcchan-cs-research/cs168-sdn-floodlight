@@ -7,6 +7,7 @@ import org.openflow.util.U16;
 /**
  * Represents an ofp_flow_removed message
  * @author David Erickson (daviderickson@cs.stanford.edu)
+ * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  *
  */
 public class OFFlowRemoved extends OFMessage {
@@ -218,9 +219,6 @@ public class OFFlowRemoved extends OFMessage {
     @Override
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
-        if (this.match == null)
-            this.match = new OFMatch();
-        this.match.readFrom(data);
         this.cookie = data.getLong();
         this.priority = data.getShort();
         this.reason = OFFlowRemovedReason.values()[(0xff & data.get())];
@@ -231,6 +229,9 @@ public class OFFlowRemoved extends OFMessage {
         this.hardTimeout = data.getShort();
         this.packetCount = data.getLong();
         this.byteCount = data.getLong();
+        if (this.match == null)
+            this.match = new OFMatch();
+        this.match.readFrom(data);
     }
 
     @Override
