@@ -119,7 +119,11 @@ public class OFMatch implements Cloneable {
      * @return integer
      */
     public int getInPort() {
-    	return (Integer)getMatchFieldValue(OFOXMFieldType.IN_PORT);
+        try {
+    	    return (Integer)getMatchFieldValue(OFOXMFieldType.IN_PORT);
+        } catch (IllegalArgumentException e) {
+            return OFPort.OFPP_ANY.getValue();
+        }
     }
 
     /**
