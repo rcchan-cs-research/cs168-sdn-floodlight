@@ -668,12 +668,13 @@ public class OFMatch implements Cloneable {
         byte mplsTC;
 
         this.type = OFMatchType.values()[data.getShort()];
-        this.length = data.getShort();
-        int remaining = this.getLengthU() - 4; //length - sizeof(type and length)
+        this.matchLength = data.getShort();
+        this.length = U16.t(8*((this.matchLength + 7)/8)); //includes padding
+        int remaining = matchLength - 4; //length - sizeof(type and length)
         int end = data.position() + remaining; //includes padding in case of STANDARD match
 
         if (type == OFMatchType.OXM) {
-            int padLength = 8*((length + 7)/8) - length;
+            int padLength = length - matchLength;
             end += padLength; // including pad
             
             if (data.remaining() < remaining)
