@@ -324,7 +324,7 @@ public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, C
         if (this.instructionFactory == null)
             throw new RuntimeException("OFInstructionFactory not set");
         this.instructions = this.instructionFactory.parseInstructions(data, getLengthU() -
-                MINIMUM_LENGTH);
+                MINIMUM_LENGTH + OFMatch.MINIMUM_LENGTH - match.getLength());
     }
 
     @Override

@@ -255,7 +255,7 @@ public class OFFlowStatisticsReply implements OFStatistics, OFInstructionFactory
         if (this.instructionFactory == null)
             throw new RuntimeException("OFInstructionFactory not set");
         this.instructions = this.instructionFactory.parseInstructions(data, getLength() -
-                MINIMUM_LENGTH);
+                MINIMUM_LENGTH + OFMatch.MINIMUM_LENGTH - match.getLength());
     }
 
     @Override
