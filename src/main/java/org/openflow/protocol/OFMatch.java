@@ -683,7 +683,7 @@ public class OFMatch implements Cloneable {
                 OFMatchField matchField = new OFMatchField();
                 matchField.readFrom(data);
                 this.matchFields.add(matchField);
-                remaining -= U32.f(matchField.getLength()+4); //value length + header length
+                remaining -= U32.f(matchField.getLength()); //value length + header length
             }
         } else {
             this.setField(OFOXMFieldType.IN_PORT, data.getInt());
