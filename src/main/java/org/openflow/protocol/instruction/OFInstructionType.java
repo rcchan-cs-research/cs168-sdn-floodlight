@@ -1,11 +1,10 @@
-/**
- *
- */
 package org.openflow.protocol.instruction;
 
 import java.lang.reflect.Constructor;
 
 import org.openflow.protocol.Instantiable;
+import org.openflow.util.LRULinkedHashMap;
+import java.util.Map;
 
 /**
  * List of OpenFlow Instruction types and mappings to wire protocol value and
@@ -52,7 +51,8 @@ public enum OFInstructionType {
 */
                             }});
 
-    protected static OFInstructionType[] mapping;
+    protected static Map<Short, OFInstructionType> mapping;
+    private static final int MAX_ENTRIES = 10;
 
     protected Class<? extends OFInstruction> clazz;
     protected Constructor<? extends OFInstruction> constructor;
@@ -88,11 +88,8 @@ public enum OFInstructionType {
      */
     static public void addMapping(short i, OFInstructionType t) {
         if (mapping == null)
-            mapping = new OFInstructionType[16];
-        // bring higher mappings down to the edge of our array
-        if (i < 0)
-            i = (short) (16 + i);
-        OFInstructionType.mapping[i] = t;
+            mapping = new LRULinkedHashMap<Short, OFInstructionType>(MAX_ENTRIES);
+        mapping.put(i, t);
     }
 
     /**
@@ -104,9 +101,7 @@ public enum OFInstructionType {
      */
 
     static public OFInstructionType valueOf(short i) {
-        if (i < 0)
-            i = (short) (16+i);
-        return OFInstructionType.mapping[i];
+        return mapping.get(i);
     }
 
     /**
