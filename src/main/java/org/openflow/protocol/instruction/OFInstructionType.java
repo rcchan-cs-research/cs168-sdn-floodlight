@@ -37,12 +37,12 @@ public enum OFInstructionType {
                             @Override
                             public OFInstruction instantiate() {
                                 return new OFInstructionClearActions();
-/* TODO
                             }}),
     METER               (6, OFInstructionMeter.class, new Instantiable<OFInstruction>() {
                             @Override
                             public OFInstruction instantiate() {
                                 return new OFInstructionMeter();
+/* TODO
                             }}),
     VENDOR        (0xffff, OFInstructionVendor.class, new Instantiable<OFInstruction>() {
                             @Override
