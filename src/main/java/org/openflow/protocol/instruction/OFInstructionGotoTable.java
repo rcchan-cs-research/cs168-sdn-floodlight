@@ -28,14 +28,14 @@ public class OFInstructionGotoTable extends OFInstruction {
     /**
      * @return the tableId
      */
-    public byte getGotoTable() {
+    public byte getTableId() {
         return tableId;
     }
 
     /**
      * @param tableId the tableId to set
      */
-    public OFInstructionGotoTable setGotoTable(byte tableId) {
+    public OFInstructionGotoTable setTableId(byte tableId) {
         this.tableId = tableId;
         return this;
     }
@@ -51,7 +51,7 @@ public class OFInstructionGotoTable extends OFInstruction {
     public void writeTo(ByteBuffer data) {
         super.writeTo(data);
         data.put(this.tableId);
-        data.putInt(0); //pad
+        data.put((byte)0); //pad
         data.putShort((short) 0); //pad
     }
 
