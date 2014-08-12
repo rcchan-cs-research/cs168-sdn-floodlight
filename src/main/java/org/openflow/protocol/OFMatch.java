@@ -99,7 +99,8 @@ public class OFMatch implements Cloneable {
             if (matchField.getType() == matchType)
                 return matchField.getMask();
         }
-        throw new IllegalArgumentException("No match exists for matchfield " + matchType.getName());
+        //No mask exists for matchfield and it is not illegal
+        return null;
     }
 
     /**
@@ -217,7 +218,11 @@ public class OFMatch implements Cloneable {
      * @return ether_type
      */
     public short getDataLayerType() {
-        return (Short)getMatchFieldValue(OFOXMFieldType.ETH_TYPE);
+    	try {
+	    	return (Short)getMatchFieldValue(OFOXMFieldType.ETH_TYPE);
+	    } catch (IllegalArgumentException e) {
+	    	return 0;
+	    }
     }
 
     /**
@@ -282,7 +287,11 @@ public class OFMatch implements Cloneable {
      * @return
      */
     public byte getNetworkProtocol() {
-        return (Byte)getMatchFieldValue(OFOXMFieldType.IP_PROTO);
+        try {
+            return (Byte)getMatchFieldValue(OFOXMFieldType.IP_PROTO);
+        } catch (IllegalArgumentException e) {
+            return 0;
+        }
     }
 
     /**
@@ -472,8 +481,9 @@ public class OFMatch implements Cloneable {
     			return (Short)getMatchFieldValue(OFOXMFieldType.UDP_DST);
     		case IP_PROTO_SCTP:
     			return (Short)getMatchFieldValue(OFOXMFieldType.SCTP_DST);
+            default:
+                return 0;
     	}
-    	throw new IllegalArgumentException("Network Protocol invalid for extracting port number");
     }
 
     /**
@@ -521,8 +531,9 @@ public class OFMatch implements Cloneable {
     			return (Short)getMatchFieldValue(OFOXMFieldType.UDP_SRC);
     		case IP_PROTO_SCTP:
     			return (Short)getMatchFieldValue(OFOXMFieldType.SCTP_SRC);
+    		default:
+    			return 0;
     	}
-    	throw new IllegalArgumentException("Network Protocol invalid for extracting port number");
     }
 
     /**
