@@ -44,6 +44,7 @@ import org.openflow.protocol.OFOXMFieldType;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFGroup;
+import org.openflow.protocol.OFVlanId;
 import org.openflow.protocol.instruction.OFInstruction;
 import org.openflow.protocol.instruction.OFInstructionActions;
 import org.openflow.protocol.instruction.OFInstructionApplyActions;
@@ -61,9 +62,7 @@ import org.openflow.util.HexString;
 @LogMessageCategory("Static Flow Pusher")
 public class StaticFlowEntries {
     protected static Logger log = LoggerFactory.getLogger(StaticFlowEntries.class);
-    
-    private static byte[] zeroMac = new byte[] {0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-    
+        
     /**
      * This function generates a random hash for the bottom half of the cookie
      * 
@@ -160,16 +159,16 @@ public class StaticFlowEntries {
 	        		entry.put(StaticFlowEntryPusher.COLUMN_ACTIONS, StaticFlowEntries.flowModActionsToString(ia.getActions()));
         	}
         }
-        if (match.getInPort() != 0)
+        if (match.getInPort() != OFPort.OFPP_ANY.getValue())
         	entry.put(StaticFlowEntryPusher.COLUMN_IN_PORT, Integer.toString(match.getInPort()));
         
-        if (!Arrays.equals(match.getDataLayerSource(), zeroMac))
+        if (match.getDataLayerSource() == null)
         	entry.put(StaticFlowEntryPusher.COLUMN_DL_SRC, HexString.toHexString(match.getDataLayerSource()));
 
-        if (!Arrays.equals(match.getDataLayerDestination(), zeroMac))
+        if (match.getDataLayerDestination() == null)
         	entry.put(StaticFlowEntryPusher.COLUMN_DL_DST, HexString.toHexString(match.getDataLayerDestination()));
         
-        if (match.getDataLayerVirtualLan() != -1)
+        if (match.getDataLayerVirtualLan() != OFVlanId.OFPVID_NONE.getValue())
         	entry.put(StaticFlowEntryPusher.COLUMN_DL_VLAN, Short.toString(match.getDataLayerVirtualLan()));
         
         if (match.getDataLayerVirtualLanPriorityCodePoint() != 0)
