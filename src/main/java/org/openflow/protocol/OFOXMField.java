@@ -22,9 +22,9 @@ public class OFOXMField implements Cloneable {
     
     public OFOXMField(OFOXMFieldType type, Object value) {
         this.type = type;
-        this.value = value;
-        this.length = 4 + type.getPayloadLength();
         this.hasMask = 0;
+        this.length = 4 + type.getPayloadLength();
+        this.value = updateObjectType(value, type.getPayloadLength());
     }
 
     public OFOXMField(int header, Object value) {
@@ -32,7 +32,7 @@ public class OFOXMField implements Cloneable {
         this.type = OFOXMFieldType.valueOf(typeVal);
         this.hasMask = (byte) ((header >> 8) & 0x1);
         this.length = 4 + (header & 0xFF);
-        this.value = value;
+        this.value = updateObjectType(value, type.getPayloadLength());
     }
 
     public OFOXMFieldType getType() {
@@ -51,7 +51,7 @@ public class OFOXMField implements Cloneable {
     }
 
     public void setValue(Object value) {
-        this.value = value;
+        this.value = updateObjectType(value, type.getPayloadLength());
     }
 
     public int getHeader() {
@@ -61,29 +61,49 @@ public class OFOXMField implements Cloneable {
             | ((byte)type.getPayloadLength());
     }
 
+    public static Object updateObjectType(Object val, int length) {
+        if (val instanceof Number) {
+            switch (length) {
+            case 1: 
+                if (!(val instanceof Byte))
+                    return (Byte)(((Number)val).byteValue());
+            case 2: 
+                if (!(val instanceof Short))
+                    return (Short)(((Number)val).shortValue());
+            case 4: 
+                if (!(val instanceof Integer))
+                    return (Integer)(((Number)val).intValue());
+            case 8:
+                if (!(val instanceof Long))
+                    return (Long)(((Number)val).longValue());
+            }
+        }
+        //Default is to retain same object
+        return val;
+    }
+
     public boolean isAllZero(Object val) {
         if (val instanceof Byte) {
-        	return ((Byte)val == 0);
+            return ((Byte)val == 0);
         }
         if (val instanceof Short) {
-        	return ((Short)val== 0);
+            return ((Short)val== 0);
         }
         if (val instanceof Integer) {
-        	return ((Integer)val == 0);
+            return ((Integer)val == 0);
         }
         if (val instanceof Long) {
-        	return ((Long)val == 0);
+            return ((Long)val == 0);
         }
         if (val instanceof byte[]) {
-	    	for (byte b: (byte[])val)
-	    		if (b != 0)
-	    			return false;
-	    	return true;
+            for (byte b: (byte[])val)
+                if (b != 0)
+                    return false;
+            return true;
         }
         //TODO: error check
         return false;
     }
-    
 
     public Object readObject(ByteBuffer data, int length)
     {
