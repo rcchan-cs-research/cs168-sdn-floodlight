@@ -55,10 +55,14 @@ public class OFOXMField implements Cloneable {
     }
 
     public int getHeader() {
+        int payloadLength = type.getPayloadLength();
+        if (hasMask != 0) 
+            payloadLength *= 2; 
+
         return (type.getMatchClass() << 16)
             | (type.getValue() << 9)
             | (hasMask << 8)
-            | ((byte)type.getPayloadLength());
+            | ((byte)payloadLength);
     }
 
     public static Object updateObjectType(Object val, int length) {
@@ -83,6 +87,9 @@ public class OFOXMField implements Cloneable {
     }
 
     public boolean isAllZero(Object val) {
+        if (val == null)
+            return true;
+
         if (val instanceof Byte) {
             return ((Byte)val == 0);
         }
@@ -138,6 +145,9 @@ public class OFOXMField implements Cloneable {
 
     public void writeObject(ByteBuffer data, Object value, int length)
     {
+        if (value == null)
+            return;
+        
         switch (length) {
             case 1: 
                 data.put((Byte)value);
