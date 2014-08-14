@@ -2,6 +2,8 @@ package org.openflow.protocol.statistics.tableFeatures;
 
 import java.nio.ByteBuffer;
 import org.openflow.util.U16;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents an ofp_table_features_prop_nextTableIds
@@ -85,8 +87,12 @@ public class OFTableFeaturesPropertyNextTables extends OFTableFeaturesProperty {
      */
     @Override
     public String toString() {
+        List<Byte> nextTableIdList = new ArrayList<Byte>();
+        for(byte b : nextTableIds) 
+            nextTableIdList.add(new Byte(b));
+
         return "OFTableFeaturesPropertyNextTables [type=" + type +
-            ", length=" + length + ", nextTableIds=" + nextTableIds +"]";
+            ", length=" + length + ", nextTableIds=" + nextTableIdList +"]";
     }
 
     /* (non-Javadoc)
