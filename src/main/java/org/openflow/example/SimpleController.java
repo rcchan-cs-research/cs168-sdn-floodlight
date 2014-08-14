@@ -10,6 +10,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,6 +82,7 @@ public class SimpleController implements SelectListener {
             Integer dlSrcKey = Arrays.hashCode(dlSrc);
             int bufferId = pi.getBufferId();
             Integer outPort = null;
+            OFSwitch sw = switchSockets.get(sock);
 
             if (dlSrc != null && dlDst != null) {
                 
@@ -104,13 +106,12 @@ public class SimpleController implements SelectListener {
             if (outPort != null) {
                 OFFlowMod fm = (OFFlowMod) factory.getMessage(OFType.FLOW_MOD);
                 fm.setBufferId(bufferId);
-                fm.setCommand((byte) 0);
+                fm.setCommand(OFFlowMod.OFPFC_ADD);
                 fm.setCookie(0);
                 fm.setFlags((short) 0);
                 fm.setHardTimeout((short) 0);
                 fm.setIdleTimeout((short) 5);
                 fm.setMatch(match);
-                fm.setPriority((short) 0);
                 OFActionOutput action = new OFActionOutput();
                 action.setMaxLength((short) 0);
                 action.setPort(outPort);
@@ -122,6 +123,8 @@ public class SimpleController implements SelectListener {
                 fm.setInstructions(instructions);
                 try {
                     stream.write(fm);
+                    System.err.println("Send FLOW_MOD to " + sw);
+                    System.err.println("--> Rule:" + fm);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -200,8 +203,7 @@ public class SimpleController implements SelectListener {
         SocketChannel sock = listenSock.accept();
         OFMessageAsyncStream stream = new OFMessageAsyncStream(sock, factory);
         switchSockets.put(sock, new OFSwitch(sock, stream));
-        System.err
-                .println("Got new connection from " + switchSockets.get(sock));
+        System.err.println("Got new connection from " + switchSockets.get(sock));
         
         OFHello hm = (OFHello) factory.getMessage(OFType.HELLO);
         List<OFHelloElement> helloElements = new ArrayList<OFHelloElement>();
@@ -226,10 +228,34 @@ public class SimpleController implements SelectListener {
         omr.setStatisticsType(OFStatisticsType.PORT_DESC);
         l.add(omr);
 
-        omr = (OFStatisticsRequest) factory.getMessage(OFType.STATS_REQUEST);
-        omr.setStatisticsType(OFStatisticsType.TABLE_FEATURES);
-        l.add(omr);
+//      Disabling table request for now because returned result is really big when printed
+//      omr = (OFStatisticsRequest) factory.getMessage(OFType.STATS_REQUEST);
+//      omr.setStatisticsType(OFStatisticsType.TABLE_FEATURES);
+//      l.add(omr);
+
         stream.write(l);
+
+        //Clear all existing rules
+        OFFlowMod fm = (OFFlowMod) factory.getMessage(OFType.FLOW_MOD);
+        fm.setCommand(OFFlowMod.OFPFC_DELETE);
+        try {
+            stream.write(fm);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Install default rule required by OF1.3
+        fm.setCommand(OFFlowMod.OFPFC_ADD);
+        fm.setPriority((short) 0);
+        OFActionOutput action = new OFActionOutput().setPort(OFPort.OFPP_CONTROLLER); 
+        fm.setInstructions(Collections.singletonList(
+                (OFInstruction)new OFInstructionApplyActions().setActions(
+                        Collections.singletonList((OFAction)action))));
+        try {
+            stream.write(fm);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         int ops = SelectionKey.OP_READ;
         if (stream.needsFlush())
@@ -258,6 +284,8 @@ public class SimpleController implements SelectListener {
                 for (OFMessage m : msgs) {
                     switch (m.getType()) {
                         case PACKET_IN:
+                            System.err.println("GOT PACKET_IN from " + sw);
+                            System.err.println("--> Data:" + ((OFPacketIn) m).toString());
                             sw.handlePacketIn((OFPacketIn) m);
                             break;
                         case FEATURES_REPLY:
