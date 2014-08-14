@@ -6,6 +6,7 @@ package org.openflow.protocol.action;
 import java.nio.ByteBuffer;
 
 import org.openflow.protocol.OFPhysicalPort;
+import org.openflow.protocol.OFPort;
 import org.openflow.util.U16;
 
 /**
@@ -16,9 +17,9 @@ import org.openflow.util.U16;
 public class OFActionOutput extends OFAction implements Cloneable {
     public static int MINIMUM_LENGTH = 16;
 
-    protected static int OFPCML_ZERO = 0;
-    protected static int OFPCML_MAX = 0xffe5;
-    protected static int OFPCML_NO_BUFFER = 0xffff;
+    protected static short OFPCML_ZERO = 0;
+    protected static short OFPCML_MAX = (short)0xffe5;
+    protected static short OFPCML_NO_BUFFER = (short)0xffff;
 
     protected int portNumber;
     protected short maxLength;
@@ -26,6 +27,7 @@ public class OFActionOutput extends OFAction implements Cloneable {
     public OFActionOutput() {
         super.setType(OFActionType.OUTPUT);
         super.setLength((short) MINIMUM_LENGTH);
+        this.setMaxLength(OFPCML_MAX);
     }
 
     public OFActionOutput(int portNumber) {
@@ -66,6 +68,15 @@ public class OFActionOutput extends OFAction implements Cloneable {
     }
 
     /**
+     * Set the output portNumber
+     * @param OFPort type
+     */
+    public OFActionOutput setPort(OFPort ofPort) {
+        this.portNumber = ofPort.getValue();
+        return this;
+    }
+
+/**
      * Get the max length to send to the controller
      * @return
      */
