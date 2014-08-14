@@ -5,21 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openflow.protocol.instruction.OFInstruction;
-import org.openflow.protocol.factory.OFInstructionFactory;
-import org.openflow.protocol.factory.OFInstructionFactoryAware;
 import org.openflow.util.U16;
 
 /**
  * Represents an ofp_table_features_prop_instructions
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
-public class OFTableFeaturesPropertyInstructions extends OFTableFeaturesProperty
-    implements OFInstructionFactoryAware {
+public class OFTableFeaturesPropertyInstructions extends OFTableFeaturesProperty {
 
-    protected OFInstructionFactory instructionFactory;
-
-    //TODO: Check if the reported instructions only contain header
-    //without more instruction specific data
     protected List<OFInstruction> instructions;
 
     /**
@@ -49,11 +42,13 @@ public class OFTableFeaturesPropertyInstructions extends OFTableFeaturesProperty
     @Override
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
-        if (this.instructionFactory == null)
-            throw new RuntimeException("OFInstructionFactory not set");
-        this.instructions = this.instructionFactory.parseInstructions(data, getLengthU() -
-                MINIMUM_LENGTH);
         int padLength = 8*((length + 7)/8) - length;
+        this.instructions = new LinkedList<OFInstruction>();
+        for (int i=(getLengthU() - padLength); i>0; i-=OFInstruction.MINIMUM_LENGTH) {
+            OFInstruction instruction = new OFInstruction();
+            instruction.readFrom(data);
+            this.instructions.add(instruction);
+        }
         data.position(data.position() + padLength);
     }
 
@@ -68,11 +63,6 @@ public class OFTableFeaturesPropertyInstructions extends OFTableFeaturesProperty
         int padLength = 8*((length + 7)/8) - length;
         for (;padLength > 0; padLength--) 
             data.put((byte) 0); // pad
-    }
-    
-    @Override
-    public void setInstructionFactory(OFInstructionFactory instructionFactory) {
-        this.instructionFactory = instructionFactory;
     }
     
     @Override

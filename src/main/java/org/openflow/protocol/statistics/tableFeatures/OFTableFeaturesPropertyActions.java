@@ -5,21 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openflow.protocol.action.OFAction;
-import org.openflow.protocol.factory.OFActionFactory;
-import org.openflow.protocol.factory.OFActionFactoryAware;
 import org.openflow.util.U16;
 
 /**
  * Represents an ofp_table_features_prop_actions
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
-public class OFTableFeaturesPropertyActions extends OFTableFeaturesProperty
-    implements OFActionFactoryAware {
+public class OFTableFeaturesPropertyActions extends OFTableFeaturesProperty {
 
-    protected OFActionFactory actionFactory;
-
-    //TODO: Check if the reported actions only contain header
-    //without more action specific data
     protected List<OFAction> actions;
 
     /**
@@ -49,11 +42,13 @@ public class OFTableFeaturesPropertyActions extends OFTableFeaturesProperty
     @Override
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
-        if (this.actionFactory == null)
-            throw new RuntimeException("OFActionFactory not set");
-        this.actions = this.actionFactory.parseActions(data, getLengthU() -
-                MINIMUM_LENGTH);
         int padLength = 8*((length + 7)/8) - length;
+        this.actions = new LinkedList<OFAction>();
+        for (int i=(getLengthU() - padLength); i>0; i-=OFAction.MINIMUM_LENGTH) {
+            OFAction action = new OFAction();
+            action.readFrom(data);
+            this.actions.add(action);
+        }
         data.position(data.position() + padLength);
     }
 
@@ -68,11 +63,6 @@ public class OFTableFeaturesPropertyActions extends OFTableFeaturesProperty
         int padLength = 8*((length + 7)/8) - length;
         for (;padLength > 0; padLength--) 
             data.put((byte) 0); // pad
-    }
-    
-    @Override
-    public void setActionFactory(OFActionFactory actionFactory) {
-        this.actionFactory = actionFactory;
     }
     
     @Override
