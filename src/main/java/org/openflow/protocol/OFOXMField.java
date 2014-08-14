@@ -1,8 +1,11 @@
 package org.openflow.protocol;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openflow.protocol.OFOXMFieldType;
+import org.openflow.util.HexString;
 
 /**
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
@@ -69,17 +72,13 @@ public class OFOXMField implements Cloneable {
         if (val instanceof Number) {
             switch (length) {
             case 1: 
-                if (!(val instanceof Byte))
-                    return (Byte)(((Number)val).byteValue());
+                return (Byte)(((Number)val).byteValue());
             case 2: 
-                if (!(val instanceof Short))
-                    return (Short)(((Number)val).shortValue());
+                return (Short)(((Number)val).shortValue());
             case 4: 
-                if (!(val instanceof Integer))
-                    return (Integer)(((Number)val).intValue());
+                return (Integer)(((Number)val).intValue());
             case 8:
-                if (!(val instanceof Long))
-                    return (Long)(((Number)val).longValue());
+                return (Long)(((Number)val).longValue());
             }
         }
         //Default is to retain same object
@@ -222,8 +221,14 @@ public class OFOXMField implements Cloneable {
      */
     @Override
     public String toString() {
+        String valueString;
+        if (value instanceof byte[])
+            valueString = HexString.toHexString((byte[])value);
+        else
+            valueString = value.toString();
+        
         return "OFOXMField [type=" + type + ",hasMask=" +
             hasMask + ", length=" + length +
-            ", value=" + value + "]";
+            ", value=" + valueString + "]";
     }
 }
