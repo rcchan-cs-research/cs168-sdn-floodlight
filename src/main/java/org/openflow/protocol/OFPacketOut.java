@@ -250,7 +250,7 @@ public class OFPacketOut extends OFMessage implements OFActionFactoryAware {
      */
     @Override
     public String toString() {
-        return "OFPacketOut [actionFactory=" + actionFactory + ", actions="
+        return "OFPacketOut [actions="
                 + actions + ", actionsLength=" + actionsLength + ", bufferId=0x"
                 + Integer.toHexString(bufferId) + ", inPort=" + inPort + ", packetData="
                 + HexString.toHexString(packetData) + "]";

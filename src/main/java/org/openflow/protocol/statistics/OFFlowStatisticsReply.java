@@ -371,8 +371,7 @@ public class OFFlowStatisticsReply implements OFStatistics, OFInstructionFactory
      */
     @Override
     public String toString() {
-        return "OFFlowStatisticsReply [instructionFactory=" + instructionFactory
-                + ", length=" + length + ", tableId=" + tableId + ", match="
+        return "OFFlowStatisticsReply [length=" + length + ", tableId=" + tableId + ", match="
                 + match + ", durationSeconds=" + durationSeconds
                 + ", durationNanoseconds=" + durationNanoseconds
                 + ", priority=" + priority + ", idleTimeout=" + idleTimeout

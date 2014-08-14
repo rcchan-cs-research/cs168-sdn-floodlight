@@ -465,7 +465,7 @@ public class OFFlowMod extends OFMessage implements OFInstructionFactoryAware, C
      */
     @Override
     public String toString() {
-        return "OFFlowMod [instructionFactory=" + instructionFactory + ", instructions=" + instructions 
+        return "OFFlowMod [instructions=" + instructions 
                 + ", bufferId=" + U32.f(bufferId) + ", tableId=" + tableId +  ", command=" + command
                 + ", cookie=" + cookie + ", cookieMask=" + cookieMask + ", flags=" + flags + ", hardTimeout="
                 + hardTimeout + ", idleTimeout=" + idleTimeout + ", match="
