@@ -19,14 +19,14 @@ public class OFActionGroup extends OFAction {
     /**
      * @return the groupId
      */
-    public int getQueueId() {
+    public int getGroupId() {
         return groupId;
     }
 
     /**
      * @param groupId the groupId to set
      */
-    public OFActionGroup setQueueId(int groupId) {
+    public OFActionGroup setGroupId(int groupId) {
         this.groupId = groupId;
         return this;
     }
