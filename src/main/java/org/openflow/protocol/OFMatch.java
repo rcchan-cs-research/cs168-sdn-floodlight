@@ -254,7 +254,7 @@ public class OFMatch implements Cloneable {
      * @param dataLayerVirtualLan VLAN ID without the VLAN present bit set
      */
     public OFMatch setDataLayerVirtualLan(short vlan) {
-    	this.setField(OFOXMFieldType.VLAN_VID, vlan | OFVlanId.OFPVID_PRESENT.getValue());
+    	this.setField(OFOXMFieldType.VLAN_VID, (short)(vlan | OFVlanId.OFPVID_PRESENT.getValue()));
         return this;
     }
 
