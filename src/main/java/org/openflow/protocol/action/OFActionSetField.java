@@ -2,6 +2,7 @@ package org.openflow.protocol.action;
 
 import java.nio.ByteBuffer;
 
+import org.openflow.protocol.OFVlanId;
 import org.openflow.protocol.OFOXMField;
 import org.openflow.protocol.OFOXMFieldType;
 import org.openflow.util.U16;
@@ -74,6 +75,12 @@ public class OFActionSetField extends OFAction {
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
         this.field.readFrom(data);
+
+        // In case of SET_VLAN_VID action, set the VLAN_PRESENT bit to 1
+        if (field.getType() == OFOXMFieldType.VLAN_VID) {
+            short vlan = (Short)field.getValue();
+            this.field.setValue((short)(vlan & ~OFVlanId.OFPVID_PRESENT.getValue()));
+        }
         int padLength = length - this.field.getLength() - 4;
         data.position(data.position() + padLength); // pad
     }
@@ -81,6 +88,12 @@ public class OFActionSetField extends OFAction {
     @Override
     public void writeTo(ByteBuffer data) {
         super.writeTo(data);
+
+        // In case of SET_VLAN_VID action, set the VLAN_PRESENT bit to 1
+        if (field.getType() == OFOXMFieldType.VLAN_VID) {
+            short vlan = (Short)field.getValue();
+            field.setValue((short)(vlan | OFVlanId.OFPVID_PRESENT.getValue()));
+        }
         field.writeTo(data);
         int padLength = length - this.field.getLength() - 4;
         for (;padLength>0;padLength--)
