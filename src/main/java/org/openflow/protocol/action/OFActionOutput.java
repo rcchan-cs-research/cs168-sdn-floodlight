@@ -31,7 +31,7 @@ public class OFActionOutput extends OFAction implements Cloneable {
     }
 
     public OFActionOutput(int portNumber) {
-        this(portNumber, (short)0);
+        this(portNumber, OFPCML_MAX);
     }
 
     public OFActionOutput(int portNumber, short maxLength) {
@@ -42,8 +42,16 @@ public class OFActionOutput extends OFAction implements Cloneable {
         this.maxLength = maxLength;
     }
 
+    public OFActionOutput(OFPort port) {
+        this(port.getValue(), OFPCML_MAX);
+    }
+
+    public OFActionOutput(OFPort port, short maxLength) {
+        this(port.getValue(), maxLength);
+    }
+
     public OFActionOutput(OFPhysicalPort port) {
-        this(port.getPortNumber(), (short)0);
+        this(port.getPortNumber(), OFPCML_MAX);
     }
 
     public OFActionOutput(OFPhysicalPort port, short maxLength) {
