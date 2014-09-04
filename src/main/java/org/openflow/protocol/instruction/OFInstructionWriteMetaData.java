@@ -10,52 +10,60 @@ import java.util.Arrays;
 public class OFInstructionWriteMetaData extends OFInstruction {
     public static int MINIMUM_LENGTH = 24;
 
-    protected long metadata;
-    protected long metadataMask;
+    protected long metaData;
+    protected long metaDataMask;
 
     public OFInstructionWriteMetaData() {
         super.setType(OFInstructionType.WRITE_METADATA);
         super.setLength((short) MINIMUM_LENGTH);
+        this.metaDataMask = Long.MAX_VALUE;
     }
 
-    public OFInstructionWriteMetaData(long metadata, long metadataMask) {
+    public OFInstructionWriteMetaData(long metaData) {
         super.setType(OFInstructionType.WRITE_METADATA);
         super.setLength((short) MINIMUM_LENGTH);
-        this.metadata = metadata;
-        this.metadataMask = metadataMask;   
+        this.metaData = metaData;
+        this.metaDataMask = Long.MAX_VALUE;
+    }
+
+    public OFInstructionWriteMetaData(long metaData, long metaDataMask) {
+        super.setType(OFInstructionType.WRITE_METADATA);
+        super.setLength((short) MINIMUM_LENGTH);
+        this.metaData = metaData;
+        this.metaDataMask = metaDataMask;
     }
 
     /**
-     * Get metadata
+     * Get metaData
      * @return
      */
-    public long getMetadata() {
-        return this.metadata;
+    public long getMetaData() {
+        return this.metaData;
     }
 
     /**
-     * Set metadata
-     * @param metadata
+     * Set metaData
+     * @param metaData
      */
-    public OFInstructionWriteMetaData setMetadata(long metadata) {
-        this.metadata = metadata;
+    public OFInstructionWriteMetaData setMetaData(long metaData) {
+        this.metaData = metaData;
         return this;
     }
 
     /**
-     * Get metadataMask
+     * Get metaDataMask
      * @return
      */
-    public long getMetadataMask() {
-        return this.metadataMask;
+    public long getMetaDataMask() {
+        return this.metaDataMask;
     }
 
     /**
-     * Set metadataMask
-     * @param metadataMask
+     * Set metaDataMask
+     * @param metaDataMask
      */
-    public OFInstructionWriteMetaData setMetadataMask(long metadataMask) {
-        this.metadataMask = metadataMask;
+    public OFInstructionWriteMetaData setMetaDataMask(long metaDataMask) {
+        this.metaDataMask = metaDataMask;
         return this;
     }
 
@@ -63,24 +71,24 @@ public class OFInstructionWriteMetaData extends OFInstruction {
     public void readFrom(ByteBuffer data) {
         super.readFrom(data);
         data.position(data.position() + 4); // pad
-        this.metadata = data.getLong();
-        this.metadataMask = data.getLong();
+        this.metaData = data.getLong();
+        this.metaDataMask = data.getLong();
     }
 
     @Override
     public void writeTo(ByteBuffer data) {
         super.writeTo(data);
         data.putInt((int) 0); // pad
-        data.putLong(metadata);
-        data.putLong(metadataMask);
+        data.putLong(metaData);
+        data.putLong(metaDataMask);
     }
 
     @Override
     public int hashCode() {
         final int prime = 347;
         int result = super.hashCode();
-        result = prime * result + (int) (metadata ^ (metadata >>> 32));
-        result = prime * result + (int) (metadataMask ^ (metadataMask >>> 32));
+        result = prime * result + (int) (metaData ^ (metaData >>> 32));
+        result = prime * result + (int) (metaDataMask ^ (metaDataMask >>> 32));
         return result;
     }
 
@@ -96,10 +104,10 @@ public class OFInstructionWriteMetaData extends OFInstruction {
             return false;
         }
         OFInstructionWriteMetaData other = (OFInstructionWriteMetaData) obj;
-        if (metadata != other.metadata) {
+        if (metaData != other.metaData) {
             return false;
         }
-        if (metadataMask != other.metadataMask) {
+        if (metaDataMask != other.metaDataMask) {
             return false;
         }
         return true;
@@ -110,7 +118,7 @@ public class OFInstructionWriteMetaData extends OFInstruction {
      */
     @Override
     public String toString() {
-        return "OFInstructionWriteMetaData [metadata=" + metadata + ", metadataMask=" + metadataMask + "]";
+        return "OFInstructionWriteMetaData [metaData=" + metaData + ", metaDataMask=" + metaDataMask + "]";
     }
 
 }
