@@ -37,10 +37,18 @@ public class OFRoleMessage extends OFMessage {
     }
 
     /**
-     * @param role the role to set
+     * @param role integer value of the role to set
      */
     public OFRoleMessage setRole(int role) {
         this.role = role;
+        return this;
+    }
+
+    /**
+     * @param role enum value of the role to set
+     */
+    public OFRoleMessage setRole(OFControllerRole role) {
+        this.role = role.ordinal();
         return this;
     }
 
@@ -64,7 +72,7 @@ public class OFRoleMessage extends OFMessage {
         super.readFrom(data);
         this.role = data.getInt();
         data.getInt(); // pad
-        this.generationId = data.get();
+        this.generationId = data.getLong();
     }
 
     @Override
