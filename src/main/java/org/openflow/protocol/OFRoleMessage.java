@@ -112,4 +112,12 @@ public class OFRoleMessage extends OFMessage {
         }
         return true;
     }
+
+    /* (non-Javadoc)
+     * @see org.openflow.protocol.OFMessage#computeLength()
+     */
+    @Override
+    public void computeLength() {
+        this.length = (short) MINIMUM_LENGTH;
+    }
 }
