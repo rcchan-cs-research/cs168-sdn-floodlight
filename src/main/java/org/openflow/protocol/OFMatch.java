@@ -492,7 +492,7 @@ public class OFMatch implements Cloneable {
      * @param transportDestination TCP destination port number
      */
     public OFMatch setTransportDestination(short transportDestination) {
-        setTransportSource(IP_PROTO_TCP, transportDestination);
+        setTransportDestination(IP_PROTO_TCP, transportDestination);
         return this;
     }
 
