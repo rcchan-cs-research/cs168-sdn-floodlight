@@ -35,16 +35,16 @@ public class OFMatchField extends OFOXMField implements Cloneable {
 
     public void updateValue() {
         if (value instanceof Byte) {
-            this.value = ((Byte)value & (Byte)mask);
+            this.value = (byte)((Byte)value & (Byte)mask);
         }
         if (value instanceof Short) {
-            this.value = ((Short)value & (Short)mask);
+            this.value = (short)((Short)value & (Short)mask);
         }
         if (value instanceof Integer) {
-            this.value = ((Integer)value & (Integer)mask);
+            this.value = (int)((Integer)value & (Integer)mask);
         }
         if (value instanceof Long) {
-            this.value = ((Long)value & (Long)mask);
+            this.value = (long)((Long)value & (Long)mask);
         }
         if (value instanceof byte[]) {
             byte[] v = (byte[])this.value;
