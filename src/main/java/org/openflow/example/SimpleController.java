@@ -76,6 +76,7 @@ public class SimpleController implements SelectListener {
             // Build the Match
             int inPort = pi.getInPort();
             OFMatch match = OFMatch.load(pi.getPacketData(), inPort);
+            match.setField(OFOXMFieldType.VLAN_VID, (short)10, (short)0x0fff);
             byte[] dlDst = (byte[]) match.getMatchFieldValue(OFOXMFieldType.ETH_DST);
             Integer dlDstKey = Arrays.hashCode(dlDst);
             byte[] dlSrc = (byte[]) match.getMatchFieldValue(OFOXMFieldType.ETH_SRC);
