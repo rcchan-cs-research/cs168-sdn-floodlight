@@ -120,6 +120,7 @@ public enum OFStatisticsType {
                             return new OFGroupFeaturesStatisticsReply();
                         }
                     }),
+*/
     METER         (9, OFMeterStatisticsRequest.class, OFMeterStatisticsReply.class,
                     new Instantiable<OFStatistics>() {
                         @Override
@@ -134,11 +135,11 @@ public enum OFStatisticsType {
                         }
                     }),
 
-    METER_CONFIG   (10, OFMeterConfigStatisticsRequest.class, OFMeterConfigStatisticsReply.class,
+    METER_CONFIG   (10, OFMeterStatisticsRequest.class, OFMeterConfigStatisticsReply.class,
                     new Instantiable<OFStatistics>() {
                         @Override
                         public OFStatistics instantiate() {
-                            return new OFMeterConfigStatisticsRequest();
+                            return new OFMeterStatisticsRequest();
                         }
                     },
                     new Instantiable<OFStatistics>() {
@@ -147,20 +148,14 @@ public enum OFStatisticsType {
                             return new OFMeterConfigStatisticsReply();
                         }
                     }),
-    METER_FEATURES (11, OFMeterFeaturesStatisticsRequest.class, OFMeterFeaturesStatisticsReply.class,
+    METER_FEATURES (11, null, OFMeterFeatures.class,
+                    null,
                     new Instantiable<OFStatistics>() {
                         @Override
                         public OFStatistics instantiate() {
-                            return new OFMeterFeaturesStatisticsRequest();
-                        }
-                    },
-                    new Instantiable<OFStatistics>() {
-                        @Override
-                        public OFStatistics instantiate() {
-                            return new OFMeterFeaturesStatisticsReply();
+                            return new OFMeterFeatures();
                         }
                     }),
- */
     TABLE_FEATURES (12, OFTableFeatures.class, OFTableFeatures.class,
                     new Instantiable<OFStatistics>() {
                         @Override
