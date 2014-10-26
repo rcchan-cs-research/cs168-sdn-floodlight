@@ -2,7 +2,9 @@ package org.openflow.protocol;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openflow.protocol.factory.OFMeterBandFactory;
 import org.openflow.protocol.factory.OFMeterBandFactoryAware;
@@ -21,10 +23,54 @@ public class OFMeterMod extends OFMessage implements Cloneable, OFMeterBandFacto
     public final static int OFPMC_MODIFY = 1;
     public final static int OFPMC_DELETE = 2;
 
-    public final static int OFPMF_KBPS = 1 << 0;
-    public final static int OFPMF_PKTPS = 1 << 1;
-    public final static int OFPMF_BURST = 1 << 2;
-    public final static int OFPMF_STATS = 1 << 3;
+    public enum OFMeterFlags {
+        OFPMF_KBPS    (1 << 0),
+        OFPMF_PKTPS   (1 << 1),
+        OFPMF_BURST   (1 << 2),
+        OFPMF_STATS   (1 << 3);
+
+        protected int value;
+
+        private OFMeterFlags(int value) {
+            this.value = value;
+        }
+
+        /**
+         * Given a meter flags short value, return the set of OFMeterFlags enums
+         * associated with it
+         *
+         * @param i flags bitmap
+         * @return EnumSet<OFMeterFlags>
+         */
+        public static EnumSet<OFMeterFlags> valueOf(short i) {
+            EnumSet<OFMeterFlags> flags = EnumSet.noneOf(OFMeterFlags.class);
+            for (OFMeterFlags value: OFMeterFlags.values()) {
+                if ((i & value.getValue()) != 0)
+                    flags.add(value);
+            }
+            return flags;
+        }
+
+        /**
+         * Given a set of OFMeterFlags enums, convert to bitmap value
+         *
+         * @param flags Set<OFMeterFlags>
+         * @return bitmap value
+         */
+        public static short toBitmap(Set<OFMeterFlags> flags) {
+            short bitmap = 0;
+            for (OFMeterFlags flag: flags)
+                bitmap |= flag.getValue();
+            return bitmap;
+        }
+
+        /**
+         * @return the value
+         */
+        public int getValue() {
+            return value;
+        }
+    }
 
     protected OFMeterBandFactory meterBandFactory;
     protected int meterId;
@@ -106,7 +152,7 @@ public class OFMeterMod extends OFMessage implements Cloneable, OFMeterBandFacto
         if (this.meterBandFactory == null)
             throw new RuntimeException("OFMeterBandFactory not set");
         this.bands = meterBandFactory.parseMeterBands(data,
-                U16.f(this.command) - MINIMUM_LENGTH);
+                U16.f(this.length) - MINIMUM_LENGTH);
     }
 
     public void writeTo(ByteBuffer data) {
