@@ -147,13 +147,14 @@ public class OFGroupStatisticsReply implements OFStatistics {
 
     @Override
     public void readFrom(ByteBuffer data) {
-        this.groupId = data.getInt();
         this.length = data.getShort();
-        for (int i=0;i<6;i++)
-            data.get(); // pad
+        data.getShort(); // pad
+        this.groupId = data.getInt();
         this.setRefCount(data.getInt());
         this.packetCount = data.getLong();
         this.byteCount = data.getLong();
+        this.durationSeconds = data.getInt();
+        this.durationNanoseconds = data.getInt();
         for (int i=0;i<this.length-MINIMUM_LENGTH;i+=OFGroupBucketCounter.MINIMUM_LENGTH) {
             OFGroupBucketCounter counter = new OFGroupBucketCounter();
             counter.readFrom(data);
@@ -163,13 +164,14 @@ public class OFGroupStatisticsReply implements OFStatistics {
 
     @Override
     public void writeTo(ByteBuffer data) {
-        data.putInt(this.groupId);
         data.putShort(this.length);
-        for (int i=0;i<6;i++)
-            data.put((byte) 0); //pad
+        data.putShort((short) 0); //pad
+        data.putInt(this.groupId);
         data.putInt(this.getRefCount());
         data.putLong(this.packetCount);
         data.putLong(this.byteCount);
+        data.putInt(this.durationSeconds);
+        data.putInt(this.durationNanoseconds);
         if (bucketStatistics != null) {
             for (OFGroupBucketCounter counter : bucketStatistics) {
                 counter.writeTo(data);
@@ -181,14 +183,16 @@ public class OFGroupStatisticsReply implements OFStatistics {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
+        result = prime
+                * result
                 + ((bucketStatistics == null) ? 0 : bucketStatistics.hashCode());
         result = prime * result + (int) (byteCount ^ (byteCount >>> 32));
-        result = prime * result + getRefCount();
-        result = prime * result + length;
+        result = prime * result + durationNanoseconds;
+        result = prime * result + durationSeconds;
         result = prime * result + groupId;
-        result = prime * result
-                + (int) (packetCount ^ (packetCount >>> 32));
+        result = prime * result + length;
+        result = prime * result + (int) (packetCount ^ (packetCount >>> 32));
+        result = prime * result + refCount;
         return result;
     }
 
@@ -208,13 +212,17 @@ public class OFGroupStatisticsReply implements OFStatistics {
             return false;
         if (byteCount != other.byteCount)
             return false;
-        if (getRefCount() != other.getRefCount())
+        if (durationNanoseconds != other.durationNanoseconds)
             return false;
-        if (length != other.length)
+        if (durationSeconds != other.durationSeconds)
             return false;
         if (groupId != other.groupId)
             return false;
+        if (length != other.length)
+            return false;
         if (packetCount != other.packetCount)
+            return false;
+        if (refCount != other.refCount)
             return false;
         return true;
     }
@@ -232,8 +240,10 @@ public class OFGroupStatisticsReply implements OFStatistics {
     @Override
     public String toString() {
         return "OFGroupStatisticsReply [length=" + length + ", groupId="
-                + groupId + ", refCount=" + getRefCount() + ", packetCount="
+                + groupId + ", refCount=" + refCount + ", packetCount="
                 + packetCount + ", byteCount=" + byteCount
+                + ", durationSeconds=" + durationSeconds
+                + ", durationNanoseconds=" + durationNanoseconds
                 + ", bucketStatistics=" + bucketStatistics + "]";
     }
 
