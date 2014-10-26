@@ -109,9 +109,9 @@ public class OFMeterStatisticsReply implements OFStatistics {
         this.packetInCount = data.getLong();
         this.byteInCount = data.getLong();
         for (int i=0;i<this.length-MINIMUM_LENGTH;i+=OFMeterBandStatistics.MINIMUM_LENGTH) {
-            OFMeterBandStatistics bandStatistics = new OFMeterBandStatistics();
-            bandStatistics.readFrom(data);
-            this.bandStatistics.add(bandStatistics);
+            OFMeterBandStatistics bandStat = new OFMeterBandStatistics();
+            bandStat.readFrom(data);
+            this.bandStatistics.add(bandStat);
         }
     }
 
@@ -125,8 +125,8 @@ public class OFMeterStatisticsReply implements OFStatistics {
         data.putLong(this.packetInCount);
         data.putLong(this.byteInCount);
         if (bandStatistics != null) {
-            for (OFMeterBandStatistics bandStatistics : bandStatistics) {
-                bandStatistics.writeTo(data);
+            for (OFMeterBandStatistics bandStat : bandStatistics) {
+                bandStat.writeTo(data);
             }
         }
     }
@@ -176,8 +176,8 @@ public class OFMeterStatisticsReply implements OFStatistics {
     public void updateLength() {
         int l = MINIMUM_LENGTH;
         if (bandStatistics != null) {
-            for (OFMeterBandStatistics bandStatistics : bandStatistics) {
-                l += bandStatistics.getLength();
+            for (OFMeterBandStatistics bandStat : bandStatistics) {
+                l += bandStat.getLength();
             }
         }
         this.length = U16.t(l);
