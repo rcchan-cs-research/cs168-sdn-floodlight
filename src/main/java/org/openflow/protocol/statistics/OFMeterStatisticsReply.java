@@ -15,7 +15,7 @@ public class OFMeterStatisticsReply implements OFStatistics {
 
     protected short length;
     protected int meterId;
-    protected int flowCount;
+    private int flowCount;
     protected long packetInCount;
     protected long byteInCount;
     private List<OFMeterBandStatistics> bandStatistics;
@@ -54,6 +54,20 @@ public class OFMeterStatisticsReply implements OFStatistics {
     public OFMeterStatisticsReply setPacketInCount(long packetInCount) {
         this.packetInCount = packetInCount;
         return this;
+    }
+
+    /**
+     * @return the flowCount
+     */
+    public int getFlowCount() {
+        return flowCount;
+    }
+
+    /**
+     * @param flowCount the flowCount to set
+     */
+    public void setFlowCount(int flowCount) {
+        this.flowCount = flowCount;
     }
 
     /**
@@ -105,7 +119,7 @@ public class OFMeterStatisticsReply implements OFStatistics {
         this.length = data.getShort();
         for (int i=0;i<6;i++)
             data.get(); // pad
-        this.flowCount = data.getInt();
+        this.setFlowCount(data.getInt());
         this.packetInCount = data.getLong();
         this.byteInCount = data.getLong();
         for (int i=0;i<this.length-MINIMUM_LENGTH;i+=OFMeterBandStatistics.MINIMUM_LENGTH) {
@@ -121,7 +135,7 @@ public class OFMeterStatisticsReply implements OFStatistics {
         data.putShort(this.length);
         for (int i=0;i<6;i++)
             data.put((byte) 0); //pad
-        data.putInt(this.flowCount);
+        data.putInt(this.getFlowCount());
         data.putLong(this.packetInCount);
         data.putLong(this.byteInCount);
         if (bandStatistics != null) {
@@ -138,7 +152,7 @@ public class OFMeterStatisticsReply implements OFStatistics {
         result = prime * result
                 + ((bandStatistics == null) ? 0 : bandStatistics.hashCode());
         result = prime * result + (int) (byteInCount ^ (byteInCount >>> 32));
-        result = prime * result + flowCount;
+        result = prime * result + getFlowCount();
         result = prime * result + length;
         result = prime * result + meterId;
         result = prime * result
@@ -162,7 +176,7 @@ public class OFMeterStatisticsReply implements OFStatistics {
             return false;
         if (byteInCount != other.byteInCount)
             return false;
-        if (flowCount != other.flowCount)
+        if (getFlowCount() != other.getFlowCount())
             return false;
         if (length != other.length)
             return false;
@@ -186,7 +200,7 @@ public class OFMeterStatisticsReply implements OFStatistics {
     @Override
     public String toString() {
         return "OFMeterStatisticsReply [length=" + length + ", meterId="
-                + meterId + ", flowCount=" + flowCount + ", packetInCount="
+                + meterId + ", flowCount=" + getFlowCount() + ", packetInCount="
                 + packetInCount + ", byteInCount=" + byteInCount
                 + ", bandStatistics=" + bandStatistics + "]";
     }

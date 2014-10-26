@@ -79,7 +79,6 @@ public enum OFStatisticsType {
                             return new OFQueueStatisticsReply();
                         }
                     }),
-/* TODO
     GROUP       (6, OFGroupStatisticsRequest.class, OFGroupStatisticsReply.class,
                     new Instantiable<OFStatistics>() {
                         @Override
@@ -93,7 +92,7 @@ public enum OFStatisticsType {
                             return new OFGroupStatisticsReply();
                         }
                     }),
-
+/* TODO
     GROUP_DESC   (7, OFGroupDescriptionStatisticsRequest.class, OFGroupDescriptionStatisticsReply.class,
                     new Instantiable<OFStatistics>() {
                         @Override
