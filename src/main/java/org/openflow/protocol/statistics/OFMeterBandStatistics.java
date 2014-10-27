@@ -7,8 +7,8 @@ import java.nio.ByteBuffer;
  * @author Srini Seetharaman (srini.seetharaman@gmail.com)
  */
 public class OFMeterBandStatistics {
-    private long packetBandCount;
-    private long byteBandCount;
+    protected long packetBandCount;
+    protected long byteBandCount;
     public final static int MINIMUM_LENGTH = 16;
 
     public OFMeterBandStatistics() {

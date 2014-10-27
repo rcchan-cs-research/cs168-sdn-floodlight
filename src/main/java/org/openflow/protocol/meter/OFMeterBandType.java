@@ -4,7 +4,9 @@ import java.lang.reflect.Constructor;
 
 import org.openflow.protocol.Instantiable;
 import org.openflow.util.LRULinkedHashMap;
+
 import java.util.Map;
+import java.util.Set;
 
 /**
  * List of OpenFlow meter band types and mappings to wire protocol value and
@@ -38,7 +40,7 @@ public class OFMeterBandType {
                 }
             });
 */
-    
+
     protected Class<? extends OFMeterBand> clazz;
     protected Constructor<? extends OFMeterBand> constructor;
     protected Instantiable<OFMeterBand> instantiable;
@@ -92,6 +94,13 @@ public class OFMeterBandType {
 
     static public OFMeterBandType valueOf(short i) {
         return mapping.get(i);
+    }
+
+    /*
+     * Returns a Set of short values that corresponds to the actionType value
+     */
+    static public Set<Short> getValues() {
+        return mapping.keySet();
     }
 
     /**

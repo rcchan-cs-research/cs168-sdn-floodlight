@@ -15,10 +15,10 @@ public class OFMeterStatisticsReply implements OFStatistics {
 
     protected short length;
     protected int meterId;
-    private int flowCount;
+    protected int flowCount;
     protected long packetInCount;
     protected long byteInCount;
-    private List<OFMeterBandStatistics> bandStatistics;
+    protected List<OFMeterBandStatistics> bandStatistics;
 
     public OFMeterStatisticsReply() {
         super();

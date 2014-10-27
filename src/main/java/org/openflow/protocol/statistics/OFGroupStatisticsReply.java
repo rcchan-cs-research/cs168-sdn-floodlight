@@ -150,7 +150,8 @@ public class OFGroupStatisticsReply implements OFStatistics {
         this.length = data.getShort();
         data.getShort(); // pad
         this.groupId = data.getInt();
-        this.setRefCount(data.getInt());
+        this.refCount = data.getInt();
+        data.getInt(); //pad
         this.packetCount = data.getLong();
         this.byteCount = data.getLong();
         this.durationSeconds = data.getInt();
@@ -167,7 +168,8 @@ public class OFGroupStatisticsReply implements OFStatistics {
         data.putShort(this.length);
         data.putShort((short) 0); //pad
         data.putInt(this.groupId);
-        data.putInt(this.getRefCount());
+        data.putInt(this.refCount);
+        data.putInt(0); //pad
         data.putLong(this.packetCount);
         data.putLong(this.byteCount);
         data.putInt(this.durationSeconds);

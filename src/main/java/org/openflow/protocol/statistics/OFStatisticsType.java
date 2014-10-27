@@ -92,34 +92,22 @@ public enum OFStatisticsType {
                             return new OFGroupStatisticsReply();
                         }
                     }),
-/* TODO
-    GROUP_DESC   (7, OFGroupDescriptionStatisticsRequest.class, OFGroupDescriptionStatisticsReply.class,
+    GROUP_DESC   (7, null, OFGroupDescription.class,
+                    null,
                     new Instantiable<OFStatistics>() {
                         @Override
                         public OFStatistics instantiate() {
-                            return new OFGroupDescriptionStatisticsRequest();
-                        }
-                    },
-                    new Instantiable<OFStatistics>() {
-                        @Override
-                        public OFStatistics instantiate() {
-                            return new OFGroupDescriptionStatisticsReply();
+                            return new OFGroupDescription();
                         }
                     }),
-    GROUP_FEATURES (8, OFGroupFeaturesStatisticsRequest.class, OFGroupFeaturesStatisticsReply.class,
+    GROUP_FEATURES (8, null, OFGroupFeatures.class,
+                    null,
                     new Instantiable<OFStatistics>() {
                         @Override
                         public OFStatistics instantiate() {
-                            return new OFGroupFeaturesStatisticsRequest();
-                        }
-                    },
-                    new Instantiable<OFStatistics>() {
-                        @Override
-                        public OFStatistics instantiate() {
-                            return new OFGroupFeaturesStatisticsReply();
+                            return new OFGroupFeatures();
                         }
                     }),
-*/
     METER         (9, OFMeterStatisticsRequest.class, OFMeterStatisticsReply.class,
                     new Instantiable<OFStatistics>() {
                         @Override

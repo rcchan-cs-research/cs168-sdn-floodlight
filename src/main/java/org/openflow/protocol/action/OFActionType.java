@@ -5,6 +5,7 @@ package org.openflow.protocol.action;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
+import java.util.Set;
 
 import org.openflow.protocol.Instantiable;
 import org.openflow.util.LRULinkedHashMap;
@@ -109,7 +110,7 @@ public enum OFActionType {
     protected Constructor<? extends OFAction> constructor;
     protected Instantiable<OFAction> instantiable;
     protected short type;
-    
+
     /**
      * Store some information about the OpenFlow Action type, including wire
      * protocol type number, length, and derrived class
@@ -153,6 +154,13 @@ public enum OFActionType {
 
     static public OFActionType valueOf(short i) {
         return mapping.get(i);
+    }
+
+    /*
+     * Returns a Set of short values that corresponds to the actionType value
+     */
+    static public Set<Short> getValues() {
+        return mapping.keySet();
     }
 
     /**

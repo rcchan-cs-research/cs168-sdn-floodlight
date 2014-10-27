@@ -17,9 +17,9 @@ public class OFMeterConfigStatisticsReply implements OFStatistics, OFMeterBandFa
 
     protected OFMeterBandFactory meterBandFactory;
     protected short length = (short) MINIMUM_LENGTH;
-    private short flags;
+    protected short flags;
     protected int meterId;
-    private List<OFMeterBand> bands;
+    protected List<OFMeterBand> bands;
 
     /**
      * @return the meterId

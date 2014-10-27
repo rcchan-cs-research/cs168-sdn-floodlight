@@ -29,8 +29,8 @@ public class OFMeterFeatures implements OFStatistics {
     }
     public Set<OFMeterBandType> getBandTypes() {
         Set<OFMeterBandType> bandTypeSet = new HashSet<OFMeterBandType>();
-        for (short i=0;i<16;i++) {
-            if ((this.bandTypes & (1<<i)) != 0)
+        for (Short i: OFMeterBandType.getValues()) {
+            if ((this.bandTypes & (1<<i.intValue())) != 0)
                 bandTypeSet.add(OFMeterBandType.valueOf(i));
         }
         return bandTypeSet;
