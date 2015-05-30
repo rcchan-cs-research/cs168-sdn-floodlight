@@ -1354,7 +1354,7 @@ IFlowReconcileListener, IInfoProvider {
         byte[] senderHardwareAddr = arp.getSenderHardwareAddress();
         long senderAddr = Ethernet.toLong(senderHardwareAddr);
 
-        if (dlAddr == senderAddr) return;
+        //if (dlAddr == senderAddr) return;
 
         // Ignore broadcast/multicast source
         if ((senderHardwareAddr[0] & 0x1) != 0)
